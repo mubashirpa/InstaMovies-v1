@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name" translatable="false">Insta Movies</string>
+    <string name="admob_app_id">ca-app-pub-6381828386530834~9904287900</string>
+    <string name="banner_ad_unit_id">ca-app-pub-6381828386530834/4651961226</string>
+    <string name="rewarded_ad_unit_id">ca-app-pub-6381828386530834/4071353206</string>
+
+    <string name="movies_notification_channel_id">MOVIES1</string>
+    <string name="default_notification_channel_id">DEFAULT1</string>
+    <string name="update_notification_channel_id">UPDATE1</string>
+
+    <string name="tmdb_api_key">64d9a1c2a19a52b7f9c2d65075df8eb4</string>
+    <string name="about_url">https://imoviesapp.blogspot.com/p/about.html</string>
+    <string name="terms_url">https://imoviesapp.blogspot.com/p/terms.html</string>
+    <string name="privacy_url">https://imoviesapp.blogspot.com/p/privacy.html</string>
+    <string name="tutorial_url">https://imoviesapp.blogspot.com/p/tutorials.html</string>
+    <string name="hot_links_url">https://imoviesapp.blogspot.com/p/hot-links.html</string>
+    <string name="whats_new_url">https://imoviesapp.blogspot.com/p/whats-new.html</string>
+    <string name="music_url">https://gaana.com/</string>
+    <string name="games_url">https://gamesnacks.com/embed/</string>
+    <string name="contact_url">mailto:mubashirmubajr11@gmail.com</string>
+    <string name="google_chrome_version">88.0.4324.152</string>
+    <string name="youtube_player_api_key">AlzaSyCD1YBO6cUJnmNJOiREcCnt74nvu_L1Wbg</string>
+    <string name="official_download_website">https://imoviesapp.wordpress.com/download</string>
+</resources>

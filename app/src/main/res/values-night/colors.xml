@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color	name="colorPrimary">#27282B</color>
+    <color	name="colorPrimaryDark">#242527</color>
+    <color	name="colorAccent">#C51F5D</color>
+    <color	name="colorControlHighlight">#33FFFFFF</color>
+    <color	name="colorControlNormal">#C51F5D</color>
+
+    <color	name="colorTextPrimary">#E8EAED</color>
+    <color	name="colorTextSecondary">#9AA0A6</color>
+    <color	name="colorLayoutPrimary">#202124</color>
+    <color	name="colorLayoutSecondary">#3C4043</color>
+    <color	name="colorIconPrimary">#9AA0A6</color>
+    <color	name="colorButtonPrimary">#50B4F4</color>
+    <color	name="colorButtonText">#202124</color>
+    <color	name="colorStrokePrimary">#5F6368</color>
+    <color	name="colorHintPrimary">#9AA0A6</color>
+    <color	name="colorPopupMenu">#303030</color>
+    <color	name="colorDayBlackNightWhite">#FFFFFF</color>
+    <color	name="colorIconToolbarCustom">#FFFFFF</color>
+
+    <color	name="colorCellularInfoBg">#282120</color>
+</resources>

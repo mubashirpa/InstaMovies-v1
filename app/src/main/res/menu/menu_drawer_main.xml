@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/drawerNotify"
+            android:icon="@drawable/ic_outline_notifications_24"
+            android:title="@string/notifications"/>
+        <item
+            android:id="@+id/drawerFeedback"
+            android:icon="@drawable/ic_outline_feedback_24"
+            android:title="@string/feedback"/>
+        <item
+            android:id="@+id/drawerMore"
+            android:icon="@drawable/ic_outline_more_24"
+            android:title="@string/more"/>
+        <item
+            android:id="@+id/drawerRequest"
+            android:icon="@drawable/ic_outline_movie_24"
+            android:title="@string/request_movies"/>
+        <item
+            android:id="@+id/drawerStream"
+            android:icon="@drawable/ic_outline_play_circle_outline_24"
+            android:title="@string/network_stream"/>
+        <item
+            android:id="@+id/drawerSettings"
+            android:icon="@drawable/ic_outline_settings_24"
+            android:title="@string/settings"/>
+        <item
+            android:id="@+id/drawerUpdate"
+            android:icon="@drawable/ic_outline_update_24"
+            android:title="@string/update"/>
+    </group>
+    <item android:title="@string/support">
+        <menu>
+            <item
+                android:id="@+id/drawerDonate"
+                android:icon="@drawable/ic_outline_monetization_on_24"
+                android:title="@string/subscribe"/>
+            <item
+                android:id="@+id/drawerShare"
+                android:icon="@drawable/ic_outline_share_24"
+                android:title="@string/share_app"/>
+            <item
+                android:id="@+id/drawerSupport"
+                android:icon="@drawable/ic_outline_fingerprint_24"
+                android:title="@string/support_us"/>
+        </menu>
+    </item>
+
+    <item android:title="@string/help">
+        <menu>
+            <item
+                android:id="@+id/drawerTutorial"
+                android:icon="@drawable/ic_outline_help_24"
+                android:title="@string/tutorial_videos"/>
+            <item
+                android:id="@+id/drawerContact"
+                android:icon="@drawable/ic_outline_contact_support_24"
+                android:title="@string/contact_us"/>
+        </menu>
+    </item>
+</menu>

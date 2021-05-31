@@ -1,0 +1,108 @@
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        app:title="General"
+        app:iconSpaceReserved="false">
+        <Preference
+            app:key="notification"
+            app:title="Notifications"
+            app:summary="Manage notification settings"
+            app:iconSpaceReserved="false"/>
+        <SwitchPreferenceCompat
+            app:key="data_saver"
+            app:title="Data saver"
+            app:summary="Saves your data by reducing data usage"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+        <SwitchPreferenceCompat
+            app:key="auto_update"
+            app:title="Disable auto update"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+        <ListPreference
+            app:key="theme_preference"
+            app:title="Themes"
+            android:entries="@array/pref_theme"
+            app:entryValues="@array/pref_theme"
+            app:iconSpaceReserved="false"
+            app:summary="Choose your theme" />
+        <Preference
+            app:key="cache"
+            app:title="Clear cache"
+            app:summary="0.0 MB"
+            app:iconSpaceReserved="false"/>
+        <Preference
+            app:key="clear_update"
+            app:title="Clear update files"
+            app:iconSpaceReserved="false"/>
+        <Preference
+            app:key="repair"
+            app:title="Repair"
+            app:iconSpaceReserved="false"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        app:title="Browser"
+        app:iconSpaceReserved="false">
+        <SwitchPreferenceCompat
+            app:key="system_browser_preference"
+            app:title="Disable In-App browser"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"
+            android:summary="Open movie links in system browser"/>
+        <SwitchPreferenceCompat
+            app:key="chrome_tabs_preference"
+            app:title="Use chrome custom tabs"
+            app:summary="Links will open in Chrome Custom Tabs"
+            app:defaultValue="true"
+            app:iconSpaceReserved="false"/>
+        <ListPreference
+            app:key="download_preference"
+            app:title="Download"
+            android:entries="@array/pref_download"
+            app:entryValues="@array/pref_download"
+            app:iconSpaceReserved="false"
+            android:defaultValue="Via external apps"/>
+        <SwitchPreferenceCompat
+            app:key="cookie_preference"
+            app:title="Allow cookies"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+        <SwitchPreferenceCompat
+            app:key="advertisement_preference"
+            app:title="Block Ads"
+            app:summaryOn="Block ads on sites that show intrusive or misleading ads"
+            app:summaryOff="Allowed"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+        <SwitchPreferenceCompat
+            app:key="popup_preference"
+            app:title="Pop-ups and redirects"
+            app:summaryOn="Allowed"
+            app:summaryOff="Blocked (recommended)"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        app:title="About"
+        app:iconSpaceReserved="false">
+        <Preference
+            app:key="whats_new"
+            app:title="What's new"
+            app:iconSpaceReserved="false"/>
+        <Preference
+            app:key="version"
+            app:title="Insta Movies Version"
+            app:iconSpaceReserved="false"/>
+        <Preference
+            app:key="feedback"
+            app:title="Send feedback"
+            app:summary="Report technical issues or suggest new features"
+            app:iconSpaceReserved="false">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetPackage="instamovies.app.in"
+                android:targetClass="instamovies.app.in.FeedbackActivity"/>
+        </Preference>
+    </PreferenceCategory>
+</PreferenceScreen>

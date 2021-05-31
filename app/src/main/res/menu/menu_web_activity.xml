@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:title="@string/reload_small" />
+    <item
+        android:title="@string/clear_cache" />
+    <item
+        android:title="@string/report_page" />
+    <item
+        android:title="@string/settings" />
+    <item
+        android:title="@string/send_feedback" />
+</menu>

@@ -1,0 +1,80 @@
+<resources>
+    <style	name="AppTheme"	parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/colorControlHighlight</item>
+        <item name="colorControlNormal">@color/colorControlNormal</item>
+        <item name="android:windowBackground">@color/colorLayoutPrimary</item>
+        <item name="android:navigationBarColor">@color/black</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.AppBarOverlay.Transparent" parent="ThemeOverlay.AppCompat.DayNight.ActionBar" >
+        <item name="android:textColorPrimary">@color/colorIconToolbarCustom</item>
+        <item name="android:background">@color/colorLayoutPrimary</item>
+    </style>
+
+    <style	name="AppTheme.LauncherActivity" parent="AppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <style	name="AppTheme.VideoActivity" parent="AppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:keepScreenOn">true</item>
+    </style>
+
+    <style	name="AppTheme.YoutubePlayer" parent="AppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:keepScreenOn">true</item>
+    </style>
+
+    <style	name="AppTheme.FullScreen" parent="AppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <style name="TransparentToolbarTitleAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title" >
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="fontFamily">sans-serif</item>
+    </style>
+
+    <style name="PopupMenuTheme" parent="Widget.AppCompat.Light.PopupMenu">
+        <item name="android:colorBackground">@color/colorPopupMenu</item>
+        <item name="android:textColor">@color/colorTextPrimary</item>
+        <item name="android:colorControlHighlight">@color/colorControlHighlight</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/bg_dialog</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetDialogStyle</item>
+    </style>
+    <style name="BottomSheetDialogStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="BottomSheetDialogDefaultTheme" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetDialogDefaultStyle</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+    <style name="BottomSheetDialogDefaultStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="TrackSelectionDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="windowNoTitle">false</item>
+        <item name="android:windowBackground">@drawable/bg_dialog</item>
+    </style>
+</resources>

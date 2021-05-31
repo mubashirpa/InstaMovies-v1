@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:gravity="center_horizontal">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/dialog_padding_horizontal"
+        android:paddingTop="@dimen/dialog_padding_vertical"
+        android:paddingBottom="@dimen/dialog_with_button_padding_bottom"
+        android:orientation="vertical"
+        android:background="@drawable/bg_bottomsheet"
+        android:layout_margin="@dimen/bottomsheet_margin">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorTextPrimary"
+            android:layout_marginBottom="15dp"
+            android:visibility="gone"
+            style="@android:style/TextAppearance.DialogWindowTitle"/>
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@color/colorTextSecondary"
+            android:layout_marginBottom="15dp"
+            android:linksClickable="true"
+            android:autoLink="all"
+            android:textColorLink="@color/colorLinkText" />
+        <Button
+            android:id="@+id/positive_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textColor="@color/colorAccent"
+            style="?android:attr/borderlessButtonStyle"/>
+    </LinearLayout>
+</LinearLayout>

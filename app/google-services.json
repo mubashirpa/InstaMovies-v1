@@ -1,0 +1,41 @@
+{
+  "project_info": {
+    "project_number": "198139838404",
+    "firebase_url": "https://insta-movies.firebaseio.com",
+    "project_id": "insta-movies",
+    "storage_bucket": "insta-movies.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:198139838404:android:8b51ed2f70a80776662e91",
+        "android_client_info": {
+          "package_name": "instamovies.app.in"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "198139838404-fvussjku2naknuahjlmtuq8311naehl2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMeBLPr6bQ8rYOnh3Q1mcvOz455Zwk86g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "198139838404-fvussjku2naknuahjlmtuq8311naehl2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-9546156701127291~5258681834"
+    }
+  ],
+  "configuration_version": "1"
+}

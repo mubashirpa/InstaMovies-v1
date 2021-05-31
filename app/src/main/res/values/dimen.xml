@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="banner_height_default">180dp</dimen>
+    <dimen name="bottomsheet_margin">10dp</dimen>
+    <dimen name="dialog_padding_vertical">18dp</dimen>
+    <dimen name="dialog_with_button_padding_bottom">10dp</dimen>
+    <dimen name="dialog_padding_horizontal">24dp</dimen>
+    <dimen name="dimen_splash_screen_logo">110dp</dimen>
+    <dimen name="language_item_backdrop_height">90dp</dimen>
+</resources>

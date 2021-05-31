@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@color/colorLayoutPrimary">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:paddingTop="100dp"
+        android:paddingBottom="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/check_your_internet_connection"
+            android:textSize="16sp"
+            android:textColor="@color/colorTextPrimary"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/check_any_cables_and_reboot_any_routers_modems_or_other_network_devices_you_may_be_using"
+            android:textSize="14sp"
+            android:textColor="@color/colorTextSecondary"/>
+    </LinearLayout>
+    <Button
+        android:id="@+id/reload_button"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/bg_button_primary"
+        android:textColor="@color/colorButtonText"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:text="@string/reload" />
+    <Button
+        android:id="@+id/details_button"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/bg_border_corner_5dp"
+        android:textColor="@color/colorTextPrimary"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:text="@string/details"
+        android:stateListAnimator="@null"
+        android:layout_marginTop="10dp"/>
+</LinearLayout>

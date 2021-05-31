@@ -1,0 +1,12 @@
+<resources>
+    <string-array name="pref_theme">
+        <item>Set by Battery Saver</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
+    <string-array name="pref_download">
+        <item>Via download manager</item>
+        <item>Via external apps</item>
+    </string-array>
+</resources>
