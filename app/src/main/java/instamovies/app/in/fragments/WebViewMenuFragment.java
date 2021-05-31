@@ -16,6 +16,8 @@ import android.webkit.CookieManager;
 import android.webkit.URLUtil;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,6 +47,7 @@ public class WebViewMenuFragment extends BottomSheetDialogFragment {
     private String iconUrl;
     private Context context;
     private WebView webView;
+    private ProgressBar progressBar;
 
     @Contract(" -> new")
     public static @NotNull WebViewMenuFragment newInstance() {
@@ -74,13 +77,15 @@ public class WebViewMenuFragment extends BottomSheetDialogFragment {
         TextView linkUrl = contentView.findViewById(R.id.url);
         RecyclerView recyclerView = contentView.findViewById(R.id.recycler_view);
         RecyclerView shareRecycler = contentView.findViewById(R.id.share_recycler);
+        RelativeLayout shareRecyclerRoot = contentView.findViewById(R.id.share_recycler_root);
+        progressBar = contentView.findViewById(R.id.progressbar);
 
         linkTitle.setText(title);
         linkUrl.setText(url);
         if (iconUrl != null) {
-            if (context != null) {
-                Glide.with(context).load(iconUrl).into(linkIcon);
-            }
+            Glide.with(context).load(iconUrl).into(linkIcon);
+        } else {
+            linkIcon.setImageResource(R.drawable.ic_baseline_link_24);
         }
 
         initializeRecycler(recyclerView);
@@ -124,6 +129,7 @@ public class WebViewMenuFragment extends BottomSheetDialogFragment {
                     downloadFromUrl(url);
                 }
                 if (menuList.get(position).getName().equals("Share link")) {
+                    shareRecyclerRoot.setVisibility(View.VISIBLE);
                     showShareList(shareRecycler, dialog);
                 }
             }
@@ -160,7 +166,6 @@ public class WebViewMenuFragment extends BottomSheetDialogFragment {
     }
 
     private void showShareList(RecyclerView recyclerView, Dialog dialog) {
-        recyclerView.setVisibility(View.VISIBLE);
         ArrayList<ShareIntentModel> intentList = new ArrayList<>();
         if (getActivity() != null) {
             PackageManager packageManager = getActivity().getPackageManager();
@@ -193,6 +198,7 @@ public class WebViewMenuFragment extends BottomSheetDialogFragment {
 
                 }
             }));
+            progressBar.setVisibility(View.GONE);
         }
     }
 

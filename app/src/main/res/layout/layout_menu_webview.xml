@@ -54,11 +54,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="20dp"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/share_recycler"
+    <RelativeLayout
+        android:id="@+id/share_recycler_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="20dp"
         android:visibility="gone"
-        android:background="@drawable/bg_divider_top"/>
+        android:background="@drawable/bg_divider_top">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/share_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
 </LinearLayout>
