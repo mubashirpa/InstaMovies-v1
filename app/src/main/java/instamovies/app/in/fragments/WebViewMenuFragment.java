@@ -16,8 +16,6 @@ import android.webkit.CookieManager;
 import android.webkit.URLUtil;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,7 +45,6 @@ public class WebViewMenuFragment extends BottomSheetDialogFragment {
     private String iconUrl;
     private Context context;
     private WebView webView;
-    private ProgressBar progressBar;
 
     @Contract(" -> new")
     public static @NotNull WebViewMenuFragment newInstance() {
@@ -77,8 +74,6 @@ public class WebViewMenuFragment extends BottomSheetDialogFragment {
         TextView linkUrl = contentView.findViewById(R.id.url);
         RecyclerView recyclerView = contentView.findViewById(R.id.recycler_view);
         RecyclerView shareRecycler = contentView.findViewById(R.id.share_recycler);
-        RelativeLayout shareRecyclerRoot = contentView.findViewById(R.id.share_recycler_root);
-        progressBar = contentView.findViewById(R.id.progressbar);
 
         linkTitle.setText(title);
         linkUrl.setText(url);
@@ -129,7 +124,7 @@ public class WebViewMenuFragment extends BottomSheetDialogFragment {
                     downloadFromUrl(url);
                 }
                 if (menuList.get(position).getName().equals("Share link")) {
-                    shareRecyclerRoot.setVisibility(View.VISIBLE);
+                    shareRecycler.setVisibility(View.VISIBLE);
                     showShareList(shareRecycler, dialog);
                 }
             }
@@ -198,7 +193,6 @@ public class WebViewMenuFragment extends BottomSheetDialogFragment {
 
                 }
             }));
-            progressBar.setVisibility(View.GONE);
         }
     }
 

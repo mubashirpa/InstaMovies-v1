@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
                 || ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-            AlertDialog.Builder permissionDialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+            AlertDialog.Builder permissionDialog = new AlertDialog.Builder(context);
             permissionDialog.setTitle("Need permission");
             permissionDialog.setMessage("To download movies and files, give us permission to use your storage");
             permissionDialog.setPositiveButton("GRANT PERMISSION", (dialogInterface, i) -> ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_STORAGE));
@@ -159,9 +159,9 @@ public class MainActivity extends AppCompatActivity {
         TextView scrollBottom = findViewById(R.id.scroll_bottom);
         scrollBottom.setSelected(true);
         appSettings = getSharedPreferences("appSettings", Activity.MODE_PRIVATE);
-        notifyDialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-        maintenanceDialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-        AlertDialog.Builder uninstallDialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+        notifyDialog = new AlertDialog.Builder(context);
+        maintenanceDialog = new AlertDialog.Builder(context);
+        AlertDialog.Builder uninstallDialog = new AlertDialog.Builder(context);
         FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(context);
         errorLinear = findViewById(R.id.error_linear);
         Button retryButton = findViewById(R.id.retry_button);
@@ -446,7 +446,7 @@ public class MainActivity extends AppCompatActivity {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            AlertDialog.Builder exitDialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+            AlertDialog.Builder exitDialog = new AlertDialog.Builder(context);
             exitDialog.setTitle("Confirm");
             exitDialog.setMessage("Are you sure want to exit?");
             exitDialog.setPositiveButton("Yes", (_dialog, _which) -> finish());
@@ -548,7 +548,7 @@ public class MainActivity extends AppCompatActivity {
                 requestDialogFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
             }
             if (itemId == R.id.drawerStream){
-                AlertDialog.Builder streamDialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+                AlertDialog.Builder streamDialog = new AlertDialog.Builder(context);
                 View view = getLayoutInflater().inflate(R.layout.layout_edittext, null);
                 EditText inputText = view.findViewById(R.id.input_text);
                 inputText.setHint("Example: http://www.example.com/video.mkv");
@@ -709,7 +709,7 @@ public class MainActivity extends AppCompatActivity {
                                 updateDialog.dismiss();
                                 File filePath = new File(FileUtil.getPackageDataDir(context) + "/downloads/update", "app_update_" + latestVersion + ".apk");
                                 if (filePath.exists()) {
-                                    AlertDialog.Builder installDialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+                                    AlertDialog.Builder installDialog = new AlertDialog.Builder(context);
                                     installDialog.setTitle("File detected");
                                     installDialog.setMessage("Detected necessary file for app update. Do you want to install it?\n\nNote: if you are having any problem with installing the current file please re-download it.");
                                     installDialog.setPositiveButton("Install", (_dialog, _which) -> installUpdate());

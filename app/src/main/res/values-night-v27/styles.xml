@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style	name="AppTheme"	parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -9,6 +9,10 @@
         <item name="android:windowBackground">@color/colorLayoutPrimary</item>
         <item name="android:navigationBarColor">@color/colorLayoutPrimary</item>
         <item name="android:windowLightNavigationBar">false</item>
+        <!-- This is for alert dialogs -->
+        <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
+        <!-- This is for preference screen dialogs -->
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="android:listDivider">@color/colorStrokePrimary</item>
     </style>
 </resources>

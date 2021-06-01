@@ -769,7 +769,7 @@ public class HiddenWebActivity extends AppCompatActivity {
         }
 
         @JavascriptInterface
-        public void openMovies(String instanceLink, String Title) {
+        public void loadMovies(String instanceLink, String Title) {
             webIntent = new Intent();
             webIntent.setClass(context, MoviesActivity.class);
             webIntent.putExtra("Instance Link", instanceLink);

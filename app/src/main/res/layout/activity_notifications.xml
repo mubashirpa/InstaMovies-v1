@@ -25,7 +25,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="none"
-            android:choiceMode="none"/>
+            android:choiceMode="none"
+            android:divider="@color/colorStrokePrimary"
+            android:dividerHeight="1dp"/>
         <ProgressBar
             android:id="@+id/progressbar"
             android:layout_width="wrap_content"

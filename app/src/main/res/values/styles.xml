@@ -7,7 +7,11 @@
         <item name="colorControlNormal">@color/colorControlNormal</item>
         <item name="android:windowBackground">@color/colorLayoutPrimary</item>
         <item name="android:navigationBarColor">@color/black</item>
+        <!-- This is for alert dialogs -->
+        <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
+        <!-- This is for preference screen dialogs -->
         <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="android:listDivider">@color/colorStrokePrimary</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
