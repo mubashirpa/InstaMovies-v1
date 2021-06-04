@@ -10,8 +10,8 @@
     android:gravity="center">
     <ImageView
         android:id="@+id/app_icon"
-        android:layout_width="@dimen/dimen_splash_screen_logo"
-        android:layout_height="@dimen/dimen_splash_screen_logo"
+        android:layout_width="@dimen/splash_screen_logo_size"
+        android:layout_height="@dimen/splash_screen_logo_size"
         android:src="@drawable/ic_icon"
         android:contentDescription="@string/app_name" />
 </LinearLayout>

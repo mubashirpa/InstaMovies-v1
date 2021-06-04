@@ -51,7 +51,7 @@
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/view_slider"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/banner_height_default"
+                        android:layout_height="@dimen/viewpager_height_main"
                         android:layout_marginHorizontal="20dp"
                         android:layout_marginVertical="10dp"/>
                     <LinearLayout

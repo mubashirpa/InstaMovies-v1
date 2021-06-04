@@ -95,8 +95,8 @@ dependencies {
     implementation 'com.github.florent37:fiftyshadesof:1.0.0'
     implementation 'org.jetbrains:annotations:21.0.1'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
-    implementation 'org.checkerframework:checker-qual-android:3.13.0'
-    implementation 'androidx.recyclerview:recyclerview:1.2.0'
+    implementation 'org.checkerframework:checker-qual-android:3.14.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.webkit:webkit:1.4.0'
     implementation 'org.jsoup:jsoup:1.13.1'
     implementation files('libs/YouTubeAndroidPlayerApi.jar')
