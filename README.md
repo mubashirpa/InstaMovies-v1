@@ -22,6 +22,13 @@ Insta Movies is an Ancroid app which alows you to watch, stream and download FRE
 | Video | Open URL in YouTubePlayerActivity if URL starts with https://youtu.be/ else open URL in PlayerActivity |
 | Movie | Open URL in MovieDetailsActivity |
 
+**Movies Database keys**
+| Keys | Uses |
+| :---------- | :---------- |
+| Name | Name of the movie |
+| Thumbnail | Poster of the movie |
+| Links | Defined in the **Database keys** |
+| IMDb | IMDb ID of the movie |
 
 ### To-do
 **New/Changes**
