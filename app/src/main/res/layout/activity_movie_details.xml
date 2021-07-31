@@ -182,6 +182,7 @@
                             android:text="@string/synopsis"
                             android:textSize="16sp"
                             android:textStyle="bold"
+                            android:maxLines="4"
                             android:layout_marginBottom="12dp"/>
                         <TextView
                             android:id="@+id/movie_summary"
@@ -256,6 +257,7 @@
                     android:text="@string/by_downloading_this_content_you_are_confirming_that_you_are_at_least_18_years_of_age"
                     android:textColor="@color/colorTextSecondary"
                     android:textSize="12sp"
+                    android:gravity="center"
                     android:visibility="gone"
                     android:layout_marginTop="10dp"/>
             </LinearLayout>

@@ -2,6 +2,7 @@ package instamovies.app.in.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ public class RequestDialogFragment extends BottomSheetDialogFragment {
 
     private final FirebaseFirestore requestDatabase = FirebaseFirestore.getInstance();
     private AlertDialog progressDialog;
+    private Context context;
 
     @Contract(" -> new")
     public static @NotNull RequestDialogFragment newInstance() {
@@ -56,6 +58,7 @@ public class RequestDialogFragment extends BottomSheetDialogFragment {
         sheetBehavior.setDraggable(true);
         sheetBehavior.setFitToContents(true);
         sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        context = dialog.getContext();
 
         EditText movieName = contentView.findViewById(R.id.movie_name);
         EditText movieLanguage = contentView.findViewById(R.id.movie_language);
@@ -128,10 +131,10 @@ public class RequestDialogFragment extends BottomSheetDialogFragment {
                         progressDialog.dismiss();
                     }
                     dismiss();
-                    AppUtils.toastShortDefault(requireContext(), requireActivity(), "Successfully requested");
+                    AppUtils.toastShortDefault(getContext(), requireActivity(), "Successfully requested");
                 })
                 .addOnFailureListener(e -> {
-                    AppUtils.toastShortError(requireContext(), requireActivity(), "Failed to Request movie");
+                    AppUtils.toastShortError(getContext(), requireActivity(), "Failed to Request movie");
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
@@ -139,7 +142,7 @@ public class RequestDialogFragment extends BottomSheetDialogFragment {
     }
 
     private void showProgressDialog() {
-        progressDialog = new AlertDialog.Builder(requireContext()).create();
+        progressDialog = new AlertDialog.Builder(context).create();
         Window window = progressDialog.getWindow();
         if (window != null) {
             window.setBackgroundDrawableResource(android.R.color.transparent);

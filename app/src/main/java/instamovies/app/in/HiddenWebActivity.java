@@ -636,6 +636,13 @@ public class HiddenWebActivity extends AppCompatActivity {
     }
 
     private void handleNonNetworkUrls(String url) {
+        if (url.startsWith("link://")) {
+            String replacedUrl = url.replace("link://","");
+            webIntent = new Intent();
+            webIntent.setClass(context, HiddenWebActivity.class);
+            webIntent.putExtra("HIDDEN_URL", replacedUrl);
+            startActivity(webIntent);
+        }
         if (url.startsWith("link1://")) {
             String replacedUrl = url.replace("link1://","");
             webIntent = new Intent();

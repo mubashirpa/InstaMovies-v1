@@ -19,6 +19,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.Manifest;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -548,11 +549,15 @@ public class MainActivity extends AppCompatActivity {
                 requestDialogFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
             }
             if (itemId == R.id.drawerStream){
+                String networkURL = pasteText();
                 AlertDialog.Builder streamDialog = new AlertDialog.Builder(context);
                 View view = getLayoutInflater().inflate(R.layout.layout_edittext, null);
                 EditText inputText = view.findViewById(R.id.input_text);
-                inputText.setHint("Example: http://www.example.com/video.mkv");
-                streamDialog.setTitle("Network Stream");
+                inputText.setHint("Enter a network URL");
+                if (URLUtil.isNetworkUrl(networkURL)) {
+                    inputText.setText(networkURL);
+                }
+                streamDialog.setTitle("Network stream");
                 streamDialog.setMessage("\n" + "Please enter a network URL:");
                 streamDialog.setPositiveButton("OK", (_dialog, _which) -> {
                     String streamLink = inputText.getText().toString();
@@ -845,6 +850,7 @@ public class MainActivity extends AppCompatActivity {
                 downloadQuery.setFilterById(downloadReference);
                 Cursor cursor = downloadManager.query(downloadQuery);
                 cursor.moveToFirst();
+
                 int bytesDownloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
                 int bytesTotal = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
 
@@ -990,5 +996,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkSettings() {
         premiumUser = appData.getBoolean("prime_purchased", false);
+    }
+
+    private String pasteText() {
+        ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+        return clipboardManager.getPrimaryClip().getItemAt(0).coerceToText(context).toString();
     }
 }
