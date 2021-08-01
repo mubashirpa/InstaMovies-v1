@@ -172,6 +172,7 @@ public class MovieLanguagesActivity extends AppCompatActivity {
 
         fab.setOnClickListener(_view -> {
             RequestDialogFragment requestDialogFragment = RequestDialogFragment.newInstance();
+            requestDialogFragment.setActivity(MovieLanguagesActivity.this);
             requestDialogFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
         });
 

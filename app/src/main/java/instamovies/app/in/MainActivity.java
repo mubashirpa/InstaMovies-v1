@@ -546,6 +546,7 @@ public class MainActivity extends AppCompatActivity {
             }
             if (itemId == R.id.drawerRequest){
                 RequestDialogFragment requestDialogFragment = RequestDialogFragment.newInstance();
+                requestDialogFragment.setActivity(MainActivity.this);
                 requestDialogFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
             }
             if (itemId == R.id.drawerStream){
@@ -1000,6 +1001,9 @@ public class MainActivity extends AppCompatActivity {
 
     private String pasteText() {
         ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-        return clipboardManager.getPrimaryClip().getItemAt(0).coerceToText(context).toString();
+        if (clipboardManager.getPrimaryClip() != null) {
+            return clipboardManager.getPrimaryClip().getItemAt(0).coerceToText(context).toString();
+        }
+        return null;
     }
 }

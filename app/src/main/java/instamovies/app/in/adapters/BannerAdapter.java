@@ -181,12 +181,19 @@ public class BannerAdapter extends RecyclerView.Adapter<BannerAdapter.BannerView
         }
 
         void setSliderImage(@NotNull ArrayList<HashMap<String, Object>> sliderModels, Context context, int position) {
-            Glide.with(context)
-                    .load(sliderModels.get(position).get("Image"))
-                    .error(R.drawable.img_loading_placeholder_horizontal)
-                    .placeholder(R.drawable.img_loading_placeholder_horizontal)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(sliderImage);
+            if (sliderModels.get(position).containsKey("Video")) {
+                Glide.with(context)
+                        .load(sliderModels.get(position).get("Image"))
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(sliderImage);
+            } else {
+                Glide.with(context)
+                        .load(sliderModels.get(position).get("Image"))
+                        .error(R.drawable.img_loading_placeholder_horizontal)
+                        .placeholder(R.drawable.img_loading_placeholder_horizontal)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(sliderImage);
+            }
         }
     }
 

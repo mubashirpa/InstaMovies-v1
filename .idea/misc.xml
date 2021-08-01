@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/drawable/ic_round_cancel_24.xml" value="0.1125" />
+        <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/layout_edittext.xml" value="0.20416666666666666" />
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/layout_progress_dialog.xml" value="0.11296296296296296" />
       </map>
     </option>

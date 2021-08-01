@@ -5,6 +5,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorControlHighlight">@color/colorControlHighlight</item>
         <item name="colorControlNormal">@color/colorControlNormal</item>
+
         <item name="android:windowBackground">@color/colorLayoutPrimary</item>
         <item name="android:navigationBarColor">@color/black</item>
         <!-- This is for alert dialogs -->

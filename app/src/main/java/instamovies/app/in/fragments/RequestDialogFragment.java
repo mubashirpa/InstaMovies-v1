@@ -1,5 +1,6 @@
 package instamovies.app.in.fragments;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -34,6 +35,7 @@ public class RequestDialogFragment extends BottomSheetDialogFragment {
     private final FirebaseFirestore requestDatabase = FirebaseFirestore.getInstance();
     private AlertDialog progressDialog;
     private Context context;
+    private Activity activity;
 
     @Contract(" -> new")
     public static @NotNull RequestDialogFragment newInstance() {
@@ -52,13 +54,13 @@ public class RequestDialogFragment extends BottomSheetDialogFragment {
 
     @Override
     public void setupDialog(@NonNull Dialog dialog, int style) {
-        View contentView = View.inflate(getContext(), R.layout.layout_request, null);
+        context = dialog.getContext();
+        View contentView = View.inflate(context, R.layout.layout_request, null);
         dialog.setContentView(contentView);
         BottomSheetBehavior<View> sheetBehavior = BottomSheetBehavior.from((View)contentView.getParent());
         sheetBehavior.setDraggable(true);
         sheetBehavior.setFitToContents(true);
         sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        context = dialog.getContext();
 
         EditText movieName = contentView.findViewById(R.id.movie_name);
         EditText movieLanguage = contentView.findViewById(R.id.movie_language);
@@ -69,7 +71,7 @@ public class RequestDialogFragment extends BottomSheetDialogFragment {
 
         requestButton.setOnClickListener(v -> {
             if (movieName.getText().toString().equals("")) {
-                AppUtils.toastShortDefault(requireContext(), requireActivity(),"Enter required fields");
+                AppUtils.toastShortDefault(context, activity,"Enter required fields");
             } else {
                 dialog.dismiss();
                 String reqDetails = movieName.getText().toString()+" | " + movieLanguage.getText().toString()+" | " + movieYear.getText().toString()+" | " + movieSize.getText().toString();
@@ -131,10 +133,10 @@ public class RequestDialogFragment extends BottomSheetDialogFragment {
                         progressDialog.dismiss();
                     }
                     dismiss();
-                    AppUtils.toastShortDefault(getContext(), requireActivity(), "Successfully requested");
+                    AppUtils.toastShortDefault(context, activity, "Successfully requested");
                 })
                 .addOnFailureListener(e -> {
-                    AppUtils.toastShortError(getContext(), requireActivity(), "Failed to Request movie");
+                    AppUtils.toastShortError(context, activity, "Failed to Request movie");
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
@@ -159,5 +161,9 @@ public class RequestDialogFragment extends BottomSheetDialogFragment {
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
     }
 }

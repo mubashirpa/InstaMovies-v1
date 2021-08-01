@@ -349,6 +349,7 @@ public class MoviesActivity extends AppCompatActivity {
                 return true;
             case "Request":
                 RequestDialogFragment requestDialogFragment = RequestDialogFragment.newInstance();
+                requestDialogFragment.setActivity(MoviesActivity.this);
                 requestDialogFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
                 return true;
             case "Settings":

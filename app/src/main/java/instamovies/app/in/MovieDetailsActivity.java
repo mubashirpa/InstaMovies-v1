@@ -185,13 +185,15 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
             Element omdbJSON = document.getElementById("omdb_json");
             Element moreJSON = document.getElementById("more_json");
-            String omdbString = omdbJSON.text();
-            String moreString = moreJSON.text();
-            runOnUiThread(() -> {
-                parseOMDB(omdbString);
-                parseMore(moreString);
-                progressbarLayout.setVisibility(View.GONE);
-            });
+            runOnUiThread(() -> progressbarLayout.setVisibility(View.GONE));
+            if (omdbJSON != null) {
+                String omdbString = omdbJSON.text();
+                runOnUiThread(() -> parseOMDB(omdbString));
+            }
+            if (moreJSON != null) {
+                String moreString = moreJSON.text();
+                runOnUiThread(() -> parseMore(moreString));
+            }
         }).start();
     }
 
@@ -217,8 +219,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             movieGenre.setText(jsonObject.getString("Genre"));
             castDetails.setText(jsonObject.getString("Actors"));
             Glide.with(context)
-                    .load(Uri.parse(jsonObject.getString("Poster")))
-                    .error(R.drawable.img_image_placeholder_h).into(moviePoster);
+                    .load(Uri.parse(jsonObject.getString("Poster"))).into(moviePoster);
         } catch (JSONException e) {
             AppUtils.toastShortError(context, MovieDetailsActivity.this, e.getMessage());
         }
