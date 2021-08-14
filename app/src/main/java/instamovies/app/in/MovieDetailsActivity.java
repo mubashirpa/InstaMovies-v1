@@ -26,6 +26,8 @@ import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,12 +36,28 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+
+import instamovies.app.in.api.tmdb.Genres;
+import instamovies.app.in.api.tmdb.MovieDetailsApi;
+import instamovies.app.in.api.tmdb.ProductionCountries;
+import instamovies.app.in.api.tmdb.MovieDetailsResponses;
+import instamovies.app.in.api.tmdb.credits.Cast;
+import instamovies.app.in.api.tmdb.credits.CreditsApi;
+import instamovies.app.in.api.tmdb.credits.CreditsResponses;
 import instamovies.app.in.fragments.DownloadOptionsFragment;
 import instamovies.app.in.utils.AppUtils;
 import instamovies.app.in.utils.RecyclerDecorationHorizontal;
 import instamovies.app.in.adapters.ScreenshotAdapter;
 import instamovies.app.in.models.ScreenshotModel;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MovieDetailsActivity extends AppCompatActivity {
 
@@ -129,7 +147,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
         thumbnailRecycler.setItemAnimator(new DefaultItemAnimator());
         thumbnailRecycler.addItemDecoration(recyclerDecoration);
 
-        fetchData(dataURL);
+        //fetchData(dataURL);
+        fetchMovieDetails("tt10661848");
+        fetchCredits("tt10661848");
 
         retryButton.setOnClickListener(v -> {
             progressbarLayout.setVisibility(View.VISIBLE);
@@ -176,16 +196,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
             try {
                 document = Jsoup.connect(url).get();
             } catch (IOException e) {
-                runOnUiThread(() -> {
-                    progressbarLayout.setVisibility(View.GONE);
-                    errorLayout.setVisibility(View.VISIBLE);
-                });
+                runOnUiThread(this::fetchError);
                 return;
             }
 
             Element omdbJSON = document.getElementById("omdb_json");
             Element moreJSON = document.getElementById("more_json");
-            runOnUiThread(() -> progressbarLayout.setVisibility(View.GONE));
+            runOnUiThread(this::fetchSuccess);
             if (omdbJSON != null) {
                 String omdbString = omdbJSON.text();
                 runOnUiThread(() -> parseOMDB(omdbString));
@@ -218,8 +235,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             movieSummary.setText(jsonObject.getString("Plot"));
             movieGenre.setText(jsonObject.getString("Genre"));
             castDetails.setText(jsonObject.getString("Actors"));
-            Glide.with(context)
-                    .load(Uri.parse(jsonObject.getString("Poster"))).into(moviePoster);
+            Glide.with(context).load(Uri.parse(jsonObject.getString("Poster"))).into(moviePoster);
         } catch (JSONException e) {
             AppUtils.toastShortError(context, MovieDetailsActivity.this, e.getMessage());
         }
@@ -253,7 +269,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private void fetchScreenshots(JSONArray jsonArray) throws JSONException {
+    private void fetchScreenshots(@NonNull JSONArray jsonArray) throws JSONException {
         for (int i = 0; i < jsonArray.length(); i++) {
             ScreenshotModel model = new ScreenshotModel();
             model.setBackdropPath(jsonArray.getJSONObject(i).getString("backdrop_path"));
@@ -270,5 +286,129 @@ public class MovieDetailsActivity extends AppCompatActivity {
         DownloadOptionsFragment downloadOptionsFragment = DownloadOptionsFragment.newInstance();
         downloadOptionsFragment.setJsonArray(jsonArray);
         downloadOptionsFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
+    }
+
+    private void fetchMovieDetails(String fileId) {
+        String apiKey = getString(R.string.tmdb_api_key);
+
+        OkHttpClient okHttpClient = new OkHttpClient
+                .Builder().addInterceptor(new HttpLoggingInterceptor()
+                .setLevel(HttpLoggingInterceptor.Level.BODY)).build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .client(okHttpClient)
+                .baseUrl(MovieDetailsApi.JSON_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        MovieDetailsApi theMovieDbApi = retrofit.create(MovieDetailsApi.class);
+        Call<MovieDetailsResponses> call = theMovieDbApi.getMovie(fileId, apiKey, "en-US");
+        call.enqueue(new Callback<MovieDetailsResponses>() {
+            @Override
+            public void onResponse(@NotNull Call<MovieDetailsResponses> call, @NotNull Response<MovieDetailsResponses> response) {
+                if (!response.isSuccessful()) {
+                    AppUtils.toastShortError(context, MovieDetailsActivity.this, "Error");
+                    return;
+                }
+                progressbarLayout.setVisibility(View.GONE);
+                MovieDetailsResponses dbResponses = response.body();
+                if (dbResponses != null) {
+                    StringBuilder genre = new StringBuilder();
+                    List<Genres> genresList = dbResponses.getGenres();
+                    for (int i = 0; i < genresList.size(); i++) {
+                        if (i != genresList.size() - 1) {
+                            genre.append(genresList.get(i).getGenre()).append(", ");
+                        } else {
+                            genre.append(genresList.get(i).getGenre());
+                        }
+                    }
+
+                    StringBuilder country = new StringBuilder();
+                    List<ProductionCountries> productionCountries = dbResponses.getCountries();
+                    for (int i = 0; i < productionCountries.size(); i++) {
+                        if (i != productionCountries.size() - 1) {
+                            country.append(productionCountries.get(i).getCountry()).append(", ");
+                        } else {
+                            country.append(productionCountries.get(i).getCountry());
+                        }
+                    }
+
+                    setTitle(dbResponses.getTitle());
+                    movieTitle.setText(dbResponses.getTitle());
+                    Glide.with(context)
+                            .load(Uri.parse("https://www.themoviedb.org/t/p/w220_and_h330_face/" + dbResponses.getPoster()))
+                            .into(moviePoster);
+                    IMDbRating.setText(String.valueOf(dbResponses.getRating()));
+                    float starRating = dbResponses.getRating() / 2;
+                    ratingBar.setRating(starRating);
+                    movieGenre.setText(genre);
+                    int totalMinutes = dbResponses.getRuntime();
+                    String durationHour = String.valueOf(totalMinutes / 60);
+                    String durationMinutes = String.valueOf(totalMinutes % 60);
+                    movieDuration.setText(String.format(Locale.getDefault(),"%shr %smin", durationHour, durationMinutes));
+                    releaseYear.setText(String.format("%s  |  %s", dbResponses.getYear().substring(0, 4), country));
+                    durationMins.setText(String.format(Locale.getDefault(), "%d min", totalMinutes));
+                    movieSummary.setText(dbResponses.getOverview());
+                    if (dbResponses.isAdult()) {
+                        adultWarning.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<MovieDetailsResponses> call, @NotNull Throwable t) {
+                AppUtils.toastShortError(context, MovieDetailsActivity.this, "Error: " + t.getMessage());
+            }
+        });
+    }
+
+    private void fetchCredits(String fileId) {
+        String apiKey = getString(R.string.tmdb_api_key);
+
+        OkHttpClient okHttpClient = new OkHttpClient
+                .Builder().addInterceptor(new HttpLoggingInterceptor()
+                .setLevel(HttpLoggingInterceptor.Level.BODY)).build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .client(okHttpClient)
+                .baseUrl(CreditsApi.JSON_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        CreditsApi creditsApi = retrofit.create(CreditsApi.class);
+        Call<CreditsResponses> call = creditsApi.getCredits(fileId, apiKey, "en-US");
+        call.enqueue(new Callback<CreditsResponses>() {
+            @Override
+            public void onResponse(@NonNull Call<CreditsResponses> call, @NonNull Response<CreditsResponses> response) {
+                if (!response.isSuccessful()) {
+                    AppUtils.toastShortError(context, MovieDetailsActivity.this, "Error");
+                    return;
+                }
+                CreditsResponses creditsResponses = response.body();
+                if (creditsResponses != null) {
+                    StringBuilder name = new StringBuilder();
+                    List<Cast> castList = creditsResponses.getCast();
+                    for (int i = 0; i < castList.size(); i++) {
+                        name.append(castList.get(i).getName());
+                    }
+                    castDetails.setText(name);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<CreditsResponses> call, @NonNull Throwable t) {
+                AppUtils.toastShortError(context, MovieDetailsActivity.this, "Error: " + t.getMessage());
+            }
+        });
+    }
+
+    private void fetchSuccess() {
+        progressbarLayout.setVisibility(View.GONE);
+        errorLayout.setVisibility(View.GONE);
+    }
+
+    private void fetchError() {
+        progressbarLayout.setVisibility(View.GONE);
+        errorLayout.setVisibility(View.VISIBLE);
     }
 }

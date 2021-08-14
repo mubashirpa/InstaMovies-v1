@@ -14,6 +14,9 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.util.Log;
@@ -38,13 +41,15 @@ import org.jetbrains.annotations.NotNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.preference.PreferenceManager;
+import instamovies.app.in.api.movies.MoviesJsonApi;
+import instamovies.app.in.api.movies.MoviesJsonResponse;
 import instamovies.app.in.fragments.MovieDetailsFragment;
 import instamovies.app.in.fragments.RequestDialogFragment;
 import instamovies.app.in.player.IntentUtil;
 import instamovies.app.in.utils.AppUtils;
-import instamovies.app.in.api.Genres;
-import instamovies.app.in.api.TMDbApi;
-import instamovies.app.in.api.TMDbResponses;
+import instamovies.app.in.api.tmdb.Genres;
+import instamovies.app.in.api.tmdb.MovieDetailsApi;
+import instamovies.app.in.api.tmdb.MovieDetailsResponses;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -57,21 +62,28 @@ public class MoviesActivity extends AppCompatActivity {
 
     private ArrayList<HashMap<String, Object>> movieList = new ArrayList<>();
     private DatabaseReference databaseReference;
+    private ValueEventListener movieEventListener;
     private GridView gridView;
     private Intent webIntent = new Intent();
-    private String searchText = "";
+    private Intent videoIntent = new Intent();
     private SharedPreferences settingsPreferences;
     private SharedPreferences appData;
-    private Intent videoIntent = new Intent();
     private GridLayoutAnimationController animationController;
     private Context context;
-    private final String LOG_TAG = "MoviesActivity";
-    private ProgressBar progressBar;
     private AdView adView;
+    private final String LOG_TAG = "MoviesActivity";
+    private String searchText = "";
     private boolean premiumUser = false;
     private boolean systemBrowser = false;
     private boolean chromeTabs = true;
     private boolean dataSaver = false;
+    private String apiKey;
+
+    private View progressStatus;
+    private ProgressBar progressBar;
+    private LinearLayout errorView;
+    private TextView errorText;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,16 +108,20 @@ public class MoviesActivity extends AppCompatActivity {
         settingsPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.move_top);
         animationController = new GridLayoutAnimationController(animation,.2f,.2f);
-        String Language = getIntent().getStringExtra("Title");
-        String instanceLink = getIntent().getStringExtra("Instance Link");
-        setTitle(Language);
-        FirebaseDatabase database = FirebaseDatabase.getInstance(instanceLink);
-        databaseReference = database.getReference(Language);
-        progressBar = findViewById(R.id.progressbar);
+        String referencePath = getIntent().getStringExtra("reference_path_movie_json");
+        String baseURL = getIntent().getStringExtra("base_url_movie_json");
+
+        progressStatus = findViewById(R.id.progress_status_view);
+        progressBar = progressStatus.findViewById(R.id.progressbar);
+        errorView = progressStatus.findViewById(R.id.error_view);
+        errorText = progressStatus.findViewById(R.id.cause_text);
+        Button retryButton = progressStatus.findViewById(R.id.retry_button);
+
         adView = findViewById(R.id.adView);
+        apiKey = getString(R.string.tmdb_api_key);
         checkSettings();
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        movieEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
                 movieList = new ArrayList<>();
@@ -119,8 +135,7 @@ public class MoviesActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     Log.e(LOG_TAG, e.getMessage());
                 }
-
-                progressBar.setVisibility(View.GONE);
+                connectSuccess();
                 gridView.setAdapter(new GridViewAdapter(movieList));
                 ((BaseAdapter)gridView.getAdapter()).notifyDataSetChanged();
                 gridView.setLayoutAnimation(animationController);
@@ -129,8 +144,23 @@ public class MoviesActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NotNull DatabaseError error) {
                 Log.e(LOG_TAG, error.getMessage());
+                connectError(error.getMessage());
             }
-        });
+        };
+        progressStatus.setVisibility(View.VISIBLE);
+
+        if (baseURL.contains("firebaseio.com")) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance(baseURL);
+            databaseReference = database.getReference(referencePath);
+            databaseReference.addValueEventListener(movieEventListener);
+        } else {
+            if (URLUtil.isNetworkUrl(baseURL) && baseURL.endsWith("/")) {
+                loadMoviesFromJson(baseURL, referencePath);
+            } else {
+                AppUtils.toastShortError(context, MoviesActivity.this, "Something wrong");
+                finish();
+            }
+        }
 
         gridView.setOnItemClickListener((parent, view, position, id) -> {
             if (movieList.get(position).containsKey("Premium") && !premiumUser) {
@@ -226,6 +256,28 @@ public class MoviesActivity extends AppCompatActivity {
             }
             return true;
         });
+
+        retryButton.setOnClickListener(view -> {
+            onRetry();
+            // using timer to avoid multiple clicking on retry
+            handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(() -> {
+                if (!isDestroyed()) {
+                    if (baseURL.contains("firebaseio.com")) {
+                        FirebaseDatabase database = FirebaseDatabase.getInstance(baseURL);
+                        databaseReference = database.getReference(referencePath);
+                        databaseReference.addValueEventListener(movieEventListener);
+                    } else {
+                        if (URLUtil.isNetworkUrl(baseURL) && baseURL.endsWith("/")) {
+                            loadMoviesFromJson(baseURL, referencePath);
+                        } else {
+                            AppUtils.toastShortError(context, MoviesActivity.this, "Something wrong");
+                            finish();
+                        }
+                    }
+                }
+            }, 500);
+        });
     }
 
     @Override
@@ -242,6 +294,14 @@ public class MoviesActivity extends AppCompatActivity {
             adView.loadAd(adRequest);
         } else {
             adView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
         }
     }
 
@@ -369,12 +429,26 @@ public class MoviesActivity extends AppCompatActivity {
         premiumUser = appData.getBoolean("prime_purchased", false);
     }
 
+    private void connectSuccess() {
+        progressStatus.setVisibility(View.GONE);
+    }
+
+    private void connectError(String error) {
+        progressStatus.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
+        errorText.setText(error);
+        errorView.setVisibility(View.VISIBLE);
+    }
+
+    private void onRetry() {
+        errorView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
     private void fetchMovieDetails(String fileId) {
         MovieDetailsFragment movieDetailsFragment = MovieDetailsFragment.newInstance();
         movieDetailsFragment.setOnClickListener(v -> movieDetailsFragment.dismiss());
         movieDetailsFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
-
-        String apiKey = getString(R.string.tmdb_api_key);
 
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder().addInterceptor(new HttpLoggingInterceptor()
@@ -382,15 +456,15 @@ public class MoviesActivity extends AppCompatActivity {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
-                .baseUrl(TMDbApi.JSON_URL)
+                .baseUrl(MovieDetailsApi.JSON_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        TMDbApi theMovieDbApi = retrofit.create(TMDbApi.class);
-        Call<TMDbResponses> call = theMovieDbApi.getMovie(fileId, apiKey);
-        call.enqueue(new Callback<TMDbResponses>() {
+        MovieDetailsApi theMovieDbApi = retrofit.create(MovieDetailsApi.class);
+        Call<MovieDetailsResponses> call = theMovieDbApi.getMovie(fileId, apiKey, "en-US");
+        call.enqueue(new Callback<MovieDetailsResponses>() {
             @Override
-            public void onResponse(@NotNull Call<TMDbResponses> call, @NotNull Response<TMDbResponses> response) {
+            public void onResponse(@NotNull Call<MovieDetailsResponses> call, @NotNull Response<MovieDetailsResponses> response) {
                 if (!response.isSuccessful()) {
                     if (movieDetailsFragment.getDialog() != null) {
                         movieDetailsFragment.progressBar.setVisibility(View.GONE);
@@ -398,32 +472,102 @@ public class MoviesActivity extends AppCompatActivity {
                     }
                     return;
                 }
-                TMDbResponses posts = response.body();
-                if (posts != null) {
+                MovieDetailsResponses dbResponses = response.body();
+                if (dbResponses != null) {
                     StringBuilder genre = new StringBuilder();
-                    List<Genres> genresList = posts.getGenres();
+                    List<Genres> genresList = dbResponses.getGenres();
                     for (int i = 0; i < genresList.size(); i++) {
-                        genre.append(genresList.get(i).getGenreName()).append(" ");
+                        if (i != genresList.size() - 1) {
+                            genre.append(genresList.get(i).getGenre()).append(", ");
+                        } else {
+                            genre.append(genresList.get(i).getGenre());
+                        }
                     }
 
                     if (movieDetailsFragment.getDialog() != null) {
                         movieDetailsFragment.progressLayout.setVisibility(View.GONE);
                         movieDetailsFragment.contentLayout.setVisibility(View.VISIBLE);
-                        movieDetailsFragment.movieTitle.setText(posts.getMovieTitle());
+                        movieDetailsFragment.movieTitle.setText(dbResponses.getTitle());
                         movieDetailsFragment.movieGenre.setText(String.valueOf(genre));
-                        movieDetailsFragment.movieYear.setText(posts.getReleaseDate());
-                        movieDetailsFragment.movieRating.setText(posts.getRating());
-                        movieDetailsFragment.movieSummary.setText(posts.getOverview());
+                        movieDetailsFragment.movieYear.setText(dbResponses.getYear());
+                        movieDetailsFragment.movieRating.setText(String.valueOf(dbResponses.getRating()));
+                        movieDetailsFragment.movieSummary.setText(dbResponses.getOverview());
                     }
                 }
             }
 
             @Override
-            public void onFailure(@NotNull Call<TMDbResponses> call, @NotNull Throwable t) {
+            public void onFailure(@NotNull Call<MovieDetailsResponses> call, @NotNull Throwable t) {
                 if (movieDetailsFragment.getDialog() != null) {
                     movieDetailsFragment.progressBar.setVisibility(View.GONE);
                     movieDetailsFragment.errorMessage.setVisibility(View.VISIBLE);
                 }
+            }
+        });
+    }
+
+    private void loadMoviesFromJson(String url, String path) {
+        OkHttpClient okHttpClient = new OkHttpClient
+                .Builder().addInterceptor(new HttpLoggingInterceptor()
+                .setLevel(HttpLoggingInterceptor.Level.BODY)).build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .client(okHttpClient)
+                .baseUrl(url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        MoviesJsonApi moviesJsonApi = retrofit.create(MoviesJsonApi.class);
+        Call<ArrayList<MoviesJsonResponse>> call = moviesJsonApi.getMovies(path);
+        call.enqueue(new Callback<ArrayList<MoviesJsonResponse>>() {
+            @Override
+            public void onResponse(@NotNull Call<ArrayList<MoviesJsonResponse>> call, @NotNull Response<ArrayList<MoviesJsonResponse>> response) {
+                if (!response.isSuccessful()) {
+                    connectError("Response unsuccessful");
+                    return;
+                }
+                movieList = new ArrayList<>();
+                ArrayList<MoviesJsonResponse> moviesJsonResponse;
+                moviesJsonResponse = response.body();
+                if (moviesJsonResponse != null) {
+                    for (int i = 0; i < moviesJsonResponse.size(); i++){
+                        HashMap<String,Object> hashMap = new HashMap<>();
+                        if (moviesJsonResponse.get(i).getName() != null) {
+                            hashMap.put("Name", moviesJsonResponse.get(i).getName());
+                        }
+                        if (moviesJsonResponse.get(i).getThumbnail() != null) {
+                            hashMap.put("Thumbnail", moviesJsonResponse.get(i).getThumbnail());
+                        }
+                        if (moviesJsonResponse.get(i).getMovie() != null) {
+                            hashMap.put("Movie", moviesJsonResponse.get(i).getMovie());
+                        }
+                        if (moviesJsonResponse.get(i).getLink() != null) {
+                            hashMap.put("Link", moviesJsonResponse.get(i).getLink());
+                        }
+                        if (moviesJsonResponse.get(i).getLink1() != null) {
+                            hashMap.put("Link1", moviesJsonResponse.get(i).getLink1());
+                        }
+                        if (moviesJsonResponse.get(i).getLink2() != null) {
+                            hashMap.put("Link2", moviesJsonResponse.get(i).getLink2());
+                        }
+                        if (moviesJsonResponse.get(i).getLink3() != null) {
+                            hashMap.put("Link3", moviesJsonResponse.get(i).getLink3());
+                        }
+                        if (moviesJsonResponse.get(i).getVideo() != null) {
+                            hashMap.put("Video", moviesJsonResponse.get(i).getVideo());
+                        }
+                        movieList.add(hashMap);
+                    }
+                    connectSuccess();
+                    gridView.setAdapter(new GridViewAdapter(movieList));
+                    ((BaseAdapter)gridView.getAdapter()).notifyDataSetChanged();
+                    gridView.setLayoutAnimation(animationController);
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<ArrayList<MoviesJsonResponse>> call, @NotNull Throwable t) {
+                connectError(t.getMessage());
             }
         });
     }

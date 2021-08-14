@@ -237,8 +237,8 @@ public class MovieLanguagesActivity extends AppCompatActivity {
                 String title = Objects.requireNonNull(languageList.get(position).get("Title")).toString();
                 webIntent = new Intent();
                 webIntent.setClass(context, MoviesActivity.class);
-                webIntent.putExtra("Instance Link", instanceLink);
-                webIntent.putExtra("Title", title);
+                webIntent.putExtra("base_url_movie_json", instanceLink);
+                webIntent.putExtra("reference_path_movie_json", title);
                 startActivity(webIntent);
             }
             if (languageList.get(position).containsKey("Movie")) {

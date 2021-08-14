@@ -113,8 +113,8 @@ public class NotificationsActivity extends AppCompatActivity {
                 String title = Objects.requireNonNull(notificationList.get(position).get("Title")).toString();
                 webIntent = new Intent();
                 webIntent.setClass(context, MoviesActivity.class);
-                webIntent.putExtra("Instance Link", instanceLink);
-                webIntent.putExtra("Title", title);
+                webIntent.putExtra("base_url_movie_json", instanceLink);
+                webIntent.putExtra("reference_path_movie_json", title);
                 startActivity(webIntent);
                 return;
             }

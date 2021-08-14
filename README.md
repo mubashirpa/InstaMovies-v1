@@ -1,8 +1,8 @@
 ## InstaMovies for Android
-Insta Movies is an Ancroid app which alows you to watch, stream and download FREE and 1080p HD TV shows and movies on your Android devices. It provides almost latest TV shows and movies. Absolutely free. You can download them on your Android device or watch online. Watching movies and TV shows are the best entertainment!
+Insta Movies is an Android app which allows you to watch, stream and download FREE and 1080p HD TV shows and movies on your Android devices. It provides almost latest TV shows and movies. Absolutely free. You can download them on your Android device or watch online. Watching movies and TV shows are the best entertainment!
 
 ### Variables
-**Webview custom URLs**
+**WebView custom URLs**
 | Links | Uses |
 | :---------- | :---------- |
 | link:// | Open URL in HiddenWebActivity |
@@ -35,7 +35,7 @@ Insta Movies is an Ancroid app which alows you to watch, stream and download FRE
 - Adult text position in Movie Details Activity
 - Don't show background image in banner main if contains video
 - Copy magnet link option for hidden web and movie details activities
-- Categorize errors in Webviews
+- Categorize errors in WebViews
 - Migrate to Material theme
 - Add link:// option also in hidden web activity to open once more
 - Change max lines to 4 in movie details activity summary

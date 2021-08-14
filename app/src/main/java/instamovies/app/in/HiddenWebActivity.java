@@ -52,9 +52,9 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URISyntaxException;
 import java.util.List;
 import javax.annotation.Nullable;
-import instamovies.app.in.api.Genres;
-import instamovies.app.in.api.TMDbApi;
-import instamovies.app.in.api.TMDbResponses;
+import instamovies.app.in.api.tmdb.Genres;
+import instamovies.app.in.api.tmdb.MovieDetailsApi;
+import instamovies.app.in.api.tmdb.MovieDetailsResponses;
 import instamovies.app.in.fragments.BottomSheetFragment;
 import instamovies.app.in.fragments.MovieDetailsFragment;
 import instamovies.app.in.player.IntentUtil;
@@ -589,15 +589,15 @@ public class HiddenWebActivity extends AppCompatActivity {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
-                .baseUrl(TMDbApi.JSON_URL)
+                .baseUrl(MovieDetailsApi.JSON_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        TMDbApi theMovieDbApi = retrofit.create(TMDbApi.class);
-        Call<TMDbResponses> call = theMovieDbApi.getMovie(fileId, apiKey);
-        call.enqueue(new Callback<TMDbResponses>() {
+        MovieDetailsApi theMovieDbApi = retrofit.create(MovieDetailsApi.class);
+        Call<MovieDetailsResponses> call = theMovieDbApi.getMovie(fileId, apiKey, "en-US");
+        call.enqueue(new Callback<MovieDetailsResponses>() {
             @Override
-            public void onResponse(@NotNull Call<TMDbResponses> call, @NotNull Response<TMDbResponses> response) {
+            public void onResponse(@NotNull Call<MovieDetailsResponses> call, @NotNull Response<MovieDetailsResponses> response) {
                 if (!response.isSuccessful()) {
                     if (movieDetailsFragment.getDialog() != null) {
                         movieDetailsFragment.progressBar.setVisibility(View.GONE);
@@ -605,28 +605,32 @@ public class HiddenWebActivity extends AppCompatActivity {
                     }
                     return;
                 }
-                TMDbResponses posts = response.body();
-                if (posts != null) {
+                MovieDetailsResponses dbResponses = response.body();
+                if (dbResponses != null) {
                     StringBuilder genre = new StringBuilder();
-                    List<Genres> genresList = posts.getGenres();
+                    List<Genres> genresList = dbResponses.getGenres();
                     for (int i = 0; i < genresList.size(); i++) {
-                        genre.append(genresList.get(i).getGenreName()).append(" ");
+                        if (i != genresList.size() - 1) {
+                            genre.append(genresList.get(i).getGenre()).append(", ");
+                        } else {
+                            genre.append(genresList.get(i).getGenre());
+                        }
                     }
 
                     if (movieDetailsFragment.getDialog() != null) {
                         movieDetailsFragment.progressLayout.setVisibility(View.GONE);
                         movieDetailsFragment.contentLayout.setVisibility(View.VISIBLE);
-                        movieDetailsFragment.movieTitle.setText(posts.getMovieTitle());
+                        movieDetailsFragment.movieTitle.setText(dbResponses.getTitle());
                         movieDetailsFragment.movieGenre.setText(String.valueOf(genre));
-                        movieDetailsFragment.movieYear.setText(posts.getReleaseDate());
-                        movieDetailsFragment.movieRating.setText(posts.getRating());
-                        movieDetailsFragment.movieSummary.setText(posts.getOverview());
+                        movieDetailsFragment.movieYear.setText(dbResponses.getYear());
+                        movieDetailsFragment.movieRating.setText(String.valueOf(dbResponses.getRating()));
+                        movieDetailsFragment.movieSummary.setText(dbResponses.getOverview());
                     }
                 }
             }
 
             @Override
-            public void onFailure(@NotNull Call<TMDbResponses> call, @NotNull Throwable t) {
+            public void onFailure(@NotNull Call<MovieDetailsResponses> call, @NotNull Throwable t) {
                 if (movieDetailsFragment.getDialog() != null) {
                     movieDetailsFragment.progressBar.setVisibility(View.GONE);
                     movieDetailsFragment.errorMessage.setVisibility(View.VISIBLE);
@@ -776,11 +780,11 @@ public class HiddenWebActivity extends AppCompatActivity {
         }
 
         @JavascriptInterface
-        public void loadMovies(String instanceLink, String Title) {
+        public void loadMovies(String instanceLink, String title) {
             webIntent = new Intent();
             webIntent.setClass(context, MoviesActivity.class);
-            webIntent.putExtra("Instance Link", instanceLink);
-            webIntent.putExtra("Title", Title);
+            webIntent.putExtra("base_url_movie_json", instanceLink);
+            webIntent.putExtra("reference_path_movie_json", title);
             startActivity(webIntent);
         }
     }

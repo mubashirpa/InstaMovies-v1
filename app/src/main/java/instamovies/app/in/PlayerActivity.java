@@ -12,19 +12,18 @@ import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import com.github.ybq.android.spinkit.SpinKitView;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
-import com.google.android.exoplayer2.source.BehindLiveWindowException;
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
 import com.google.android.exoplayer2.source.MediaSourceFactory;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -38,7 +37,6 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.ErrorMessageProvider;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Util;
-import org.jetbrains.annotations.NotNull;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -72,7 +70,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
     private int startWindow;
     private long startPosition;
     private Context context;
-    private ProgressBar exoBuffering;
+    private SpinKitView exoBuffering;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -284,21 +282,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         debugRootView.setVisibility(View.VISIBLE);
     }
 
-    private static boolean isBehindLiveWindow(@NotNull ExoPlaybackException e) {
-        if (e.type != ExoPlaybackException.TYPE_SOURCE) {
-            return false;
-        }
-        Throwable cause = e.getSourceException();
-        while (cause != null) {
-            if (cause instanceof BehindLiveWindowException) {
-                return true;
-            }
-            cause = cause.getCause();
-        }
-        return false;
-    }
-
-    private class PlayerEventListener implements Player.EventListener {
+    private class PlayerEventListener implements Player.Listener {
 
         @Override
         public void onPlaybackStateChanged(@Player.State int playbackState) {
@@ -315,11 +299,11 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         @Override
-        public void onPlayerError(@NonNull ExoPlaybackException playbackException) {
+        public void onPlayerError(@NonNull PlaybackException error) {
             exoBuffering.setVisibility(View.GONE);
-            if (isBehindLiveWindow(playbackException)) {
-                clearStartPosition();
-                initializePlayer();
+            if (error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) {
+                player.seekToDefaultPosition();
+                player.prepare();
             } else {
                 updateButtonVisibility();
                 showControls();
@@ -344,27 +328,33 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private class PlayerErrorMessageProvider implements ErrorMessageProvider<ExoPlaybackException> {
+    private class PlayerErrorMessageProvider implements ErrorMessageProvider<PlaybackException> {
 
         @Override
         @NonNull
-        public Pair<Integer, String> getErrorMessage(@NonNull ExoPlaybackException exoPlaybackException) {
+        public Pair<Integer, String> getErrorMessage(@NonNull PlaybackException e) {
             String errorString = getString(R.string.error_generic);
-            if (exoPlaybackException.type == ExoPlaybackException.TYPE_RENDERER) {
-                Exception cause = exoPlaybackException.getRendererException();
-                if (cause instanceof MediaCodecRenderer.DecoderInitializationException) {
-                    MediaCodecRenderer.DecoderInitializationException decoderInitializationException = (MediaCodecRenderer.DecoderInitializationException) cause;
-                    if (decoderInitializationException.codecInfo == null) {
-                        if (decoderInitializationException.getCause() instanceof MediaCodecUtil.DecoderQueryException) {
-                            errorString = getString(R.string.error_querying_decoders);
-                        } else if (decoderInitializationException.secureDecoderRequired) {
-                            getString(R.string.error_no_secure_decoder, decoderInitializationException.mimeType);
-                        } else {
-                            getString(R.string.error_no_decoder, decoderInitializationException.mimeType);
-                        }
-                    } else {
+            Throwable cause = e.getCause();
+            if (cause instanceof MediaCodecRenderer.DecoderInitializationException) {
+                // Special case for decoder initialization failures.
+                MediaCodecRenderer.DecoderInitializationException decoderInitializationException =
+                        (MediaCodecRenderer.DecoderInitializationException) cause;
+                if (decoderInitializationException.codecInfo == null) {
+                    if (decoderInitializationException.getCause() instanceof MediaCodecUtil.DecoderQueryException) {
                         errorString = getString(R.string.error_querying_decoders);
+                    } else if (decoderInitializationException.secureDecoderRequired) {
+                        errorString =
+                                getString(
+                                        R.string.error_no_secure_decoder, decoderInitializationException.mimeType);
+                    } else {
+                        errorString =
+                                getString(R.string.error_no_decoder, decoderInitializationException.mimeType);
                     }
+                } else {
+                    errorString =
+                            getString(
+                                    R.string.error_instantiating_decoder,
+                                    decoderInitializationException.codecInfo.name);
                 }
             }
             return Pair.create(0, errorString);
