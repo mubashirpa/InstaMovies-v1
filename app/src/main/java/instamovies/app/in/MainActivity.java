@@ -859,7 +859,7 @@ public class MainActivity extends AppCompatActivity {
                     downloading = false;
                 }
 
-                long progressValue = (100 * bytesDownloaded) / bytesTotal;
+                long progressValue = (100L * bytesDownloaded) / bytesTotal;
                 String sizeDownloaded = bytesDownloaded / 1048576 + " MB/" + bytesTotal / 1048576 + " MB";
 
                 runOnUiThread(() -> {
