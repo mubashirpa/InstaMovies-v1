@@ -16,8 +16,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -33,7 +31,6 @@ import instamovies.app.in.utils.AppUtils;
 public class SplashScreenActivity extends AppCompatActivity {
 
     private SharedPreferences appDetails;
-    private Handler handler;
     private Context context;
     private final int REQUEST_CODE_STORAGE = 1001;
 
@@ -102,32 +99,27 @@ public class SplashScreenActivity extends AppCompatActivity {
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.anim_fade_in_splash_text);
         ImageView appIcon = findViewById(R.id.app_icon);
         appIcon.startAnimation(animation);
-        handler = new Handler(Looper.getMainLooper());
 
-        handler.postDelayed(() -> {
-            if (appDetails != null) {
-                if (!appDetails.getBoolean("First Open", false)) {
-                    BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance();
-                    bottomSheetDialog.setTitle("Important");
-                    bottomSheetDialog.setMessage(getString(R.string.copyright_info));
-                    bottomSheetDialog.setPositiveButton("Continue", v -> {
-                        bottomSheetDialog.dismiss();
-                        appDetails.edit().putBoolean("First Open", true).apply();
-                        Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
-                        finish();
-                    });
-                    bottomSheetDialog.setCancelable(false);
-                    bottomSheetDialog.show(getSupportFragmentManager(), "BottomSheetDialog");
-                } else {
-                    Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+        if (appDetails != null) {
+            if (!appDetails.getBoolean("First Open", false)) {
+                BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance();
+                bottomSheetDialog.setTitle("Important");
+                bottomSheetDialog.setMessage(getString(R.string.copyright_info));
+                bottomSheetDialog.setPositiveButton("Continue", v -> {
+                    bottomSheetDialog.dismiss();
+                    appDetails.edit().putBoolean("First Open", true).apply();
+                    startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
                     overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
-                }
+                    finish();
+                });
+                bottomSheetDialog.setCancelable(false);
+                bottomSheetDialog.show(getSupportFragmentManager(), "BottomSheetDialog");
+            } else {
+                startActivity(new Intent(SplashScreenActivity.this, MainActivity.class));
+                overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                finish();
             }
-        }, 2000);
+        }
     }
 
     @Override
@@ -135,15 +127,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (handler != null) {
-            handler.removeCallbacksAndMessages(null);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NotNull String @NotNull [] permissions, @NotNull int @NotNull [] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NotNull String @NotNull [] permissions, int @NotNull [] grantResults) {
         super.onRequestPermissionsResult(requestCode,permissions,grantResults);
         if (requestCode == REQUEST_CODE_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {

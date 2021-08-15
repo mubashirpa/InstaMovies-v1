@@ -37,6 +37,9 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.ErrorMessageProvider;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Util;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -328,7 +331,7 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private class PlayerErrorMessageProvider implements ErrorMessageProvider<PlaybackException> {
+    private class PlayerErrorMessageProvider implements ErrorMessageProvider<@NotNull PlaybackException> {
 
         @Override
         @NonNull

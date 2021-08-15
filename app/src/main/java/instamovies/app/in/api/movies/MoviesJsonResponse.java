@@ -6,6 +6,7 @@ public class MoviesJsonResponse {
 
     @SerializedName("Name") private String name;
     @SerializedName("Thumbnail") private String thumbnail;
+    @SerializedName("IMDb") private String imdb;
     @SerializedName("Movie") private String movie;
     @SerializedName("Link") private String link;
     @SerializedName("Link1") private String link1;
@@ -19,6 +20,10 @@ public class MoviesJsonResponse {
 
     public  String getThumbnail() {
         return thumbnail;
+    }
+
+    public String getImdb() {
+        return imdb;
     }
 
     public String getMovie() {

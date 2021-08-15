@@ -42,7 +42,7 @@
             android:name=".SplashScreenActivity"
             android:configChanges="smallestScreenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.LauncherActivity"
+            android:theme="@style/AppTheme.SplashTheme"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -156,7 +156,7 @@
         This is used when no icon is set for incoming notification messages. -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_icon" />
+            android:resource="@drawable/app_logo" />
         <!-- Set color used with incoming notification messages.
         This is used when no color is set for the incoming notification message. -->
         <meta-data

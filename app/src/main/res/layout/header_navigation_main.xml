@@ -12,7 +12,7 @@
         android:layout_height="32dp"
         android:scaleType="centerCrop"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_icon"
+        android:src="@drawable/app_logo"
         android:layout_marginEnd="15dp"/>
     <TextView
         android:layout_width="match_parent"

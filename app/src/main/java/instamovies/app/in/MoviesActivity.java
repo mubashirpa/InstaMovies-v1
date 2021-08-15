@@ -14,7 +14,6 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Spannable;
@@ -537,6 +536,9 @@ public class MoviesActivity extends AppCompatActivity {
                         }
                         if (moviesJsonResponse.get(i).getThumbnail() != null) {
                             hashMap.put("Thumbnail", moviesJsonResponse.get(i).getThumbnail());
+                        }
+                        if (moviesJsonResponse.get(i).getImdb() != null) {
+                            hashMap.put("IMDb", moviesJsonResponse.get(i).getImdb());
                         }
                         if (moviesJsonResponse.get(i).getMovie() != null) {
                             hashMap.put("Movie", moviesJsonResponse.get(i).getMovie());
