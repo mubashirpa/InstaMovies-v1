@@ -89,7 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:text="@string/something_went_wrong_please_try_again"
+                android:text="@string/error_retrofit_enqueue_failed"
                 android:padding="8dp"
                 android:textColor="@color/colorTextSecondary"
                 android:visibility="gone"/>

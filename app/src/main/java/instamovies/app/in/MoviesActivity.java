@@ -17,7 +17,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.util.Log;
 import android.view.*;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -70,13 +69,13 @@ public class MoviesActivity extends AppCompatActivity {
     private GridLayoutAnimationController animationController;
     private Context context;
     private AdView adView;
-    private final String LOG_TAG = "MoviesActivity";
     private String searchText = "";
     private boolean premiumUser = false;
     private boolean systemBrowser = false;
     private boolean chromeTabs = true;
     private boolean dataSaver = false;
     private String apiKey;
+    private TextView noResultsText;
 
     private View progressStatus;
     private ProgressBar progressBar;
@@ -110,6 +109,7 @@ public class MoviesActivity extends AppCompatActivity {
         String referencePath = getIntent().getStringExtra("reference_path_movie_json");
         String baseURL = getIntent().getStringExtra("base_url_movie_json");
         setTitle(getIntent().getStringExtra("title_movie_act"));
+        noResultsText = findViewById(R.id.no_results_text);
 
         progressStatus = findViewById(R.id.progress_status_view);
         progressBar = progressStatus.findViewById(R.id.progressbar);
@@ -125,32 +125,25 @@ public class MoviesActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
                 movieList = new ArrayList<>();
-                try {
-                    GenericTypeIndicator<HashMap<String, Object>> ind = new GenericTypeIndicator<HashMap<String, Object>>() {
-                    };
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        HashMap<String, Object> map = data.getValue(ind);
-                        movieList.add(map);
-                    }
-                } catch (Exception e) {
-                    Log.e(LOG_TAG, e.getMessage());
+                GenericTypeIndicator<HashMap<String, Object>> ind = new GenericTypeIndicator<HashMap<String, Object>>() {};
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    HashMap<String, Object> map = data.getValue(ind);
+                    movieList.add(map);
                 }
-                connectSuccess();
-                // this substitute array list is for search option
+                // This substitute array list is for search option
                 subMovieList.addAll(movieList);
                 gridView.setAdapter(new GridViewAdapter(movieList));
                 ((BaseAdapter)gridView.getAdapter()).notifyDataSetChanged();
                 gridView.setLayoutAnimation(animationController);
+                connectSuccess();
             }
 
             @Override
             public void onCancelled(@NotNull DatabaseError error) {
-                Log.e(LOG_TAG, error.getMessage());
-                connectError(error.getMessage());
+                connectError(getString(R.string.error_fdb_on_cancelled));
             }
         };
         progressStatus.setVisibility(View.VISIBLE);
-
         if (baseURL.contains("firebaseio.com")) {
             FirebaseDatabase database = FirebaseDatabase.getInstance(baseURL);
             databaseReference = database.getReference(referencePath);
@@ -158,9 +151,6 @@ public class MoviesActivity extends AppCompatActivity {
         } else {
             if (URLUtil.isNetworkUrl(baseURL) && baseURL.endsWith("/")) {
                 loadMoviesFromJson(baseURL, referencePath);
-            } else {
-                AppUtils.toastShortError(context, MoviesActivity.this, "Something wrong");
-                finish();
             }
         }
 
@@ -260,7 +250,8 @@ public class MoviesActivity extends AppCompatActivity {
         });
 
         retryButton.setOnClickListener(view -> {
-            onRetry();
+            errorView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
             // using timer to avoid multiple clicking on retry
             handler = new Handler(Looper.getMainLooper());
             handler.postDelayed(() -> {
@@ -402,11 +393,6 @@ public class MoviesActivity extends AppCompatActivity {
         errorView.setVisibility(View.VISIBLE);
     }
 
-    private void onRetry() {
-        errorView.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
     private void fetchMovieDetails(String fileId) {
         MovieDetailsFragment movieDetailsFragment = MovieDetailsFragment.newInstance();
         movieDetailsFragment.setOnClickListener(v -> movieDetailsFragment.dismiss());
@@ -485,14 +471,13 @@ public class MoviesActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NotNull Call<ArrayList<MoviesJsonResponse>> call, @NotNull Response<ArrayList<MoviesJsonResponse>> response) {
                 if (!response.isSuccessful()) {
-                    connectError("Response unsuccessful");
+                    connectError(getString(R.string.error_retrofit_response));
                     return;
                 }
                 movieList = new ArrayList<>();
                 ArrayList<MoviesJsonResponse> moviesJsonResponse;
                 moviesJsonResponse = response.body();
                 if (moviesJsonResponse != null) {
-                    AppUtils.toastShortDefault(context, MoviesActivity.this, String.valueOf(moviesJsonResponse));
                     for (int i = 0; i < moviesJsonResponse.size(); i++){
                         HashMap<String,Object> hashMap = new HashMap<>();
                         if (moviesJsonResponse.get(i).getTitle() != null) {
@@ -524,18 +509,18 @@ public class MoviesActivity extends AppCompatActivity {
                         }
                         movieList.add(hashMap);
                     }
-                    connectSuccess();
-                    // this substitute array list is for search option
+                    // This substitute array list is for search option
                     subMovieList.addAll(movieList);
                     gridView.setAdapter(new GridViewAdapter(movieList));
                     ((BaseAdapter)gridView.getAdapter()).notifyDataSetChanged();
                     gridView.setLayoutAnimation(animationController);
+                    connectSuccess();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<ArrayList<MoviesJsonResponse>> call, @NotNull Throwable t) {
-                connectError(t.getMessage());
+                connectError(getString(R.string.error_retrofit_enqueue_failed));
             }
         });
     }
@@ -546,6 +531,13 @@ public class MoviesActivity extends AppCompatActivity {
 
         GridViewAdapter(ArrayList<HashMap<String, Object>> arr) {
             data = arr;
+            if (data.size() == 0) {
+                gridView.setVisibility(View.GONE);
+                noResultsText.setVisibility(View.VISIBLE);
+            } else {
+                noResultsText.setVisibility(View.GONE);
+                gridView.setVisibility(View.VISIBLE);
+            }
         }
 
         @Override
@@ -576,7 +568,6 @@ public class MoviesActivity extends AppCompatActivity {
             movieName.setSelected(true);
 
             FiftyShadesOf.with(context).on(posterFrame).fadein(true).start();
-
             String movieTitle =  "";
             if (data.get(position).containsKey("title")) {
                 movieTitle = Objects.requireNonNull(data.get(position).get("title")).toString().toUpperCase();

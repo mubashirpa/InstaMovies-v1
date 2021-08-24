@@ -76,6 +76,11 @@
     <string name="error_querying_decoders">Unable to query device decoders</string>
     <string name="error_instantiating_decoder">Unable to instantiate decoder <xliff:g id="decoder_name">%1$s</xliff:g></string>
 
+    <!-- Error strings -->
+    <string name="error_fdb_on_cancelled">Failed to connect with database</string>
+    <string name="error_retrofit_enqueue_failed">Failed to connect with database</string>
+    <string name="error_retrofit_response">No response found</string>
+
     <string name="details">Details</string>
     <string name="share_message">Hey,\n\nInsta Movies is an app built for downloading latest movies. With the app, you can download latest movies of more than six languages including Malayalam, Tamil, Hindi and English.\n\nGet it for free at\n<xliff:g id="download_link">%1$s</xliff:g></string>
     <string name="network_stream">Network Stream</string>
@@ -87,7 +92,6 @@
     <string name="list_of_actors">List of actors</string>
     <string name="synopsis">Synopsis</string>
     <string name="send">Send</string>
-    <string name="something_went_wrong_please_try_again">Something went wrong, please try again.</string>
     <string name="select_an_option">Select an option</string>
     <string name="coming_soon">Coming soon</string>
     <string name="by_downloading_this_content_you_are_confirming_that_you_are_at_least_18_years_of_age">By downloading this content, you are confirming that you are at least 18 years of age.</string>
@@ -96,4 +100,5 @@
     <string name="update_manually">UPDATE MANUALLY</string>
     <string name="update_message">A newer version of the app is available to download. Please update the app and continue using. Downloading the latest update you will get the latest features, improvements and bug fixes of Insta Movies.</string>
     <string name="error">Error</string>
+    <string name="no_movies_or_tv_shows_n_found">No movies or TV shows\n found</string>
 </resources>
