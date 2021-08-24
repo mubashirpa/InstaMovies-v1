@@ -27,19 +27,29 @@
             android:layout_height="0dp"
             android:gravity="center_horizontal"
             android:layout_weight="1">
+            <TextView
+                android:id="@+id/no_results_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No movies or TV shows\n found"
+                android:layout_marginTop="100dp"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:textColor="@color/colorTextSecondary"
+                android:visibility="gone"/>
             <GridView
                 android:id="@+id/gridView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:columnWidth="100dp"
-                android:scrollbars="none"
-                android:padding="10dp"
-                android:horizontalSpacing="10dp"
-                android:verticalSpacing="10dp"
                 android:animateLayoutChanges="true"
+                android:columnWidth="100dp"
+                android:gravity="center_horizontal"
+                android:horizontalSpacing="10dp"
                 android:numColumns="auto_fit"
+                android:padding="10dp"
+                android:scrollbars="none"
                 android:stretchMode="columnWidth"
-                android:gravity="center_horizontal"/>
+                android:verticalSpacing="10dp" />
             <include
                 android:id="@+id/progress_status_view"
                 android:layout_height="match_parent"

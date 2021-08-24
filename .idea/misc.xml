@@ -5,7 +5,9 @@
       <map>
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/drawable/splash_background.xml" value="0.21614583333333334" />
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/activity_feedback.xml" value="0.1" />
+        <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/activity_movies.xml" value="0.2" />
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/activity_splash_screen.xml" value="0.19021739130434784" />
+        <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/layout_progress_status.xml" value="0.19293478260869565" />
       </map>
     </option>
   </component>

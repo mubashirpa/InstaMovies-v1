@@ -1,6 +1,5 @@
 package instamovies.app.in;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.app.Activity;
@@ -60,6 +59,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MoviesActivity extends AppCompatActivity {
 
     private ArrayList<HashMap<String, Object>> movieList = new ArrayList<>();
+    private final ArrayList<HashMap<String, Object>> subMovieList = new ArrayList<>();
     private DatabaseReference databaseReference;
     private ValueEventListener movieEventListener;
     private GridView gridView;
@@ -109,6 +109,7 @@ public class MoviesActivity extends AppCompatActivity {
         animationController = new GridLayoutAnimationController(animation,.2f,.2f);
         String referencePath = getIntent().getStringExtra("reference_path_movie_json");
         String baseURL = getIntent().getStringExtra("base_url_movie_json");
+        setTitle(getIntent().getStringExtra("title_movie_act"));
 
         progressStatus = findViewById(R.id.progress_status_view);
         progressBar = progressStatus.findViewById(R.id.progressbar);
@@ -135,6 +136,8 @@ public class MoviesActivity extends AppCompatActivity {
                     Log.e(LOG_TAG, e.getMessage());
                 }
                 connectSuccess();
+                // this substitute array list is for search option
+                subMovieList.addAll(movieList);
                 gridView.setAdapter(new GridViewAdapter(movieList));
                 ((BaseAdapter)gridView.getAdapter()).notifyDataSetChanged();
                 gridView.setLayoutAnimation(animationController);
@@ -249,8 +252,8 @@ public class MoviesActivity extends AppCompatActivity {
         });
 
         gridView.setOnItemLongClickListener((parent, view, position, id) -> {
-            if (movieList.get(position).containsKey("IMDb")) {
-                String itemID = Objects.requireNonNull(movieList.get(position).get("IMDb")).toString();
+            if (movieList.get(position).containsKey("imdb_id")) {
+                String itemID = Objects.requireNonNull(movieList.get(position).get("imdb_id")).toString();
                 fetchMovieDetails(itemID);
             }
             return true;
@@ -317,80 +320,40 @@ public class MoviesActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 searchText = s.toUpperCase();
-
-                databaseReference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot _dataSnapshot) {
-                        movieList = new ArrayList<>();
-                        try {
-                            GenericTypeIndicator<HashMap<String, Object>>_ind = new GenericTypeIndicator<HashMap<String, Object>>() {};
-                            for (DataSnapshot _data:_dataSnapshot.getChildren()) {
-                                HashMap<String, Object>_map = _data.getValue(_ind);
-                                movieList.add(_map);
-                            }
+                movieList = new ArrayList<>();
+                movieList.addAll(subMovieList);
+                if (searchText.length() > 0) {
+                    int position = movieList.size() - 1;
+                    int size = movieList.size();
+                    for (int i = 0; i < size; i++) {
+                        if (!Objects.requireNonNull(movieList.get(position).get("title")).toString().toUpperCase().contains(searchText)) {
+                            movieList.remove(position);
                         }
-                        catch (Exception _e) {
-                            _e.printStackTrace();
-                        }
-                        if (searchText.length()>0){
-                            double mapLength = movieList.size()-1;
-                            double currentLength = movieList.size();
-                            for (int _repeat46 = 0; _repeat46<(int)(currentLength);_repeat46++){
-                                if (!Objects.requireNonNull(movieList.get((int) mapLength).get("Name")).toString().toUpperCase().contains(searchText)) {
-                                    movieList.remove((int)(mapLength));
-                                }
-                                mapLength--;
-                            }
-                        }
-                        gridView.setAdapter(new GridViewAdapter(movieList));
-                        ((BaseAdapter)gridView.getAdapter()).notifyDataSetChanged();
+                        position--;
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e(LOG_TAG, databaseError.getMessage());
-                    }
-                });
+                }
+                gridView.setAdapter(new GridViewAdapter(movieList));
+                ((BaseAdapter)gridView.getAdapter()).notifyDataSetChanged();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
                 searchText = s.toUpperCase();
-
-                databaseReference.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot _dataSnapshot) {
-                        movieList = new ArrayList<>();
-                        try {
-                            GenericTypeIndicator<HashMap<String, Object>>_ind = new GenericTypeIndicator<HashMap<String, Object>>() {};
-                            for (DataSnapshot _data:_dataSnapshot.getChildren()) {
-                                HashMap<String, Object>_map = _data.getValue(_ind);
-                                movieList.add(_map);
-                            }
+                movieList = new ArrayList<>();
+                movieList.addAll(subMovieList);
+                if (searchText.length() > 0) {
+                    int position = movieList.size() - 1;
+                    int size = movieList.size();
+                    for (int i = 0; i < size; i++) {
+                        if (!Objects.requireNonNull(movieList.get(position).get("title")).toString().toUpperCase().contains(searchText)) {
+                            movieList.remove(position);
                         }
-                        catch (Exception _e) {
-                            _e.printStackTrace();
-                        }
-                        if (searchText.length()>0){
-                            double mapLength = movieList.size()-1;
-                            double currentLength = movieList.size();
-                            for (int _repeat46 = 0; _repeat46<(int)(currentLength);_repeat46++){
-                                if (!Objects.requireNonNull(movieList.get((int) mapLength).get("Name")).toString().toUpperCase().contains(searchText)) {
-                                    movieList.remove((int)(mapLength));
-                                }
-                                mapLength--;
-                            }
-                        }
-                        gridView.setAdapter(new GridViewAdapter(movieList));
-                        ((BaseAdapter)gridView.getAdapter()).notifyDataSetChanged();
+                        position--;
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.e(LOG_TAG, databaseError.getMessage());
-                    }
-                });
+                }
+                gridView.setAdapter(new GridViewAdapter(movieList));
+                ((BaseAdapter)gridView.getAdapter()).notifyDataSetChanged();
                 return false;
             }
         });
@@ -529,16 +492,17 @@ public class MoviesActivity extends AppCompatActivity {
                 ArrayList<MoviesJsonResponse> moviesJsonResponse;
                 moviesJsonResponse = response.body();
                 if (moviesJsonResponse != null) {
+                    AppUtils.toastShortDefault(context, MoviesActivity.this, String.valueOf(moviesJsonResponse));
                     for (int i = 0; i < moviesJsonResponse.size(); i++){
                         HashMap<String,Object> hashMap = new HashMap<>();
-                        if (moviesJsonResponse.get(i).getName() != null) {
-                            hashMap.put("Name", moviesJsonResponse.get(i).getName());
+                        if (moviesJsonResponse.get(i).getTitle() != null) {
+                            hashMap.put("title", moviesJsonResponse.get(i).getTitle());
                         }
-                        if (moviesJsonResponse.get(i).getThumbnail() != null) {
-                            hashMap.put("Thumbnail", moviesJsonResponse.get(i).getThumbnail());
+                        if (moviesJsonResponse.get(i).getPoster() != null) {
+                            hashMap.put("poster", moviesJsonResponse.get(i).getPoster());
                         }
                         if (moviesJsonResponse.get(i).getImdb() != null) {
-                            hashMap.put("IMDb", moviesJsonResponse.get(i).getImdb());
+                            hashMap.put("imdb_id", moviesJsonResponse.get(i).getImdb());
                         }
                         if (moviesJsonResponse.get(i).getMovie() != null) {
                             hashMap.put("Movie", moviesJsonResponse.get(i).getMovie());
@@ -561,6 +525,8 @@ public class MoviesActivity extends AppCompatActivity {
                         movieList.add(hashMap);
                     }
                     connectSuccess();
+                    // this substitute array list is for search option
+                    subMovieList.addAll(movieList);
                     gridView.setAdapter(new GridViewAdapter(movieList));
                     ((BaseAdapter)gridView.getAdapter()).notifyDataSetChanged();
                     gridView.setLayoutAnimation(animationController);
@@ -604,16 +570,16 @@ public class MoviesActivity extends AppCompatActivity {
                 convertView = Objects.requireNonNull(inflater).inflate(R.layout.item_movies, parent, false);
             }
 
-            final ImageView thumbnailImage = convertView.findViewById(R.id.thumb_image);
+            final ImageView posterFrame = convertView.findViewById(R.id.thumb_image);
             final TextView movieName = convertView.findViewById(R.id.movie_name);
             // Needed for marquee scrolling
             movieName.setSelected(true);
 
-            FiftyShadesOf.with(context).on(thumbnailImage).fadein(true).start();
+            FiftyShadesOf.with(context).on(posterFrame).fadein(true).start();
 
             String movieTitle =  "";
-            if (movieList.get(position).containsKey("Name")) {
-                movieTitle = Objects.requireNonNull(movieList.get(position).get("Name")).toString().toUpperCase();
+            if (data.get(position).containsKey("title")) {
+                movieTitle = Objects.requireNonNull(data.get(position).get("title")).toString().toUpperCase();
             }
             Spannable spannable;
             android.text.style.ForegroundColorSpan foregroundColorSpan = new android.text.style.ForegroundColorSpan(Color.RED);
@@ -627,11 +593,11 @@ public class MoviesActivity extends AppCompatActivity {
             }
             movieName.setText(spannable);
 
-            if (movieList.get(position).containsKey("Thumbnail") && !dataSaver) {
-                String itemLink = Objects.requireNonNull(movieList.get(position).get("Thumbnail")).toString();
-                Glide.with(context).load(Uri.parse(itemLink)).into(thumbnailImage);
+            if (data.get(position).containsKey("poster") && !dataSaver) {
+                String itemLink = Objects.requireNonNull(data.get(position).get("poster")).toString();
+                Glide.with(context).load(Uri.parse(itemLink)).into(posterFrame);
             } else {
-                thumbnailImage.setImageResource(R.drawable.img_image_placeholder_v);
+                posterFrame.setImageResource(R.drawable.img_image_placeholder_v);
             }
             return convertView;
         }

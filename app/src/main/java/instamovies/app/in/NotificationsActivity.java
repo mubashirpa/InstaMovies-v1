@@ -108,15 +108,19 @@ public class NotificationsActivity extends AppCompatActivity {
                 AppUtils.toastShortDefault(context,NotificationsActivity.this, "You are not a premium user.");
                 return;
             }
-            if (notificationList.get(position).containsKey("Instance Link")) {
-                String instanceLink = Objects.requireNonNull(notificationList.get(position).get("Instance Link")).toString();
-                String title = Objects.requireNonNull(notificationList.get(position).get("Title")).toString();
+            if (notificationList.get(position).containsKey("base_url") && notificationList.get(position).containsKey("reference_path")) {
+                String baseURL = Objects.requireNonNull(notificationList.get(position).get("base_url")).toString();
+                String referencePath = Objects.requireNonNull(notificationList.get(position).get("reference_path")).toString();
+                String title = getString(R.string.app_name);
+                if (notificationList.get(position).containsKey("title")) {
+                    title = Objects.requireNonNull(notificationList.get(position).get("title")).toString();
+                }
                 webIntent = new Intent();
                 webIntent.setClass(context, MoviesActivity.class);
-                webIntent.putExtra("base_url_movie_json", instanceLink);
-                webIntent.putExtra("reference_path_movie_json", title);
+                webIntent.putExtra("base_url_movie_json", baseURL);
+                webIntent.putExtra("reference_path_movie_json", referencePath);
+                webIntent.putExtra("title_movie_act", title);
                 startActivity(webIntent);
-                return;
             }
             if (notificationList.get(position).containsKey("Movie")) {
                 String movieLink = Objects.requireNonNull(notificationList.get(position).get("Movie")).toString();

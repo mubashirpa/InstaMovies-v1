@@ -775,16 +775,17 @@ public class HiddenWebActivity extends AppCompatActivity {
         }
 
         @JavascriptInterface
-        public void showMovieDetails(String IMDbID) {
-            fetchMovieDetails(IMDbID);
+        public void showMovieDetails(String imdb_id) {
+            fetchMovieDetails(imdb_id);
         }
 
         @JavascriptInterface
-        public void loadMovies(String instanceLink, String title) {
+        public void loadMovies(String baseURL, String referencePath, String title) {
             webIntent = new Intent();
             webIntent.setClass(context, MoviesActivity.class);
-            webIntent.putExtra("base_url_movie_json", instanceLink);
-            webIntent.putExtra("reference_path_movie_json", title);
+            webIntent.putExtra("base_url_movie_json", baseURL);
+            webIntent.putExtra("reference_path_movie_json", referencePath);
+            webIntent.putExtra("title_movie_act", title);
             startActivity(webIntent);
         }
     }

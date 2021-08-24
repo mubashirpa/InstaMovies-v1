@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class MoviesJsonResponse {
 
-    @SerializedName("Name") private String name;
-    @SerializedName("Thumbnail") private String thumbnail;
-    @SerializedName("IMDb") private String imdb;
+    @SerializedName("title") private String title;
+    @SerializedName("poster") private String poster;
+    @SerializedName("imdb_id") private String imdb;
     @SerializedName("Movie") private String movie;
     @SerializedName("Link") private String link;
     @SerializedName("Link1") private String link1;
@@ -14,12 +14,12 @@ public class MoviesJsonResponse {
     @SerializedName("Link3") private String link3;
     @SerializedName("Video") private String video;
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public  String getThumbnail() {
-        return thumbnail;
+    public  String getPoster() {
+        return poster;
     }
 
     public String getImdb() {

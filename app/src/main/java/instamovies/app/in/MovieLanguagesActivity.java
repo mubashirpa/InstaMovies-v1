@@ -232,13 +232,18 @@ public class MovieLanguagesActivity extends AppCompatActivity {
                 AppUtils.toastShortDefault(context,MovieLanguagesActivity.this, "You are not a premium user.");
                 return;
             }
-            if (languageList.get(position).containsKey("Instance Link")) {
-                String instanceLink = Objects.requireNonNull(languageList.get(position).get("Instance Link")).toString();
-                String title = Objects.requireNonNull(languageList.get(position).get("Title")).toString();
+            if (languageList.get(position).containsKey("base_url") && languageList.get(position).containsKey("reference_path")) {
+                String baseURL = Objects.requireNonNull(languageList.get(position).get("base_url")).toString();
+                String referencePath = Objects.requireNonNull(languageList.get(position).get("reference_path")).toString();
+                String title = getString(R.string.app_name);
+                if (languageList.get(position).containsKey("title")) {
+                    title = Objects.requireNonNull(languageList.get(position).get("title")).toString();
+                }
                 webIntent = new Intent();
                 webIntent.setClass(context, MoviesActivity.class);
-                webIntent.putExtra("base_url_movie_json", instanceLink);
-                webIntent.putExtra("reference_path_movie_json", title);
+                webIntent.putExtra("base_url_movie_json", baseURL);
+                webIntent.putExtra("reference_path_movie_json", referencePath);
+                webIntent.putExtra("title_movie_act", title);
                 startActivity(webIntent);
             }
             if (languageList.get(position).containsKey("Movie")) {
