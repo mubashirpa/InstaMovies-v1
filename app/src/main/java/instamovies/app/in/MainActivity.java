@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
 
         View.OnClickListener languageClickListener = v -> {
             languageIntent = new Intent();
-            languageIntent.setClass(context, MovieLanguagesActivity.class);
+            languageIntent.setClass(context, CategoriesActivity.class);
             startActivity(languageIntent);
         };
         layoutMalayalam.setOnClickListener(languageClickListener);

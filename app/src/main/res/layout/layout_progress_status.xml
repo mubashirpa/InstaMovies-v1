@@ -24,7 +24,6 @@
             android:id="@+id/cause_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/error"
             android:gravity="center"
             android:textSize="14sp"
             android:textColor="@color/colorTextSecondary" />

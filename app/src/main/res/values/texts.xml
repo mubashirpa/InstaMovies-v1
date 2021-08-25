@@ -77,9 +77,12 @@
     <string name="error_instantiating_decoder">Unable to instantiate decoder <xliff:g id="decoder_name">%1$s</xliff:g></string>
 
     <!-- Error strings -->
+    <string name="error_default">An error occurred</string>
     <string name="error_fdb_on_cancelled">Failed to connect with database</string>
     <string name="error_retrofit_enqueue_failed">Failed to connect with database</string>
     <string name="error_retrofit_response">No response found</string>
+    <string name="error_activity_not_found">No activity found to handle intent</string>
+    <string name="error_permission_denied">Permission for <xliff:g id="permission_type">%1$s</xliff:g> was denied</string>
 
     <string name="details">Details</string>
     <string name="share_message">Hey,\n\nInsta Movies is an app built for downloading latest movies. With the app, you can download latest movies of more than six languages including Malayalam, Tamil, Hindi and English.\n\nGet it for free at\n<xliff:g id="download_link">%1$s</xliff:g></string>

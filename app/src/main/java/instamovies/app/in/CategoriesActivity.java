@@ -52,19 +52,19 @@ import instamovies.app.in.fragments.RequestDialogFragment;
 import instamovies.app.in.player.IntentUtil;
 import instamovies.app.in.utils.AppUtils;
 
-public class MovieLanguagesActivity extends AppCompatActivity {
+public class CategoriesActivity extends AppCompatActivity {
 
     private Intent webIntent = new Intent();
     private AlertDialog.Builder notifyDialog;
     private SharedPreferences appData;
-    private ArrayList<HashMap<String,Object>> languageList = new ArrayList<>();
+    private ArrayList<HashMap<String,Object>> categoryList = new ArrayList<>();
     private GridView gridView;
     private Context context;
     private final int REQUEST_CODE_STORAGE = 1001;
     private Intent videoIntent = new Intent();
     private SharedPreferences settingsPreferences;
-    private boolean premiumUser = false;
     private AdView adView;
+    private boolean premiumUser = false;
     private boolean systemBrowser = false;
     private boolean chromeTabs = true;
     private boolean dataSaver = false;
@@ -72,7 +72,7 @@ public class MovieLanguagesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_languages);
+        setContentView(R.layout.activity_categories);
 
         context = this;
         MobileAds.initialize(context);
@@ -145,34 +145,35 @@ public class MovieLanguagesActivity extends AppCompatActivity {
         scrollBottom.setSelected(true);
         checkSettings();
 
-        if (!appData.getString("LanguageData","").equals("")) {
-            languageList = new Gson().fromJson(appData.getString("LanguageData",""), new TypeToken<ArrayList<HashMap<String, Object>>>(){}.getType());
+        if (!appData.getString("category_list_data","").equals("")) {
+            categoryList = new Gson().fromJson(appData.getString("category_list_data",""), new TypeToken<ArrayList<HashMap<String, Object>>>(){}.getType());
         } else {
-            HashMap<String,Object> mal = new HashMap<>();
-            mal.put("Title","Malayalam");
-            languageList.add(mal);
-            HashMap<String,Object> tam = new HashMap<>();
-            tam.put("Title","Tamil");
-            languageList.add(tam);
-            HashMap<String,Object> eng = new HashMap<>();
-            eng.put("Title","English");
-            languageList.add(eng);
-            HashMap<String,Object> onl = new HashMap<>();
-            onl.put("Title","Hindi");
-            languageList.add(onl);
-            HashMap<String,Object> hin = new HashMap<>();
-            hin.put("Title","Loading");
-            languageList.add(hin);
-            HashMap<String,Object> ser = new HashMap<>();
-            ser.put("Title","Loading");
-            languageList.add(ser);
+            HashMap<String,Object> hashMap;
+            hashMap = new HashMap<>();
+            hashMap.put("title","Malayalam");
+            categoryList.add(hashMap);
+            hashMap = new HashMap<>();
+            hashMap.put("title","Tamil");
+            categoryList.add(hashMap);
+            hashMap = new HashMap<>();
+            hashMap.put("title","English");
+            categoryList.add(hashMap);
+            hashMap = new HashMap<>();
+            hashMap.put("title","Hindi");
+            categoryList.add(hashMap);
+            hashMap = new HashMap<>();
+            hashMap.put("title","Loading");
+            categoryList.add(hashMap);
+            hashMap = new HashMap<>();
+            hashMap.put("title","Loading");
+            categoryList.add(hashMap);
         }
-        gridView.setAdapter(new GridViewAdapter(languageList));
+        gridView.setAdapter(new GridViewAdapter(categoryList));
         getLanguages();
 
         fab.setOnClickListener(_view -> {
             RequestDialogFragment requestDialogFragment = RequestDialogFragment.newInstance();
-            requestDialogFragment.setActivity(MovieLanguagesActivity.this);
+            requestDialogFragment.setActivity(CategoriesActivity.this);
             requestDialogFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
         });
 
@@ -191,14 +192,14 @@ public class MovieLanguagesActivity extends AppCompatActivity {
                 notifyDialog.setView(dialogView);
                 notifyDialog.setPositiveButton("OK", (_dialog, _which) -> _dialog.dismiss());
                 notifyDialog.setCancelable(false);
-                if (!Message.equals(appData.getString("message_language_activity", "")) && !isDestroyed()) {
+                if (!Message.equals(appData.getString("message_categories_activity", "")) && !isDestroyed()) {
                     notifyDialog.create().show();
                 }
                 checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
                     if(compoundButton.isChecked()){
-                        appData.edit().putString("message_language_activity", Message).apply();
+                        appData.edit().putString("message_categories_activity", Message).apply();
                     }else{
-                        appData.edit().putString("message_language_activity", "").apply();
+                        appData.edit().putString("message_categories_activity", "").apply();
                     }
                 });
             }
@@ -216,28 +217,28 @@ public class MovieLanguagesActivity extends AppCompatActivity {
         });
         tutorialDialog.setNegativeButton("LATER", (_dialog, _which) -> _dialog.dismiss());
         tutorialDialog.setCancelable(false);
-        if (!appData.getBoolean("show_tutorial_language_activity", false)){
+        if (!appData.getBoolean("show_tutorial_categories_activity", false)){
             tutorialDialog.create().show();
         }
         checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
             if(compoundButton.isChecked()){
-                appData.edit().putBoolean("show_tutorial_language_activity", true).apply();
+                appData.edit().putBoolean("show_tutorial_categories_activity", true).apply();
             }else{
-                appData.edit().putBoolean("show_tutorial_language_activity", false).apply();
+                appData.edit().putBoolean("show_tutorial_categories_activity", false).apply();
             }
         });
 
         gridView.setOnItemClickListener((parent, view, position, id) -> {
-            if (languageList.get(position).containsKey("Premium") && !premiumUser) {
-                AppUtils.toastShortDefault(context,MovieLanguagesActivity.this, "You are not a premium user.");
+            if (categoryList.get(position).containsKey("Premium") && !premiumUser) {
+                AppUtils.toastShortDefault(context, CategoriesActivity.this, "You are not a premium user.");
                 return;
             }
-            if (languageList.get(position).containsKey("base_url") && languageList.get(position).containsKey("reference_path")) {
-                String baseURL = Objects.requireNonNull(languageList.get(position).get("base_url")).toString();
-                String referencePath = Objects.requireNonNull(languageList.get(position).get("reference_path")).toString();
+            if (categoryList.get(position).containsKey("base_url") && categoryList.get(position).containsKey("reference_path")) {
+                String baseURL = Objects.requireNonNull(categoryList.get(position).get("base_url")).toString();
+                String referencePath = Objects.requireNonNull(categoryList.get(position).get("reference_path")).toString();
                 String title = getString(R.string.app_name);
-                if (languageList.get(position).containsKey("title")) {
-                    title = Objects.requireNonNull(languageList.get(position).get("title")).toString();
+                if (categoryList.get(position).containsKey("title")) {
+                    title = Objects.requireNonNull(categoryList.get(position).get("title")).toString();
                 }
                 webIntent = new Intent();
                 webIntent.setClass(context, MoviesActivity.class);
@@ -246,33 +247,33 @@ public class MovieLanguagesActivity extends AppCompatActivity {
                 webIntent.putExtra("title_movie_act", title);
                 startActivity(webIntent);
             }
-            if (languageList.get(position).containsKey("Movie")) {
-                String movieLink = Objects.requireNonNull(languageList.get(position).get("Movie")).toString();
+            if (categoryList.get(position).containsKey("Movie")) {
+                String movieLink = Objects.requireNonNull(categoryList.get(position).get("Movie")).toString();
                 webIntent = new Intent();
                 webIntent.setClass(context, MovieDetailsActivity.class);
                 webIntent.putExtra("Movie Link", movieLink);
                 startActivity(webIntent);
             }
-            if (languageList.get(position).containsKey("Link")) {
-                String itemLink = Objects.requireNonNull(languageList.get(position).get("Link")).toString();
+            if (categoryList.get(position).containsKey("Link")) {
+                String itemLink = Objects.requireNonNull(categoryList.get(position).get("Link")).toString();
                 if (URLUtil.isNetworkUrl(itemLink)) {
                     webIntent = new Intent();
                     webIntent.setClass(context, HiddenWebActivity.class);
                     webIntent.putExtra("HIDDEN_URL", itemLink);
                     startActivity(webIntent);
                 } else {
-                    AppUtils.toastShortDefault(context,MovieLanguagesActivity.this, itemLink);
+                    AppUtils.toastShortDefault(context, CategoriesActivity.this, itemLink);
                 }
             }
-            if (languageList.get(position).containsKey("Link1")) {
-                String itemLink = Objects.requireNonNull(languageList.get(position).get("Link1")).toString();
+            if (categoryList.get(position).containsKey("Link1")) {
+                String itemLink = Objects.requireNonNull(categoryList.get(position).get("Link1")).toString();
                 webIntent = new Intent();
                 webIntent.setClass(context, WebActivity.class);
                 webIntent.putExtra("WEB_URL", itemLink);
                 startActivity(webIntent);
             }
-            if (languageList.get(position).containsKey("Link2")) {
-                String itemLink = Objects.requireNonNull(languageList.get(position).get("Link2")).toString();
+            if (categoryList.get(position).containsKey("Link2")) {
+                String itemLink = Objects.requireNonNull(categoryList.get(position).get("Link2")).toString();
                 if (chromeTabs) {
                     CustomTabsIntent.Builder customTabsBuilder = new CustomTabsIntent.Builder();
                     CustomTabsIntent customTabsIntent = customTabsBuilder.build();
@@ -284,12 +285,12 @@ public class MovieLanguagesActivity extends AppCompatActivity {
                         webIntent.setData(Uri.parse(itemLink));
                         startActivity(webIntent);
                     } catch (android.content.ActivityNotFoundException notFoundException){
-                        AppUtils.toastShortError(context,MovieLanguagesActivity.this, "Failed to load url");
+                        AppUtils.toastShortError(context, CategoriesActivity.this, getString(R.string.error_activity_not_found));
                     }
                 }
             }
-            if (languageList.get(position).containsKey("Link3")) {
-                String itemLink = Objects.requireNonNull(languageList.get(position).get("Link3")).toString();
+            if (categoryList.get(position).containsKey("Link3")) {
+                String itemLink = Objects.requireNonNull(categoryList.get(position).get("Link3")).toString();
                 if (systemBrowser) {
                     if (chromeTabs) {
                         CustomTabsIntent.Builder customTabsBuilder = new CustomTabsIntent.Builder();
@@ -302,7 +303,7 @@ public class MovieLanguagesActivity extends AppCompatActivity {
                             webIntent.setData(Uri.parse(itemLink));
                             startActivity(webIntent);
                         } catch (android.content.ActivityNotFoundException notFoundException){
-                            AppUtils.toastShortError(context,MovieLanguagesActivity.this, "Failed to load url");
+                            AppUtils.toastShortError(context, CategoriesActivity.this, getString(R.string.error_activity_not_found));
                         }
                     }
                 } else {
@@ -312,8 +313,8 @@ public class MovieLanguagesActivity extends AppCompatActivity {
                     startActivity(webIntent);
                 }
             }
-            if (languageList.get(position).containsKey("Video")) {
-                String itemLink = Objects.requireNonNull(languageList.get(position).get("Video")).toString();
+            if (categoryList.get(position).containsKey("Video")) {
+                String itemLink = Objects.requireNonNull(categoryList.get(position).get("Video")).toString();
                 if (itemLink.contains("https://youtu.be/")) {
                     videoIntent = new Intent();
                     videoIntent.setClass(context, YouTubePlayerActivity.class);
@@ -324,7 +325,7 @@ public class MovieLanguagesActivity extends AppCompatActivity {
                     videoIntent.putExtra("VIDEO_URI", itemLink);
                     videoIntent.putExtra(IntentUtil.PREFER_EXTENSION_DECODERS_EXTRA, true);
                 }
-                context.startActivity(videoIntent);
+                startActivity(videoIntent);
             }
         });
     }
@@ -351,7 +352,7 @@ public class MovieLanguagesActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode,permissions,grantResults);
         if (requestCode == REQUEST_CODE_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                AppUtils.toastShortError(context,MovieLanguagesActivity.this,"Failed to get permission. Give us permission manually");
+                AppUtils.toastShortError(context, CategoriesActivity.this, getString(R.string.error_permission_denied, "storage"));
                 finish();
             } else {
                 initializeActivity();
@@ -361,29 +362,24 @@ public class MovieLanguagesActivity extends AppCompatActivity {
 
     private void getLanguages(){
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference("Languages");
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Categories");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
-                languageList = new ArrayList<>();
-                try {
-                    GenericTypeIndicator<HashMap<String, Object>> ind = new GenericTypeIndicator<HashMap<String, Object>>() {
-                    };
-                    for (DataSnapshot data : dataSnapshot.getChildren()) {
-                        HashMap<String, Object> map = data.getValue(ind);
-                        languageList.add(map);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                categoryList = new ArrayList<>();
+                GenericTypeIndicator<HashMap<String, Object>> ind = new GenericTypeIndicator<HashMap<String, Object>>() {};
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    HashMap<String, Object> map = data.getValue(ind);
+                    categoryList.add(map);
                 }
-                appData.edit().putString("LanguageData",new Gson().toJson(languageList)).apply();
-                gridView.setAdapter(new GridViewAdapter(languageList));
+                appData.edit().putString("category_list_data",new Gson().toJson(categoryList)).apply();
+                gridView.setAdapter(new GridViewAdapter(categoryList));
                 ((BaseAdapter)gridView.getAdapter()).notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NotNull DatabaseError error) {
-                AppUtils.toastShortError(context,MovieLanguagesActivity.this,error.getMessage());
+                AppUtils.toastShortError(context, CategoriesActivity.this, getString(R.string.error_fdb_on_cancelled));
             }
         });
     }
@@ -428,11 +424,11 @@ public class MovieLanguagesActivity extends AppCompatActivity {
             final TextView title = convertView.findViewById(R.id.title);
             final ImageView backdrop = convertView.findViewById(R.id.backdrop);
 
-            if (languageList.get(position).containsKey("Title")) {
-                title.setText(Objects.requireNonNull(languageList.get(position).get("Title")).toString().toUpperCase());
+            if (data.get(position).containsKey("title")) {
+                title.setText(Objects.requireNonNull(data.get(position).get("title")).toString().toUpperCase());
             }
-            if (languageList.get(position).containsKey("Backdrop") && !dataSaver) {
-                String backdropPath = Objects.requireNonNull(languageList.get(position).get("Backdrop")).toString();
+            if (data.get(position).containsKey("backdrop") && !dataSaver) {
+                String backdropPath = Objects.requireNonNull(data.get(position).get("backdrop")).toString();
                 Glide.with(context).load(backdropPath).error(R.drawable.img_backdrop_languages).into(backdrop);
             } else {
                 backdrop.setImageResource(R.drawable.img_backdrop_languages);

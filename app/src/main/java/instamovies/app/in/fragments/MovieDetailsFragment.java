@@ -15,14 +15,27 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
 import instamovies.app.in.R;
+import instamovies.app.in.api.tmdb.Genres;
+import instamovies.app.in.api.tmdb.MovieDetailsApi;
+import instamovies.app.in.api.tmdb.MovieDetailsResponses;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MovieDetailsFragment extends BottomSheetDialogFragment {
 
-    private View.OnClickListener onClickListener = null;
-    public TextView movieTitle, movieGenre, movieYear, movieRating, movieSummary, errorMessage;
-    public ProgressBar progressBar;
-    public LinearLayout contentLayout, progressLayout;
+    private TextView movieTitle, movieGenre, movieYear, movieRating, movieSummary, errorMessage;
+    private ProgressBar progressBar;
+    private LinearLayout contentLayout, progressLayout;
+    private String fileID;
 
     @Contract(" -> new")
     public static @NotNull MovieDetailsFragment newInstance() {
@@ -56,9 +69,9 @@ public class MovieDetailsFragment extends BottomSheetDialogFragment {
         errorMessage = contentView.findViewById(R.id.error_message);
         contentLayout = contentView.findViewById(R.id.layout_content);
         progressLayout = contentView.findViewById(R.id.layout_progress);
-
         Button downloadButton = contentView.findViewById(R.id.button_download);
-        downloadButton.setOnClickListener(onClickListener);
+        downloadButton.setOnClickListener(v -> dismiss());
+        fetchData(fileID);
     }
 
     @Override
@@ -99,7 +112,61 @@ public class MovieDetailsFragment extends BottomSheetDialogFragment {
         return (int) ((450 * density) + 0.5f);
     }
 
-    public void setOnClickListener(View.OnClickListener onClickListener) {
-        this.onClickListener = onClickListener;
+    private void fetchData(String id) {
+        String apiKey = getString(R.string.tmdb_api_key);
+        OkHttpClient okHttpClient = new OkHttpClient
+                .Builder().addInterceptor(new HttpLoggingInterceptor()
+                .setLevel(HttpLoggingInterceptor.Level.BODY)).build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .client(okHttpClient)
+                .baseUrl(MovieDetailsApi.JSON_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        MovieDetailsApi theMovieDbApi = retrofit.create(MovieDetailsApi.class);
+        Call<MovieDetailsResponses> call = theMovieDbApi.getMovie(id, apiKey, "en-US");
+        call.enqueue(new Callback<MovieDetailsResponses>() {
+            @Override
+            public void onResponse(@NotNull Call<MovieDetailsResponses> call, @NotNull Response<MovieDetailsResponses> response) {
+                if (!response.isSuccessful()) {
+                    progressBar.setVisibility(View.GONE);
+                    errorMessage.setText(getString(R.string.error_retrofit_response));
+                    errorMessage.setVisibility(View.VISIBLE);
+                    return;
+                }
+
+                MovieDetailsResponses dbResponses = response.body();
+                if (dbResponses != null) {
+                    StringBuilder genre = new StringBuilder();
+                    List<Genres> genresList = dbResponses.getGenres();
+                    for (int i = 0; i < genresList.size(); i++) {
+                        if (i != genresList.size() - 1) {
+                            genre.append(genresList.get(i).getGenre()).append(", ");
+                        } else {
+                            genre.append(genresList.get(i).getGenre());
+                        }
+                    }
+                    progressLayout.setVisibility(View.GONE);
+                    contentLayout.setVisibility(View.VISIBLE);
+                    movieTitle.setText(dbResponses.getTitle());
+                    movieGenre.setText(String.valueOf(genre));
+                    movieYear.setText(dbResponses.getYear());
+                    movieRating.setText(String.valueOf(dbResponses.getRating()));
+                    movieSummary.setText(dbResponses.getOverview());
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<MovieDetailsResponses> call, @NotNull Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                errorMessage.setText(getString(R.string.error_retrofit_enqueue_failed));
+                errorMessage.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    public void setFileID(String fileID) {
+        this.fileID = fileID;
     }
 }

@@ -18,7 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import org.jetbrains.annotations.NotNull;
 import instamovies.app.in.models.ThumbnailModel;
-import instamovies.app.in.MovieLanguagesActivity;
+import instamovies.app.in.CategoriesActivity;
 import instamovies.app.in.R;
 import instamovies.app.in.utils.RecyclerTouchListener;
 
@@ -63,7 +63,7 @@ public class ThumbnailDatabase {
             public void onClick(View view, int position) {
                 Intent moviesIntent = new Intent();
                 moviesIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                moviesIntent.setClass(context, MovieLanguagesActivity.class);
+                moviesIntent.setClass(context, CategoriesActivity.class);
                 context.startActivity(moviesIntent);
             }
 
@@ -110,7 +110,7 @@ public class ThumbnailDatabase {
             public void onClick(View view, int position) {
                 Intent moviesIntent = new Intent();
                 moviesIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                moviesIntent.setClass(context, MovieLanguagesActivity.class);
+                moviesIntent.setClass(context, CategoriesActivity.class);
                 context.startActivity(moviesIntent);
             }
 

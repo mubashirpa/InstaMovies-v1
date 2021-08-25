@@ -50,22 +50,11 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import org.jetbrains.annotations.NotNull;
 import java.net.URISyntaxException;
-import java.util.List;
 import javax.annotation.Nullable;
-import instamovies.app.in.api.tmdb.Genres;
-import instamovies.app.in.api.tmdb.MovieDetailsApi;
-import instamovies.app.in.api.tmdb.MovieDetailsResponses;
 import instamovies.app.in.fragments.BottomSheetFragment;
 import instamovies.app.in.fragments.MovieDetailsFragment;
 import instamovies.app.in.player.IntentUtil;
 import instamovies.app.in.utils.AppUtils;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HiddenWebActivity extends AppCompatActivity {
 
@@ -576,69 +565,6 @@ public class HiddenWebActivity extends AppCompatActivity {
         chromeTabs = settingsPreferences.getBoolean("chrome_tabs_preference", true);
     }
 
-    private void fetchMovieDetails(String fileId) {
-        MovieDetailsFragment movieDetailsFragment = MovieDetailsFragment.newInstance();
-        movieDetailsFragment.setOnClickListener(v -> movieDetailsFragment.dismiss());
-        movieDetailsFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
-
-        String apiKey = getString(R.string.tmdb_api_key);
-
-        OkHttpClient okHttpClient = new OkHttpClient
-                .Builder().addInterceptor(new HttpLoggingInterceptor()
-                .setLevel(HttpLoggingInterceptor.Level.BODY)).build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .client(okHttpClient)
-                .baseUrl(MovieDetailsApi.JSON_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        MovieDetailsApi theMovieDbApi = retrofit.create(MovieDetailsApi.class);
-        Call<MovieDetailsResponses> call = theMovieDbApi.getMovie(fileId, apiKey, "en-US");
-        call.enqueue(new Callback<MovieDetailsResponses>() {
-            @Override
-            public void onResponse(@NotNull Call<MovieDetailsResponses> call, @NotNull Response<MovieDetailsResponses> response) {
-                if (!response.isSuccessful()) {
-                    if (movieDetailsFragment.getDialog() != null) {
-                        movieDetailsFragment.progressBar.setVisibility(View.GONE);
-                        movieDetailsFragment.errorMessage.setVisibility(View.VISIBLE);
-                    }
-                    return;
-                }
-                MovieDetailsResponses dbResponses = response.body();
-                if (dbResponses != null) {
-                    StringBuilder genre = new StringBuilder();
-                    List<Genres> genresList = dbResponses.getGenres();
-                    for (int i = 0; i < genresList.size(); i++) {
-                        if (i != genresList.size() - 1) {
-                            genre.append(genresList.get(i).getGenre()).append(", ");
-                        } else {
-                            genre.append(genresList.get(i).getGenre());
-                        }
-                    }
-
-                    if (movieDetailsFragment.getDialog() != null) {
-                        movieDetailsFragment.progressLayout.setVisibility(View.GONE);
-                        movieDetailsFragment.contentLayout.setVisibility(View.VISIBLE);
-                        movieDetailsFragment.movieTitle.setText(dbResponses.getTitle());
-                        movieDetailsFragment.movieGenre.setText(String.valueOf(genre));
-                        movieDetailsFragment.movieYear.setText(dbResponses.getYear());
-                        movieDetailsFragment.movieRating.setText(String.valueOf(dbResponses.getRating()));
-                        movieDetailsFragment.movieSummary.setText(dbResponses.getOverview());
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<MovieDetailsResponses> call, @NotNull Throwable t) {
-                if (movieDetailsFragment.getDialog() != null) {
-                    movieDetailsFragment.progressBar.setVisibility(View.GONE);
-                    movieDetailsFragment.errorMessage.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-    }
-
     private void handleNonNetworkUrls(String url) {
         if (url.startsWith("link://")) {
             String replacedUrl = url.replace("link://","");
@@ -775,8 +701,10 @@ public class HiddenWebActivity extends AppCompatActivity {
         }
 
         @JavascriptInterface
-        public void showMovieDetails(String imdb_id) {
-            fetchMovieDetails(imdb_id);
+        public void showMovieDetails(String imdbID) {
+            MovieDetailsFragment movieDetailsFragment = MovieDetailsFragment.newInstance();
+            movieDetailsFragment.setFileID(imdbID);
+            movieDetailsFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
         }
 
         @JavascriptInterface

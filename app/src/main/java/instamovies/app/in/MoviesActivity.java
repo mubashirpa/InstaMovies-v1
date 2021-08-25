@@ -32,7 +32,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.bumptech.glide.Glide;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import androidx.appcompat.widget.SearchView;
@@ -44,9 +43,6 @@ import instamovies.app.in.fragments.MovieDetailsFragment;
 import instamovies.app.in.fragments.RequestDialogFragment;
 import instamovies.app.in.player.IntentUtil;
 import instamovies.app.in.utils.AppUtils;
-import instamovies.app.in.api.tmdb.Genres;
-import instamovies.app.in.api.tmdb.MovieDetailsApi;
-import instamovies.app.in.api.tmdb.MovieDetailsResponses;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
@@ -74,9 +70,7 @@ public class MoviesActivity extends AppCompatActivity {
     private boolean systemBrowser = false;
     private boolean chromeTabs = true;
     private boolean dataSaver = false;
-    private String apiKey;
     private TextView noResultsText;
-
     private View progressStatus;
     private ProgressBar progressBar;
     private LinearLayout errorView;
@@ -110,15 +104,12 @@ public class MoviesActivity extends AppCompatActivity {
         String baseURL = getIntent().getStringExtra("base_url_movie_json");
         setTitle(getIntent().getStringExtra("title_movie_act"));
         noResultsText = findViewById(R.id.no_results_text);
-
         progressStatus = findViewById(R.id.progress_status_view);
         progressBar = progressStatus.findViewById(R.id.progressbar);
         errorView = progressStatus.findViewById(R.id.error_view);
         errorText = progressStatus.findViewById(R.id.cause_text);
         Button retryButton = progressStatus.findViewById(R.id.retry_button);
-
         adView = findViewById(R.id.adView);
-        apiKey = getString(R.string.tmdb_api_key);
         checkSettings();
 
         movieEventListener = new ValueEventListener() {
@@ -151,6 +142,8 @@ public class MoviesActivity extends AppCompatActivity {
         } else {
             if (URLUtil.isNetworkUrl(baseURL) && baseURL.endsWith("/")) {
                 loadMoviesFromJson(baseURL, referencePath);
+            } else {
+                AppUtils.toastShortError(context, MoviesActivity.this, getString(R.string.error_default));
             }
         }
 
@@ -197,7 +190,7 @@ public class MoviesActivity extends AppCompatActivity {
                         webIntent.setData(Uri.parse(itemLink));
                         startActivity(webIntent);
                     } catch (android.content.ActivityNotFoundException notFoundException){
-                        AppUtils.toastShortError(context,MoviesActivity.this, "Failed to load url");
+                        AppUtils.toastShortError(context, MoviesActivity.this, getString(R.string.error_activity_not_found));
                     }
                 }
             }
@@ -215,7 +208,7 @@ public class MoviesActivity extends AppCompatActivity {
                             webIntent.setData(Uri.parse(itemLink));
                             startActivity(webIntent);
                         } catch (android.content.ActivityNotFoundException notFoundException){
-                            AppUtils.toastShortError(context,MoviesActivity.this, "Failed to load url");
+                            AppUtils.toastShortError(context, MoviesActivity.this, getString(R.string.error_activity_not_found));
                         }
                     }
                 } else {
@@ -243,8 +236,10 @@ public class MoviesActivity extends AppCompatActivity {
 
         gridView.setOnItemLongClickListener((parent, view, position, id) -> {
             if (movieList.get(position).containsKey("imdb_id")) {
-                String itemID = Objects.requireNonNull(movieList.get(position).get("imdb_id")).toString();
-                fetchMovieDetails(itemID);
+                String fileID = Objects.requireNonNull(movieList.get(position).get("imdb_id")).toString();
+                MovieDetailsFragment movieDetailsFragment = MovieDetailsFragment.newInstance();
+                movieDetailsFragment.setFileID(fileID);
+                movieDetailsFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
             }
             return true;
         });
@@ -252,7 +247,7 @@ public class MoviesActivity extends AppCompatActivity {
         retryButton.setOnClickListener(view -> {
             errorView.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
-            // using timer to avoid multiple clicking on retry
+            // Using timer to avoid multiple clicking on retry
             handler = new Handler(Looper.getMainLooper());
             handler.postDelayed(() -> {
                 if (!isDestroyed()) {
@@ -264,8 +259,7 @@ public class MoviesActivity extends AppCompatActivity {
                         if (URLUtil.isNetworkUrl(baseURL) && baseURL.endsWith("/")) {
                             loadMoviesFromJson(baseURL, referencePath);
                         } else {
-                            AppUtils.toastShortError(context, MoviesActivity.this, "Something wrong");
-                            finish();
+                            AppUtils.toastShortError(context, MoviesActivity.this, getString(R.string.error_default));
                         }
                     }
                 }
@@ -391,67 +385,6 @@ public class MoviesActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
         errorText.setText(error);
         errorView.setVisibility(View.VISIBLE);
-    }
-
-    private void fetchMovieDetails(String fileId) {
-        MovieDetailsFragment movieDetailsFragment = MovieDetailsFragment.newInstance();
-        movieDetailsFragment.setOnClickListener(v -> movieDetailsFragment.dismiss());
-        movieDetailsFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
-
-        OkHttpClient okHttpClient = new OkHttpClient
-                .Builder().addInterceptor(new HttpLoggingInterceptor()
-                .setLevel(HttpLoggingInterceptor.Level.BODY)).build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .client(okHttpClient)
-                .baseUrl(MovieDetailsApi.JSON_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        MovieDetailsApi theMovieDbApi = retrofit.create(MovieDetailsApi.class);
-        Call<MovieDetailsResponses> call = theMovieDbApi.getMovie(fileId, apiKey, "en-US");
-        call.enqueue(new Callback<MovieDetailsResponses>() {
-            @Override
-            public void onResponse(@NotNull Call<MovieDetailsResponses> call, @NotNull Response<MovieDetailsResponses> response) {
-                if (!response.isSuccessful()) {
-                    if (movieDetailsFragment.getDialog() != null) {
-                        movieDetailsFragment.progressBar.setVisibility(View.GONE);
-                        movieDetailsFragment.errorMessage.setVisibility(View.VISIBLE);
-                    }
-                    return;
-                }
-                MovieDetailsResponses dbResponses = response.body();
-                if (dbResponses != null) {
-                    StringBuilder genre = new StringBuilder();
-                    List<Genres> genresList = dbResponses.getGenres();
-                    for (int i = 0; i < genresList.size(); i++) {
-                        if (i != genresList.size() - 1) {
-                            genre.append(genresList.get(i).getGenre()).append(", ");
-                        } else {
-                            genre.append(genresList.get(i).getGenre());
-                        }
-                    }
-
-                    if (movieDetailsFragment.getDialog() != null) {
-                        movieDetailsFragment.progressLayout.setVisibility(View.GONE);
-                        movieDetailsFragment.contentLayout.setVisibility(View.VISIBLE);
-                        movieDetailsFragment.movieTitle.setText(dbResponses.getTitle());
-                        movieDetailsFragment.movieGenre.setText(String.valueOf(genre));
-                        movieDetailsFragment.movieYear.setText(dbResponses.getYear());
-                        movieDetailsFragment.movieRating.setText(String.valueOf(dbResponses.getRating()));
-                        movieDetailsFragment.movieSummary.setText(dbResponses.getOverview());
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NotNull Call<MovieDetailsResponses> call, @NotNull Throwable t) {
-                if (movieDetailsFragment.getDialog() != null) {
-                    movieDetailsFragment.progressBar.setVisibility(View.GONE);
-                    movieDetailsFragment.errorMessage.setVisibility(View.VISIBLE);
-                }
-            }
-        });
     }
 
     private void loadMoviesFromJson(String url, String path) {

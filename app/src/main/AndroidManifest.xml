@@ -98,7 +98,7 @@
             android:configChanges="smallestScreenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MovieLanguagesActivity"
+            android:name=".CategoriesActivity"
             android:configChanges="smallestScreenSize"
             android:screenOrientation="portrait" />
         <activity
