@@ -25,6 +25,8 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.*;
@@ -64,21 +66,21 @@ public class WebActivity extends AppCompatActivity {
     private AlertDialog.Builder reportDialog;
     private String reportMessage;
     private WebView webView;
-    private ProgressBar progressBar;
     private SharedPreferences appData;
     private final FirebaseFirestore reportDB = FirebaseFirestore.getInstance();
     private AlertDialog.Builder sslErrorPop;
     private SharedPreferences settingsPreferences;
-    private String errorUrl = null;
     private TextView titleText;
     private final String errorPageUrl = "about:blank";
     private String pageUrl;
     private ValueCallback<Uri[]> uploadMessage;
-    private View errorLinear;
     private BottomSheetFragment bottomSheetDialog;
     private Context context;
-    private final String LOG_TAG = "WebActivity";
     private boolean hasShownCustomView = false;
+    private ProgressBar progressBar;
+    private View errorLinear;
+    private Handler handler;
+    private String errorUrl = null;
     private String errorDetails = "";
     private AdView adView;
     private DownloadManager downloadManager;
@@ -232,12 +234,12 @@ public class WebActivity extends AppCompatActivity {
                                         try {
                                             startActivity(marketIntent);
                                         } catch (ActivityNotFoundException notFoundException) {
-                                            Log.e(LOG_TAG, notFoundException.getMessage());
+                                            AppUtils.toastShortError(context, WebActivity.this, getString(R.string.error_activity_not_found));
                                         }
                                     }
                                 }
                             } catch (URISyntaxException uriSyntaxException){
-                                Log.e(LOG_TAG, uriSyntaxException.getMessage());
+                                AppUtils.toastShortError(context, WebActivity.this, getString(R.string.error_uri_syntax_exception));
                             }
                         } else if (loadingUrl.startsWith("magnet:")){
                             bottomSheetDialog.setTitle("Error");
@@ -249,7 +251,7 @@ public class WebActivity extends AppCompatActivity {
                                 try {
                                     startActivity(marketIntent);
                                 } catch (ActivityNotFoundException notFoundException1){
-                                    AppUtils.toastShortError(context,WebActivity.this, "Failed to download Torrent client");
+                                    AppUtils.toastShortError(context, WebActivity.this, getString(R.string.error_activity_not_found));
                                 }
                             });
                             bottomSheetDialog.show(getSupportFragmentManager(), "BottomSheetDialog");
@@ -308,12 +310,12 @@ public class WebActivity extends AppCompatActivity {
                                         try {
                                             startActivity(marketIntent);
                                         } catch (ActivityNotFoundException notFoundException) {
-                                            Log.e(LOG_TAG, notFoundException.getMessage());
+                                            AppUtils.toastShortError(context, WebActivity.this, getString(R.string.error_activity_not_found));
                                         }
                                     }
                                 }
                             } catch (URISyntaxException uriSyntaxException){
-                                Log.e(LOG_TAG, uriSyntaxException.getMessage());
+                                AppUtils.toastShortError(context, WebActivity.this, getString(R.string.error_uri_syntax_exception));
                             }
                         } else if (loadingUrl.startsWith("magnet:")){
                             bottomSheetDialog.setTitle("Error");
@@ -325,7 +327,7 @@ public class WebActivity extends AppCompatActivity {
                                 try {
                                     startActivity(marketIntent);
                                 } catch (ActivityNotFoundException notFoundException1){
-                                    AppUtils.toastShortError(context,WebActivity.this, "Failed to download Torrent client");
+                                    AppUtils.toastShortError(context, WebActivity.this, getString(R.string.error_activity_not_found));
                                 }
                             });
                             bottomSheetDialog.show(getSupportFragmentManager(), "BottomSheetDialog");
@@ -383,26 +385,10 @@ public class WebActivity extends AppCompatActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                progressBar.setVisibility(View.VISIBLE);
                 if (!url.equals(errorPageUrl)) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    webView.setVisibility(View.VISIBLE);
                     errorUrl = null;
-                    if (!view.isShown()) {
-                        view.setVisibility(View.VISIBLE);
-                    }
-                    if (errorLinear.isShown()) {
-                        errorLinear.setVisibility(View.GONE);
-                    }
-                }
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                if (url.startsWith("https://dood.so/d/")) {
-                    view.evaluateJavascript("javascript:var link = document.getElementsByClassName('btn')[2].href; location.replace(link);", null);
-                }
-                if (url.startsWith("https://dood.so/download/")) {
-                    view.evaluateJavascript("javascript:document.getElementsByClassName('btn-primary')[0].click();", null);
                 }
             }
         });
@@ -548,7 +534,17 @@ public class WebActivity extends AppCompatActivity {
             }
         });
 
-        reloadButton.setOnClickListener(v -> goBackWebView());
+        reloadButton.setOnClickListener(v -> {
+            errorLinear.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            // Using timer to avoid multiple clicking on retry
+            handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(() -> {
+                if (!isDestroyed()) {
+                    goBackWebView();
+                }
+            }, 300);
+        });
 
         detailsButton.setOnClickListener(v -> {
             AlertDialog.Builder errorDetailsDialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
@@ -617,11 +613,14 @@ public class WebActivity extends AppCompatActivity {
     @Override
     public void onDestroy(){
         super.onDestroy();
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
         webView.destroy();
         try {
             unregisterReceiver(downloadReceiver);
         } catch (Exception exception) {
-            Log.e(LOG_TAG, exception.getMessage());
+            Log.e("WebActivity", exception.getMessage());
         }
     }
 
@@ -720,11 +719,12 @@ public class WebActivity extends AppCompatActivity {
             progressBar.setProgress(newProgress);
             if (newProgress == 100) {
                 progressBar.setVisibility(View.GONE);
+                progressBar.setProgress(5);
             }
         }
 
         public void onReceivedTitle(WebView view, @NotNull String title) {
-            if (title.equals("Webpage not available") || title.equals(errorPageUrl)){
+            if (title.equals("Webpage not available") || title.equals(errorPageUrl)) {
                 setTitle("Insta Movies");
             } else {
                 titleText.setText(title);

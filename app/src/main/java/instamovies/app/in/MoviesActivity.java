@@ -263,7 +263,7 @@ public class MoviesActivity extends AppCompatActivity {
                         }
                     }
                 }
-            }, 500);
+            }, 400);
         });
     }
 

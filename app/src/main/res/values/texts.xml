@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="feedback_info">Some account and system info will be send to our developers. We\'ll use the info that you give us to address technical issues and improve our services, subject to our <a href="https://imoviesapp.wordpress.com/privacy-policy" >Privacy policy</a> and <a href="https://imoviesapp.wordpress.com/terms-conditions" >Terms of service.</a></string>
-    <string name="copyright_info">All the contents and videos shown in the app belongs to the respected owners and not me. I am not the owner of any contents available in the app. Please if You have any issue with the content used in my application or you find something that belongs to you, send me a message at mubashirmubajr11@gmail.com and i will delete it right away</string>
+    <string name="copyright_info">All the contents and videos shown in the app belongs to the respected owners and not me. I am not the owner of any contents available in the app. Please if You have any issue with the content used in my application or you find something that belongs to you, send me a message at mubashirpa@duck.com and i will delete it right away</string>
     <string name="leave_product_feedback_or_share_your_ideas">Leave product feedback or share your ideas</string>
     <string name="send_feedback">Send feedback</string>
     <string name="size">Size</string>
@@ -41,7 +41,6 @@
     <string name="updating">Updating</string>
     <string name="_0">0%</string>
     <string name="retry">Retry</string>
-    <string name="language_caps">LANGUAGES</string>
     <string name="scroll_main_bottom">Disclaimer:- All our posts are free available on internet posted by somebody else.. I\'m not violating any copyright law. If anything is against the law notify me so that it can be removed. If you are the rightful owner of any contents please contact us immediately and we will delete it. Share app with your friends and support us.</string>
     <string name="malayalam">Malayalam</string>
     <string name="tamil">Tamil</string>
@@ -78,10 +77,12 @@
 
     <!-- Error strings -->
     <string name="error_default">An error occurred</string>
+    <string name="error_no_connection">There is no network connection right now</string>
     <string name="error_fdb_on_cancelled">Failed to connect with database</string>
     <string name="error_retrofit_enqueue_failed">Failed to connect with database</string>
     <string name="error_retrofit_response">No response found</string>
     <string name="error_activity_not_found">No activity found to handle intent</string>
+    <string name="error_uri_syntax_exception">Failed to parse uri</string>
     <string name="error_permission_denied">Permission for <xliff:g id="permission_type">%1$s</xliff:g> was denied</string>
 
     <string name="details">Details</string>
@@ -102,6 +103,5 @@
     <string name="later">Later</string>
     <string name="update_manually">UPDATE MANUALLY</string>
     <string name="update_message">A newer version of the app is available to download. Please update the app and continue using. Downloading the latest update you will get the latest features, improvements and bug fixes of Insta Movies.</string>
-    <string name="error">Error</string>
     <string name="no_movies_or_tv_shows_n_found">No movies or TV shows\n found</string>
 </resources>

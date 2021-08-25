@@ -2,6 +2,7 @@ package instamovies.app.in;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
@@ -26,7 +27,8 @@ import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
@@ -47,7 +49,9 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import org.jetbrains.annotations.NotNull;
 import java.net.URISyntaxException;
 import javax.annotation.Nullable;
@@ -59,7 +63,6 @@ import instamovies.app.in.utils.AppUtils;
 public class HiddenWebActivity extends AppCompatActivity {
 
     private WebView webView;
-    private ProgressBar progressBar;
     private String pageUrl;
     private Intent webIntent = new Intent();
     private Intent handleIntent = new Intent();
@@ -68,10 +71,12 @@ public class HiddenWebActivity extends AppCompatActivity {
     private SharedPreferences settingsPreferences;
     private BottomSheetFragment bottomSheetDialog;
     private ValueCallback<Uri[]> uploadMessage;
-    private View errorLinear;
+    private ProgressBar progressBar;
+    private Handler handler;
+    private LinearLayout errorLinear;
+    private TextView causeText;
     private final String errorPageUrl = "about:blank";
     private Context context;
-    private final String LOG_TAG = "HiddenWebActivity";
     private boolean hasShownCustomView = false;
     private boolean systemBrowser = false;
     private boolean chromeTabs = true;
@@ -95,15 +100,26 @@ public class HiddenWebActivity extends AppCompatActivity {
         }
         toolbar.setNavigationOnClickListener(_v -> finish());
         webView = findViewById(R.id.webView);
-        progressBar = findViewById(R.id.progressbar);
         pageUrl = getIntent().getStringExtra("HIDDEN_URL");
         settingsPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         bottomSheetDialog = BottomSheetFragment.newInstance();
-        errorLinear = findViewById(R.id.error_linear);
-        Button retryButton = errorLinear.findViewById(R.id.retry_button);
+        progressBar = findViewById(R.id.progressbar);
+        errorLinear = findViewById(R.id.error_view);
+        causeText = findViewById(R.id.cause_text);
+        Button retryButton = findViewById(R.id.retry_button);
         checkSettings();
 
-        retryButton.setOnClickListener(v -> goBackWebView());
+        retryButton.setOnClickListener(v -> {
+            errorLinear.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            // Using timer to avoid multiple clicking on retry
+            handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(() -> {
+                if (!isDestroyed()) {
+                    goBackWebView();
+                }
+            }, 400);
+        });
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -129,7 +145,7 @@ public class HiddenWebActivity extends AppCompatActivity {
                                     handleIntent.setData(Uri.parse(loadingUrl));
                                     startActivity(handleIntent);
                                 } catch (android.content.ActivityNotFoundException notFoundException){
-                                    AppUtils.toastShortError(context,HiddenWebActivity.this, "Failed to load url");
+                                    AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
                                 }
                             }
                         }
@@ -169,7 +185,7 @@ public class HiddenWebActivity extends AppCompatActivity {
                                     handleIntent.setData(Uri.parse(loadingUrl));
                                     startActivity(handleIntent);
                                 } catch (android.content.ActivityNotFoundException notFoundException){
-                                    AppUtils.toastShortError(context,HiddenWebActivity.this, "Failed to load url");
+                                    AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
                                 }
                             }
                         }
@@ -189,7 +205,6 @@ public class HiddenWebActivity extends AppCompatActivity {
             }
 
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                Log.e(LOG_TAG, error.toString());
                 if (handler != null){
                     handler.proceed();
                 }
@@ -199,18 +214,12 @@ public class HiddenWebActivity extends AppCompatActivity {
             @TargetApi(Build.VERSION_CODES.M)
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 String failingUrl = request.getUrl().toString();
-                view.setVisibility(View.GONE);
-                view.loadUrl(errorPageUrl);
-                errorUrl = failingUrl;
-                errorLinear.setVisibility(View.VISIBLE);
+                onPageError(getString(R.string.error_no_connection), failingUrl);
             }
 
             @Deprecated
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                view.setVisibility(View.GONE);
-                view.loadUrl(errorPageUrl);
-                errorUrl = failingUrl;
-                errorLinear.setVisibility(View.VISIBLE);
+                onPageError(getString(R.string.error_no_connection), failingUrl);
             }
 
             @Override
@@ -218,13 +227,8 @@ public class HiddenWebActivity extends AppCompatActivity {
                 super.onPageStarted(view, url, favicon);
                 if (!url.equals(errorPageUrl)) {
                     progressBar.setVisibility(View.VISIBLE);
+                    webView.setVisibility(View.VISIBLE);
                     errorUrl = null;
-                    if (!view.isShown()) {
-                        view.setVisibility(View.VISIBLE);
-                    }
-                    if (errorLinear.isShown()) {
-                        errorLinear.setVisibility(View.GONE);
-                    }
                 }
             }
 
@@ -308,6 +312,9 @@ public class HiddenWebActivity extends AppCompatActivity {
     @Override
     public void onDestroy(){
         super.onDestroy();
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        }
         webView.destroy();
     }
 
@@ -565,7 +572,16 @@ public class HiddenWebActivity extends AppCompatActivity {
         chromeTabs = settingsPreferences.getBoolean("chrome_tabs_preference", true);
     }
 
-    private void handleNonNetworkUrls(String url) {
+    private void onPageError(String error, String url) {
+        progressBar.setVisibility(View.GONE);
+        webView.setVisibility(View.GONE);
+        webView.loadUrl(errorPageUrl);
+        errorUrl = url;
+        causeText.setText(error);
+        errorLinear.setVisibility(View.VISIBLE);
+    }
+
+    private void handleNonNetworkUrls(@NonNull String url) {
         if (url.startsWith("link://")) {
             String replacedUrl = url.replace("link://","");
             webIntent = new Intent();
@@ -593,7 +609,7 @@ public class HiddenWebActivity extends AppCompatActivity {
                     handleIntent.setData(Uri.parse(replacedUrl));
                     startActivity(handleIntent);
                 } catch (android.content.ActivityNotFoundException notFoundException){
-                    AppUtils.toastShortError(context,HiddenWebActivity.this, "Failed to load url");
+                    AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
                 }
             }
         }
@@ -611,7 +627,7 @@ public class HiddenWebActivity extends AppCompatActivity {
                         handleIntent.setData(Uri.parse(replacedUrl));
                         startActivity(handleIntent);
                     } catch (android.content.ActivityNotFoundException notFoundException){
-                        AppUtils.toastShortError(context,HiddenWebActivity.this, "Failed to load url");
+                        AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
                     }
                 }
             } else {
@@ -657,7 +673,7 @@ public class HiddenWebActivity extends AppCompatActivity {
                     try {
                         startActivity(marketIntent);
                     } catch (ActivityNotFoundException notFoundException1){
-                        AppUtils.toastShortError(context,HiddenWebActivity.this, "Failed to download Torrent client");
+                        AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
                     }
                 });
                 bottomSheetDialog.show(getSupportFragmentManager(), "BottomSheetDialog");
@@ -677,12 +693,12 @@ public class HiddenWebActivity extends AppCompatActivity {
                         try {
                             startActivity(marketIntent);
                         } catch (ActivityNotFoundException notFoundException) {
-                            Log.e(LOG_TAG, notFoundException.getMessage());
+                            AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
                         }
                     }
                 }
             } catch (URISyntaxException uriSyntaxException){
-                Log.e(LOG_TAG, uriSyntaxException.getMessage());
+                AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_uri_syntax_exception));
             }
         }
     }

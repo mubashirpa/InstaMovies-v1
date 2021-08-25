@@ -25,12 +25,33 @@
             android:id="@+id/webView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-        <include
-            android:id="@+id/error_linear"
-            android:layout_height="match_parent"
+        <LinearLayout
+            android:id="@+id/error_view"
             android:layout_width="match_parent"
-            layout="@layout/layout_error_connection"
-            android:visibility="gone"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="20dp"
+            android:background="@color/colorLayoutPrimary"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/cause_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:textColor="@color/colorTextSecondary" />
+            <Button
+                android:id="@+id/retry_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/retry"
+                android:textColor="@color/colorTextPrimary"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_marginTop="15dp"/>
+        </LinearLayout>
         <ProgressBar
             android:id="@+id/progressbar"
             android:layout_width="wrap_content"

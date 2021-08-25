@@ -10,7 +10,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="instamovies.app.in"
-            android:targetClass="instamovies.app.in.MovieLanguagesActivity"/>
+            android:targetClass="instamovies.app.in.CategoriesActivity"/>
     </shortcut>
     <shortcut
         android:shortcutId="feedback"
