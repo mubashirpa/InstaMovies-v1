@@ -250,7 +250,7 @@ public class FeedbackActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     initializeActivity();
                 } else {
-                    AppUtils.toastShortError(context,FeedbackActivity.this, "Accounts Permission denied");
+                    AppUtils.toastShortError(context, FeedbackActivity.this, getString(R.string.error_permission_denied, "accounts"));
                     finish();
                 }
                 return;
@@ -258,7 +258,7 @@ public class FeedbackActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     pickImage();
                 } else {
-                    AppUtils.toastShortError(context,FeedbackActivity.this, "Storage Permission denied");
+                    AppUtils.toastShortError(context, FeedbackActivity.this, getString(R.string.error_permission_denied, "storage"));
                 }
         }
     }

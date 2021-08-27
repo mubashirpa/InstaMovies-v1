@@ -118,7 +118,7 @@ public class HiddenWebActivity extends AppCompatActivity {
                 if (!isDestroyed()) {
                     goBackWebView();
                 }
-            }, 400);
+            }, getResources().getInteger(R.integer.retry_button_wait_time_default));
         });
 
         webView.setWebViewClient(new WebViewClient() {
@@ -226,6 +226,7 @@ public class HiddenWebActivity extends AppCompatActivity {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 if (!url.equals(errorPageUrl)) {
+                    errorLinear.setVisibility(View.GONE);
                     progressBar.setVisibility(View.VISIBLE);
                     webView.setVisibility(View.VISIBLE);
                     errorUrl = null;
@@ -321,7 +322,8 @@ public class HiddenWebActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (errorUrl != null) {
-            if (pageUrl.contains(errorUrl)) {
+            // If error occurred in first page, then on back pressed it will finish the activity else webview go back
+            if (errorUrl.contains(pageUrl)){
                 finish();
             } else {
                 goBackWebView();
@@ -639,9 +641,12 @@ public class HiddenWebActivity extends AppCompatActivity {
         }
         if (url.startsWith("movie://")) {
             String replacedUrl = url.replace("movie://","");
+            Uri uri = Uri.parse(replacedUrl);
+            String imdbID = uri.getQueryParameter("imdb_id");
             webIntent = new Intent();
             webIntent.setClass(context, MovieDetailsActivity.class);
-            webIntent.putExtra("Movie Link", replacedUrl);
+            webIntent.putExtra("movie_details_url", replacedUrl);
+            webIntent.putExtra("imdb_id", imdbID);
             startActivity(webIntent);
         }
         if (url.startsWith("video://")) {

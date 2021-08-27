@@ -1,11 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Exoplayer strings -->
+    <string name="track_selection_title">Select tracks</string>
+    <string name="error_generic">Playback failed</string>
+    <string name="error_no_decoder">This device does not provide a decoder for <xliff:g id="mime_type">%1$s</xliff:g></string>
+    <string name="error_no_secure_decoder">This device does not provide a secure decoder for <xliff:g id="mime_type">%1$s</xliff:g></string>
+    <string name="error_querying_decoders">Unable to query device decoders</string>
+    <string name="error_instantiating_decoder">Unable to instantiate decoder <xliff:g id="decoder_name">%1$s</xliff:g></string>
+
+    <!-- Error strings -->
+    <string name="error_default">An error occurred</string>
+    <string name="error_no_connection">There is no network connection right now</string>
+    <string name="error_fdb_on_cancelled">Failed to connect with database</string>
+    <string name="error_retrofit_enqueue_failed">Failed to connect with database</string>
+    <string name="error_retrofit_response">No response found</string>
+    <string name="error_activity_not_found">No activity found to handle intent</string>
+    <string name="error_uri_syntax_exception">Failed to parse uri</string>
+    <string name="error_permission_denied">Permission for <xliff:g id="permission_type">%1$s</xliff:g> was denied</string>
+
+    <!-- Other strings -->
     <string name="feedback_info">Some account and system info will be send to our developers. We\'ll use the info that you give us to address technical issues and improve our services, subject to our <a href="https://imoviesapp.wordpress.com/privacy-policy" >Privacy policy</a> and <a href="https://imoviesapp.wordpress.com/terms-conditions" >Terms of service.</a></string>
     <string name="copyright_info">All the contents and videos shown in the app belongs to the respected owners and not me. I am not the owner of any contents available in the app. Please if You have any issue with the content used in my application or you find something that belongs to you, send me a message at mubashirpa@duck.com and i will delete it right away</string>
+    <string name="warning_web">If you spot any problems please send us Feedback immediately or if you have any problem with a particular site, please use the \'Report page\' option from the menu. You can also disable the app browser from the settings. </string>
+    <string name="warning_update">All our updates are highly recommended. We regularly update our app to provide you an awesome downloading experience. To make sure you don\'t miss a thing, just keep your Updates turned on.</string>
+    <string name="about_app_sample">Insta Movies app is one of the incredible collection of entertainments App for Android mobiles. Insta Movies App best resource to watch your beloved movies, Videos with high-quality visuals. It includes producing Telugu, Tamil, Malayalam, Hindi, and English movies of all kinds. All the latest films are updated to the app as soon as possible with the most high-grade quality. It will be more accessible for you to search for the Latest Movies for free. No matter who is your favorite star, you’ll be able to see all their movies.</string>
+    <string name="scroll_main_bottom">Disclaimer:- All our posts are free available on internet posted by somebody else.. I\'m not violating any copyright law. If anything is against the law notify me so that it can be removed. If you are the rightful owner of any contents please contact us immediately and we will delete it. Share app with your friends and support us.</string>
+    <string name="update_message">A newer version of the app is available to download. Please update the app and continue using. Downloading the latest update you will get the latest features, improvements and bug fixes of Insta Movies.</string>
+    <string name="warning_adult_content">By downloading this content, you are confirming that you are at least 18 years of age.</string>
+    <string name="share_message">Hey,\n\nInsta Movies is an app built for downloading latest movies. With the app, you can download latest movies of more than six languages including Malayalam, Tamil, Hindi and English.\n\nGet it for free at\n<xliff:g id="download_link">%1$s</xliff:g></string>
+
     <string name="leave_product_feedback_or_share_your_ideas">Leave product feedback or share your ideas</string>
     <string name="send_feedback">Send feedback</string>
     <string name="size">Size</string>
-    <string name="download">Download</string>
     <string name="notifications">Notifications</string>
     <string name="feedback">Feedback</string>
     <string name="more">More</string>
@@ -13,8 +39,6 @@
     <string name="share_app">Share App</string>
     <string name="support_us">Support Us</string>
     <string name="contact_us">Contact Us</string>
-    <string name="warning_web">If you spot any problems please send us Feedback immediately or if you have any problem with a particular site, please use the \'Report page\' option from the menu. You can also disable the app browser from the settings. </string>
-    <string name="warning_bottomsheet_main">All our updates are highly recommended. We regularly update our app to provide you an awesome downloading experience. To make sure you don\'t miss a thing, just keep your Updates turned on.</string>
     <string name="request">Request</string>
     <string name="search">Search</string>
     <string name="tutorials">Tutorials</string>
@@ -30,7 +54,6 @@
     <string name="don_t_show_this_message_again">Don\'t show this message again</string>
     <string name="help">Help</string>
     <string name="support">Support</string>
-    <string name="mainScroll">Insta Movies app is one of the incredible collection of entertainments App for Android mobiles. Insta Movies App best resource to watch your beloved movies, Videos with high-quality visuals. It includes producing Telugu, Tamil, Malayalam, Hindi, and English movies of all kinds. All the latest films are updated to the app as soon as possible with the most high-grade quality. It will be more accessible for you to search for the Latest Movies for free. No matter who is your favorite star, you’ll be able to see all their movies.</string>
     <string name="shortcut_movies">Movies</string>
     <string name="shortcut_feedback">Feedback</string>
     <string name="shortcut_movies_long">Download movies</string>
@@ -41,7 +64,6 @@
     <string name="updating">Updating</string>
     <string name="_0">0%</string>
     <string name="retry">Retry</string>
-    <string name="scroll_main_bottom">Disclaimer:- All our posts are free available on internet posted by somebody else.. I\'m not violating any copyright law. If anything is against the law notify me so that it can be removed. If you are the rightful owner of any contents please contact us immediately and we will delete it. Share app with your friends and support us.</string>
     <string name="malayalam">Malayalam</string>
     <string name="tamil">Tamil</string>
     <string name="english">English</string>
@@ -66,29 +88,8 @@
     <string name="_0_0">0/0</string>
     <string name="more_movies">More movies</string>
     <string name="request_movie">Request movie</string>
-
-    <!-- Exoplayer strings -->
-    <string name="track_selection_title">Select tracks</string>
-    <string name="error_generic">Playback failed</string>
-    <string name="error_no_decoder">This device does not provide a decoder for <xliff:g id="mime_type">%1$s</xliff:g></string>
-    <string name="error_no_secure_decoder">This device does not provide a secure decoder for <xliff:g id="mime_type">%1$s</xliff:g></string>
-    <string name="error_querying_decoders">Unable to query device decoders</string>
-    <string name="error_instantiating_decoder">Unable to instantiate decoder <xliff:g id="decoder_name">%1$s</xliff:g></string>
-
-    <!-- Error strings -->
-    <string name="error_default">An error occurred</string>
-    <string name="error_no_connection">There is no network connection right now</string>
-    <string name="error_fdb_on_cancelled">Failed to connect with database</string>
-    <string name="error_retrofit_enqueue_failed">Failed to connect with database</string>
-    <string name="error_retrofit_response">No response found</string>
-    <string name="error_activity_not_found">No activity found to handle intent</string>
-    <string name="error_uri_syntax_exception">Failed to parse uri</string>
-    <string name="error_permission_denied">Permission for <xliff:g id="permission_type">%1$s</xliff:g> was denied</string>
-
     <string name="details">Details</string>
-    <string name="share_message">Hey,\n\nInsta Movies is an app built for downloading latest movies. With the app, you can download latest movies of more than six languages including Malayalam, Tamil, Hindi and English.\n\nGet it for free at\n<xliff:g id="download_link">%1$s</xliff:g></string>
     <string name="network_stream">Network Stream</string>
-    <string name="there_is_no_network_connection_right_now">There is no network connection right now</string>
     <string name="duration">Duration</string>
     <string name="rating">Rating</string>
     <string name="zero">0</string>
@@ -96,12 +97,13 @@
     <string name="list_of_actors">List of actors</string>
     <string name="synopsis">Synopsis</string>
     <string name="send">Send</string>
-    <string name="select_an_option">Select an option</string>
     <string name="coming_soon">Coming soon</string>
-    <string name="by_downloading_this_content_you_are_confirming_that_you_are_at_least_18_years_of_age">By downloading this content, you are confirming that you are at least 18 years of age.</string>
     <string name="update">Update</string>
     <string name="later">Later</string>
     <string name="update_manually">UPDATE MANUALLY</string>
-    <string name="update_message">A newer version of the app is available to download. Please update the app and continue using. Downloading the latest update you will get the latest features, improvements and bug fixes of Insta Movies.</string>
     <string name="no_movies_or_tv_shows_n_found">No movies or TV shows\n found</string>
+    <string name="trailer">Trailer</string>
+    <string name="download">Download</string>
+    <string name="failed_to_load_data">Failed to load data</string>
+    <string name="n_a">N/A</string>
 </resources>

@@ -2,16 +2,16 @@ package instamovies.app.in.models;
 
 public class DownloadLinksModel {
 
-    private String url;
+    private String link;
     private String title;
     private String subTitle;
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setLink(String link) {
+        this.link = link;
     }
 
-    public String getUrl() {
-        return url;
+    public String getLink() {
+        return link;
     }
 
     public void setTitle(String title) {

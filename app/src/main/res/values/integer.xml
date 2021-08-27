@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="retry_button_wait_time_default">300</integer>
+</resources>

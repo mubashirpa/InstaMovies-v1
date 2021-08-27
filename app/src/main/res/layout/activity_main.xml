@@ -44,7 +44,7 @@
                         android:ellipsize="marquee"
                         android:scrollHorizontally="true"
                         android:marqueeRepeatLimit="marquee_forever"
-                        android:text="@string/mainScroll"
+                        android:text="@string/about_app_sample"
                         android:singleLine="true"
                         android:textColor="@color/colorTextSecondary"/>
                     <!-- Viewpager height should be defined because, it's item should be match parent -->

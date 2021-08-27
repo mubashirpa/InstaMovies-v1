@@ -2,22 +2,13 @@ package instamovies.app.in.models;
 
 public class ScreenshotModel {
 
-    private String backdropPath;
-    private String videoUrl;
+    private String screenshotPath;
 
-    public void setBackdropPath(String url) {
-        backdropPath = url;
+    public void setScreenshotPath(String url) {
+        screenshotPath = url;
     }
 
-    public String getBackdropPath() {
-        return backdropPath;
-    }
-
-    public void setVideoUrl(String url) {
-        videoUrl = url;
-    }
-
-    public String getVideoUrl() {
-        return videoUrl;
+    public String getScreenshotPath() {
+        return screenshotPath;
     }
 }

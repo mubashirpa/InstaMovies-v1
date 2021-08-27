@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             getPackageManager().getPackageInfo("instamovies.haxd", android.content.pm.PackageManager.GET_ACTIVITIES);
-            uninstallDialog.setMessage("An older version of Insta Movies found. Do you want to uninstall it?\n\n(Note-If the uninstall button doesn't work properly please uninstall the older version manually.)");
+            uninstallDialog.setMessage("A deprecated version of Insta Movies found. Do you want to uninstall it?\n\n(Note-If the uninstall button doesn't work properly please uninstall the older version manually.)");
             uninstallDialog.setPositiveButton("UNINSTALL", (dialogInterface, i) -> {
                 Uri packageURI = Uri.parse("package:instamovies.haxd");
                 Intent uninstallIntent = new Intent(Intent.ACTION_DELETE, packageURI);
@@ -399,6 +399,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (FileUtil.isExistFile(filePath)) {
                                     FileUtil.deleteFile(filePath);
                                 }
+
                                 firebaseStorage.getReferenceFromUrl(fileUrl).getFile(filePath)
                                         .addOnSuccessListener(taskSnapshot -> appData.edit().putString("ad_pages_list", fileUrl).apply());
                             }
@@ -424,7 +425,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                AppUtils.toastShortDefault(context, MainActivity.this, databaseError.getMessage());
+                Log.e(LOG_TAG, databaseError.getMessage());
             }
         };
         SystemDB.addChildEventListener(systemChildEventListener);
@@ -505,6 +506,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode,permissions,grantResults);
         if (requestCode == REQUEST_CODE_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                AppUtils.toastShortError(context, MainActivity.this, getString(R.string.error_permission_denied, "storage"));
                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
@@ -516,7 +518,6 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception exception) {
                     Log.e(LOG_TAG, exception.getMessage());
                 }
-                AppUtils.toastShortError(context,MainActivity.this,"Failed to get permission. Give us permission manually");
                 finish();
             } else {
                 initializeActivity();
@@ -743,7 +744,7 @@ public class MainActivity extends AppCompatActivity {
                                 updateDialog.dismiss();
                                 BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance();
                                 bottomSheetDialog.setTitle("Important");
-                                bottomSheetDialog.setMessage(getString(R.string.warning_bottomsheet_main));
+                                bottomSheetDialog.setMessage(getString(R.string.warning_update));
                                 bottomSheetDialog.setPositiveButton("Close", v1 -> bottomSheetDialog.dismiss());
                                 bottomSheetDialog.setCancelable(true);
                                 bottomSheetDialog.show(getSupportFragmentManager(), "BottomSheetDialog");
@@ -898,7 +899,7 @@ public class MainActivity extends AppCompatActivity {
     private final BroadcastReceiver downloadReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, @NotNull Intent intent) {
-            //check if the broadcast message is for our Enqueued download
+            // Check if the broadcast message is for our Enqueued download
             long referenceId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
             if (downloadReference == referenceId) {
                 if (updateProgressFragment.getDialog() != null && updateProgressFragment.getDialog().isShowing()) {
@@ -999,6 +1000,7 @@ public class MainActivity extends AppCompatActivity {
         premiumUser = appData.getBoolean("prime_purchased", false);
     }
 
+    @Nullable
     private String pasteText() {
         ClipboardManager clipboardManager = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
         if (clipboardManager.getPrimaryClip() != null) {

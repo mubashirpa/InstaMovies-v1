@@ -77,10 +77,14 @@ public class BannerAdapter extends RecyclerView.Adapter<BannerAdapter.BannerView
             }
             if (sliderList.get(position).containsKey("Movie")) {
                 String movieLink = Objects.requireNonNull(sliderList.get(position).get("Movie")).toString();
-                webIntent = new Intent();
-                webIntent.setClass(context, MovieDetailsActivity.class);
-                webIntent.putExtra("Movie Link", movieLink);
-                context.startActivity(webIntent);
+                if (sliderList.get(position).containsKey("imdb_id")) {
+                    String imdbID = Objects.requireNonNull(sliderList.get(position).get("imdb_id")).toString();
+                    webIntent = new Intent();
+                    webIntent.setClass(context, MovieDetailsActivity.class);
+                    webIntent.putExtra("movie_details_url", movieLink);
+                    webIntent.putExtra("imdb_id", imdbID);
+                    context.startActivity(webIntent);
+                }
             }
             if (sliderList.get(position).containsKey("Link")) {
                 String itemLink = Objects.requireNonNull(sliderList.get(position).get("Link")).toString();

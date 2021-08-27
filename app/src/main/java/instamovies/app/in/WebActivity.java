@@ -343,13 +343,13 @@ public class WebActivity extends AppCompatActivity {
             @TargetApi(Build.VERSION_CODES.M)
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 String failingUrl = request.getUrl().toString();
-                handleWebError(view, failingUrl);
+                onPageError(failingUrl);
                 errorDetails = failingUrl + "\n\nError: " + error.getDescription().toString() + "\n\nError code: " + error.getErrorCode();
             }
 
             @Deprecated
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                handleWebError(view, failingUrl);
+                onPageError(failingUrl);
                 errorDetails = failingUrl + "\n\nError: " + description + "\n\nError code: " + errorCode;
             }
 
@@ -386,6 +386,7 @@ public class WebActivity extends AppCompatActivity {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 if (!url.equals(errorPageUrl)) {
+                    errorLinear.setVisibility(View.GONE);
                     progressBar.setVisibility(View.VISIBLE);
                     webView.setVisibility(View.VISIBLE);
                     errorUrl = null;
@@ -543,7 +544,7 @@ public class WebActivity extends AppCompatActivity {
                 if (!isDestroyed()) {
                     goBackWebView();
                 }
-            }, 300);
+            }, getResources().getInteger(R.integer.retry_button_wait_time_default));
         });
 
         detailsButton.setOnClickListener(v -> {
@@ -574,7 +575,7 @@ public class WebActivity extends AppCompatActivity {
                     if (webView.getUrl() != null){
                         ReportPage(webView.getUrl());
                     } else {
-                        AppUtils.toastShortError(context,WebActivity.this,"An error occurred");
+                        AppUtils.toastShortError(context,WebActivity.this, getString(R.string.error_default));
                     }
                     return true;
                 case "Settings":
@@ -626,8 +627,9 @@ public class WebActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (errorUrl != null){
-            if (pageUrl.contains(errorUrl)){
+        if (errorUrl != null) {
+            // If error occurred in first page, then on back pressed it will finish the activity else webview go back
+            if (errorUrl.contains(pageUrl)){
                 finish();
             } else {
                 goBackWebView();
@@ -898,9 +900,9 @@ public class WebActivity extends AppCompatActivity {
         reportDialog.create().show();
     }
 
-    private void handleWebError(@NotNull WebView view, String failingUrl) {
-        view.setVisibility(View.GONE);
-        view.loadUrl(errorPageUrl);
+    private void onPageError(String failingUrl) {
+        webView.setVisibility(View.GONE);
+        webView.loadUrl(errorPageUrl);
         errorUrl = failingUrl;
         errorLinear.setVisibility(View.VISIBLE);
     }

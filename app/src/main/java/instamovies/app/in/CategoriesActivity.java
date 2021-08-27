@@ -249,10 +249,14 @@ public class CategoriesActivity extends AppCompatActivity {
             }
             if (categoryList.get(position).containsKey("Movie")) {
                 String movieLink = Objects.requireNonNull(categoryList.get(position).get("Movie")).toString();
-                webIntent = new Intent();
-                webIntent.setClass(context, MovieDetailsActivity.class);
-                webIntent.putExtra("Movie Link", movieLink);
-                startActivity(webIntent);
+                if (categoryList.get(position).containsKey("imdb_id")) {
+                    String imdbID = Objects.requireNonNull(categoryList.get(position).get("imdb_id")).toString();
+                    webIntent = new Intent();
+                    webIntent.setClass(context, MovieDetailsActivity.class);
+                    webIntent.putExtra("movie_details_url", movieLink);
+                    webIntent.putExtra("imdb_id", imdbID);
+                    startActivity(webIntent);
+                }
             }
             if (categoryList.get(position).containsKey("Link")) {
                 String itemLink = Objects.requireNonNull(categoryList.get(position).get("Link")).toString();

@@ -124,10 +124,14 @@ public class NotificationsActivity extends AppCompatActivity {
             }
             if (notificationList.get(position).containsKey("Movie")) {
                 String movieLink = Objects.requireNonNull(notificationList.get(position).get("Movie")).toString();
-                webIntent = new Intent();
-                webIntent.setClass(context, MovieDetailsActivity.class);
-                webIntent.putExtra("Movie Link", movieLink);
-                startActivity(webIntent);
+                if (notificationList.get(position).containsKey("imdb_id")) {
+                    String imdbID = Objects.requireNonNull(notificationList.get(position).get("imdb_id")).toString();
+                    webIntent = new Intent();
+                    webIntent.setClass(context, MovieDetailsActivity.class);
+                    webIntent.putExtra("movie_details_url", movieLink);
+                    webIntent.putExtra("imdb_id", imdbID);
+                    startActivity(webIntent);
+                }
                 return;
             }
             if (notificationList.get(position).containsKey("Link")) {

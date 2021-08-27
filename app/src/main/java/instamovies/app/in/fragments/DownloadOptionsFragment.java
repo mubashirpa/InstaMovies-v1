@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import java.util.ArrayList;
-import instamovies.app.in.MovieDetailsActivity;
+import instamovies.app.in.HiddenWebActivity;
 import instamovies.app.in.PlayerActivity;
 import instamovies.app.in.R;
 import instamovies.app.in.WebActivity;
@@ -69,28 +69,31 @@ public class DownloadOptionsFragment extends BottomSheetDialogFragment {
         ListView listView = contentView.findViewById(R.id.listView);
 
         try {
-            ListAdapter listAdapter = fetchDownloads(mJsonArray);
+            ListAdapter listAdapter = parseJSONArray(mJsonArray);
             listView.setAdapter(listAdapter);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            if (downloadsList.get(position).getUrl() != null) {
+            if (downloadsList.get(position).getLink() != null) {
                 dialog.dismiss();
-                loadUrl(downloadsList.get(position).getUrl());
+                loadUrl(downloadsList.get(position).getLink());
             }
         });
     }
 
-    private DownloadLinksAdapter fetchDownloads(JSONArray jsonArray) throws JSONException {
+    @NonNull
+    @Contract("_ -> new")
+    private DownloadLinksAdapter parseJSONArray(@NonNull JSONArray jsonArray) throws JSONException {
         for (int i = 0; i < jsonArray.length(); i++) {
             DownloadLinksModel model = new DownloadLinksModel();
             model.setTitle(jsonArray.getJSONObject(i).getString("title"));
             if (jsonArray.getJSONObject(i).has("sub_title")) {
                 model.setSubTitle(jsonArray.getJSONObject(i).getString("sub_title"));
             }
-            if (jsonArray.getJSONObject(i).has("url")) {
-                model.setUrl(jsonArray.getJSONObject(i).getString("url"));
+            if (jsonArray.getJSONObject(i).has("link")) {
+                model.setLink(jsonArray.getJSONObject(i).getString("link"));
             }
             downloadsList.add(model);
         }
@@ -107,8 +110,15 @@ public class DownloadOptionsFragment extends BottomSheetDialogFragment {
         chromeTabs = settingsPreferences.getBoolean("chrome_tabs_preference", true);
     }
 
-    private void loadUrl(String url) {
+    private void loadUrl(@NonNull String url) {
         Intent webIntent;
+        if (url.startsWith("link://")) {
+            String replacedUrl = url.replace("link://","");
+            webIntent = new Intent();
+            webIntent.setClass(context, HiddenWebActivity.class);
+            webIntent.putExtra("HIDDEN_URL", replacedUrl);
+            startActivity(webIntent);
+        }
         if (url.startsWith("link1://")) {
             String replacedUrl = url.replace("link1://","");
             webIntent = new Intent();
@@ -129,7 +139,7 @@ public class DownloadOptionsFragment extends BottomSheetDialogFragment {
                     handleIntent.setData(Uri.parse(replacedUrl));
                     startActivity(handleIntent);
                 } catch (android.content.ActivityNotFoundException notFoundException){
-                    AppUtils.toastShortError(context, activity, "Failed to load url");
+                    AppUtils.toastShortError(context, activity, getString(R.string.error_activity_not_found));
                 }
             }
         }
@@ -147,7 +157,7 @@ public class DownloadOptionsFragment extends BottomSheetDialogFragment {
                         handleIntent.setData(Uri.parse(replacedUrl));
                         startActivity(handleIntent);
                     } catch (android.content.ActivityNotFoundException notFoundException){
-                        AppUtils.toastShortError(context, activity, "Failed to load url");
+                        AppUtils.toastShortError(context, activity, getString(R.string.error_activity_not_found));
                     }
                 }
             } else {
@@ -156,13 +166,6 @@ public class DownloadOptionsFragment extends BottomSheetDialogFragment {
                 webIntent.putExtra("WEB_URL", replacedUrl);
                 startActivity(webIntent);
             }
-        }
-        if (url.startsWith("movie://")) {
-            String replacedUrl = url.replace("movie://","");
-            webIntent = new Intent();
-            webIntent.setClass(context, MovieDetailsActivity.class);
-            webIntent.putExtra("Movie Link", replacedUrl);
-            startActivity(webIntent);
         }
         if (url.startsWith("video://")) {
             String replacedUrl = url.replace("video://","");
@@ -195,7 +198,7 @@ public class DownloadOptionsFragment extends BottomSheetDialogFragment {
                     try {
                         context.startActivity(marketIntent);
                     } catch (ActivityNotFoundException notFoundException1){
-                        AppUtils.toastShortError(context, activity, "Failed to download Torrent client");
+                        AppUtils.toastShortError(context, activity, getString(R.string.error_activity_not_found));
                     }
                 });
                 bottomSheetDialog.show(requireActivity().getSupportFragmentManager(), "BottomSheetDialog");
