@@ -230,7 +230,7 @@ public class CategoriesActivity extends AppCompatActivity {
 
         gridView.setOnItemClickListener((parent, view, position, id) -> {
             if (categoryList.get(position).containsKey("Premium") && !premiumUser) {
-                AppUtils.toastShortDefault(context, CategoriesActivity.this, "You are not a premium user.");
+                AppUtils.toast(context, CategoriesActivity.this, "You are not a premium user.");
                 return;
             }
             if (categoryList.get(position).containsKey("base_url") && categoryList.get(position).containsKey("reference_path")) {
@@ -266,7 +266,7 @@ public class CategoriesActivity extends AppCompatActivity {
                     webIntent.putExtra("HIDDEN_URL", itemLink);
                     startActivity(webIntent);
                 } else {
-                    AppUtils.toastShortDefault(context, CategoriesActivity.this, itemLink);
+                    AppUtils.toast(context, CategoriesActivity.this, itemLink);
                 }
             }
             if (categoryList.get(position).containsKey("Link1")) {
@@ -289,7 +289,7 @@ public class CategoriesActivity extends AppCompatActivity {
                         webIntent.setData(Uri.parse(itemLink));
                         startActivity(webIntent);
                     } catch (android.content.ActivityNotFoundException notFoundException){
-                        AppUtils.toastShortError(context, CategoriesActivity.this, getString(R.string.error_activity_not_found));
+                        AppUtils.toastError(context, CategoriesActivity.this, getString(R.string.error_activity_not_found));
                     }
                 }
             }
@@ -307,7 +307,7 @@ public class CategoriesActivity extends AppCompatActivity {
                             webIntent.setData(Uri.parse(itemLink));
                             startActivity(webIntent);
                         } catch (android.content.ActivityNotFoundException notFoundException){
-                            AppUtils.toastShortError(context, CategoriesActivity.this, getString(R.string.error_activity_not_found));
+                            AppUtils.toastError(context, CategoriesActivity.this, getString(R.string.error_activity_not_found));
                         }
                     }
                 } else {
@@ -356,7 +356,7 @@ public class CategoriesActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode,permissions,grantResults);
         if (requestCode == REQUEST_CODE_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                AppUtils.toastShortError(context, CategoriesActivity.this, getString(R.string.error_permission_denied, "storage"));
+                AppUtils.toastError(context, CategoriesActivity.this, getString(R.string.error_permission_denied, "storage"));
                 finish();
             } else {
                 initializeActivity();
@@ -383,7 +383,7 @@ public class CategoriesActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NotNull DatabaseError error) {
-                AppUtils.toastShortError(context, CategoriesActivity.this, getString(R.string.error_fdb_on_cancelled));
+                AppUtils.toastError(context, CategoriesActivity.this, getString(R.string.error_fdb_on_cancelled));
             }
         });
     }

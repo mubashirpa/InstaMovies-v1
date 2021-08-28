@@ -12,7 +12,7 @@ import instamovies.app.in.R;
 
 public class AppUtils {
 
-    public static void toastShortDefault(Context context, @NotNull Activity activity, String message){
+    public static void toast(Context context, @NotNull Activity activity, String message){
         LayoutInflater inflater = activity.getLayoutInflater();
         View viewLayout = inflater.inflate(R.layout.layout_toast, activity.findViewById(R.id.parent_view));
         TextView toast_text = viewLayout.findViewById(R.id.toast_text);
@@ -25,7 +25,7 @@ public class AppUtils {
         toast.show();
     }
 
-    public static void toastShortError(Context context, @NotNull Activity activity, String message){
+    public static void toastError(Context context, @NotNull Activity activity, String message){
         LayoutInflater inflater = activity.getLayoutInflater();
         View viewLayout = inflater.inflate(R.layout.layout_toast_error, activity.findViewById(R.id.parent_view));
         TextView toast_text = viewLayout.findViewById(R.id.toast_text);

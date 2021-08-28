@@ -75,7 +75,6 @@ public class ThumbnailDatabase {
     }
 
     public static void ThumbnailDatabaseMore(String childID, @NotNull RecyclerView recyclerView, Context context) {
-
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = database.getReference("Thumbnail");
         Query query = databaseReference.child(childID);

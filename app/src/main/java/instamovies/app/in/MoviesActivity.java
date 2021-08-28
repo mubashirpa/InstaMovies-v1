@@ -143,13 +143,13 @@ public class MoviesActivity extends AppCompatActivity {
             if (URLUtil.isNetworkUrl(baseURL) && baseURL.endsWith("/")) {
                 loadMoviesFromJson(baseURL, referencePath);
             } else {
-                AppUtils.toastShortError(context, MoviesActivity.this, getString(R.string.error_default));
+                AppUtils.toastError(context, MoviesActivity.this, getString(R.string.error_default));
             }
         }
 
         gridView.setOnItemClickListener((parent, view, position, id) -> {
             if (movieList.get(position).containsKey("Premium") && !premiumUser) {
-                AppUtils.toastShortDefault(context,MoviesActivity.this, "You are not a premium user.");
+                AppUtils.toast(context,MoviesActivity.this, "You are not a premium user.");
                 return;
             }
             if (movieList.get(position).containsKey("Movie")) {
@@ -171,7 +171,7 @@ public class MoviesActivity extends AppCompatActivity {
                     webIntent.putExtra("HIDDEN_URL", itemLink);
                     startActivity(webIntent);
                 } else {
-                    AppUtils.toastShortDefault(context,MoviesActivity.this, itemLink);
+                    AppUtils.toast(context,MoviesActivity.this, itemLink);
                 }
             }
             if (movieList.get(position).containsKey("Link1")) {
@@ -194,7 +194,7 @@ public class MoviesActivity extends AppCompatActivity {
                         webIntent.setData(Uri.parse(itemLink));
                         startActivity(webIntent);
                     } catch (android.content.ActivityNotFoundException notFoundException){
-                        AppUtils.toastShortError(context, MoviesActivity.this, getString(R.string.error_activity_not_found));
+                        AppUtils.toastError(context, MoviesActivity.this, getString(R.string.error_activity_not_found));
                     }
                 }
             }
@@ -212,7 +212,7 @@ public class MoviesActivity extends AppCompatActivity {
                             webIntent.setData(Uri.parse(itemLink));
                             startActivity(webIntent);
                         } catch (android.content.ActivityNotFoundException notFoundException){
-                            AppUtils.toastShortError(context, MoviesActivity.this, getString(R.string.error_activity_not_found));
+                            AppUtils.toastError(context, MoviesActivity.this, getString(R.string.error_activity_not_found));
                         }
                     }
                 } else {
@@ -263,7 +263,7 @@ public class MoviesActivity extends AppCompatActivity {
                         if (URLUtil.isNetworkUrl(baseURL) && baseURL.endsWith("/")) {
                             loadMoviesFromJson(baseURL, referencePath);
                         } else {
-                            AppUtils.toastShortError(context, MoviesActivity.this, getString(R.string.error_default));
+                            AppUtils.toastError(context, MoviesActivity.this, getString(R.string.error_default));
                         }
                     }
                 }

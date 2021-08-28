@@ -15,9 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
-
 import instamovies.app.in.R;
 import instamovies.app.in.api.tmdb.Genres;
 import instamovies.app.in.api.tmdb.MovieDetailsApi;

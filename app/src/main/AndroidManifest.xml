@@ -106,11 +106,6 @@
             android:configChanges="smallestScreenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".BillingActivity"
-            android:configChanges="smallestScreenSize"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.FullScreen" />
-        <activity
             android:name=".HiddenWebActivity"
             android:configChanges="smallestScreenSize"
             android:hardwareAccelerated="true"

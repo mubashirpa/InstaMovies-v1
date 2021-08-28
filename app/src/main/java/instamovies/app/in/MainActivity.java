@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
         notificationService.CreateUpdateChannel();
         notificationService.CreateMoviesChannel();
         if (NetworkUtil.isOnline(context)) {
-            AppUtils.toastShortError(context,MainActivity.this,"No connection");
+            AppUtils.toastError(context,MainActivity.this, getString(R.string.error_no_connection));
             progressbarLayout.setVisibility(View.GONE);
             errorLinear.setVisibility(View.VISIBLE);
         }
@@ -506,7 +506,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode,permissions,grantResults);
         if (requestCode == REQUEST_CODE_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                AppUtils.toastShortError(context, MainActivity.this, getString(R.string.error_permission_denied, "storage"));
+                AppUtils.toastError(context, MainActivity.this, getString(R.string.error_permission_denied, "storage"));
                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
@@ -565,7 +565,7 @@ public class MainActivity extends AppCompatActivity {
                     String streamLink = inputText.getText().toString();
                     if (!streamLink.equals("")) {
                         if (!URLUtil.isValidUrl(streamLink)) {
-                            AppUtils.toastShortDefault(context, MainActivity.this, "Please enter a valid URL");
+                            AppUtils.toast(context, MainActivity.this, "Please enter a valid URL");
                             return;
                         }
                         Intent videoIntent = new Intent();
@@ -596,13 +596,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(webIntent);
             }
             if (itemId == R.id.drawerDonate){
-                if (!premiumUser) {
-                    AppUtils.toastShortDefault(context, MainActivity.this, "Coming soon");
-                } else {
-                    drawerIntent = new Intent();
-                    drawerIntent.setClass(context, BillingActivity.class);
-                    startActivity(drawerIntent);
-                }
+                AppUtils.toast(context, MainActivity.this, "Coming soon");
             }
             if (itemId == R.id.drawerShare){
                 shareApp();
@@ -675,7 +669,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             currentVersion = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
         } catch (android.content.pm.PackageManager.NameNotFoundException nameNotFoundException) {
-            AppUtils.toastShortDefault(context, MainActivity.this, "Failed to check update");
+            AppUtils.toastError(context, MainActivity.this, "Failed to check update");
             return;
         }
         versionChildEventListener = new ChildEventListener() {
@@ -688,9 +682,9 @@ public class MainActivity extends AppCompatActivity {
                     if (childValue != null && childValue.containsKey("Latest Version")) {
                         latestVersion = Objects.requireNonNull(childValue.get("Latest Version")).toString();
                         if (latestVersion.equals(currentVersion)) {
-                            AppUtils.toastShortDefault(context, MainActivity.this, "App is up to date");
+                            AppUtils.toast(context, MainActivity.this, "App is up to date");
                         } else {
-                            AppUtils.toastShortDefault(context, MainActivity.this, "Update Available");
+                            AppUtils.toast(context, MainActivity.this, "Update Available");
                             if (!childValue.containsKey("Update Link")) {
                                 return;
                             }
@@ -792,7 +786,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                AppUtils.toastShortDefault(context, MainActivity.this, "Failed to check update");
+                AppUtils.toastError(context, MainActivity.this, "Failed to check update");
             }
         };
         VersionDB.addChildEventListener(versionChildEventListener);
@@ -826,7 +820,7 @@ public class MainActivity extends AppCompatActivity {
                     if (updateProgressFragment.getDialog() != null && updateProgressFragment.getDialog().isShowing()) {
                         updateProgressFragment.dismiss();
                     }
-                    AppUtils.toastShortError(context,MainActivity.this, "Update failed");
+                    AppUtils.toastError(context,MainActivity.this, "Update failed");
                 })
                 .addOnProgressListener(taskSnapshot -> {
                     long progressValue = (100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
@@ -937,7 +931,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             startActivity(openIntent);
         } catch (Exception exception) {
-            AppUtils.toastShortError(context,MainActivity.this, "Update failed");
+            AppUtils.toastError(context,MainActivity.this, "Update failed");
         }
     }
 
@@ -945,7 +939,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
             super.onAdFailedToShowFullScreenContent(adError);
-            AppUtils.toastShortError(context, MainActivity.this, "Ad failed to display");
+            AppUtils.toastError(context, MainActivity.this, "Ad failed to display");
         }
 
         @Override
@@ -970,7 +964,7 @@ public class MainActivity extends AppCompatActivity {
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
                 mRewardedAd = null;
-                AppUtils.toastShortError(context, MainActivity.this, "Ad failed to load");
+                AppUtils.toastError(context, MainActivity.this, "Ad failed to load");
             }
         });
     }

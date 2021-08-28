@@ -6,7 +6,6 @@ import android.webkit.WebResourceResponse;
 import androidx.annotation.WorkerThread;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,9 +40,8 @@ public class AdBlocker {
         return new WebResourceResponse("text/plain", "utf-8", new ByteArrayInputStream("".getBytes()));
     }
 
-    @Nullable
     @WorkerThread
-    private static Void loadFromAssets(@NotNull Context context) throws IOException {
+    private static void loadFromAssets(@NotNull Context context) throws IOException {
         InputStream stream = context.getAssets().open("ad-servers.txt");
         BufferedSource buffer = Okio.buffer(Okio.source(stream));
         String line;
@@ -52,7 +50,6 @@ public class AdBlocker {
         }
         buffer.close();
         stream.close();
-        return null;
     }
 
     private static boolean isAdHost(String host){

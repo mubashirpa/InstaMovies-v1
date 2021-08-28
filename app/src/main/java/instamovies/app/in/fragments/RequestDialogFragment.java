@@ -54,7 +54,7 @@ public class RequestDialogFragment extends BottomSheetDialogFragment {
 
     @Override
     public void setupDialog(@NonNull Dialog dialog, int style) {
-        context = dialog.getContext();
+        context = getContext();
         View contentView = View.inflate(context, R.layout.layout_request, null);
         dialog.setContentView(contentView);
         BottomSheetBehavior<View> sheetBehavior = BottomSheetBehavior.from((View)contentView.getParent());
@@ -71,7 +71,7 @@ public class RequestDialogFragment extends BottomSheetDialogFragment {
 
         requestButton.setOnClickListener(v -> {
             if (movieName.getText().toString().equals("")) {
-                AppUtils.toastShortDefault(context, activity,"Enter required fields");
+                AppUtils.toast(context, activity,"Enter required fields");
             } else {
                 dialog.dismiss();
                 String reqDetails = movieName.getText().toString()+" | " + movieLanguage.getText().toString()+" | " + movieYear.getText().toString()+" | " + movieSize.getText().toString();
@@ -133,10 +133,10 @@ public class RequestDialogFragment extends BottomSheetDialogFragment {
                         progressDialog.dismiss();
                     }
                     dismiss();
-                    AppUtils.toastShortDefault(context, activity, "Successfully requested");
+                    AppUtils.toast(context, activity, "Successfully requested");
                 })
                 .addOnFailureListener(e -> {
-                    AppUtils.toastShortError(context, activity, "Failed to Request movie");
+                    AppUtils.toastError(context, activity, "Failed to Request movie");
                     if (progressDialog != null && progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }

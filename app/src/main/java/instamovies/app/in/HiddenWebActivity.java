@@ -145,7 +145,7 @@ public class HiddenWebActivity extends AppCompatActivity {
                                     handleIntent.setData(Uri.parse(loadingUrl));
                                     startActivity(handleIntent);
                                 } catch (android.content.ActivityNotFoundException notFoundException){
-                                    AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
+                                    AppUtils.toastError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
                                 }
                             }
                         }
@@ -185,7 +185,7 @@ public class HiddenWebActivity extends AppCompatActivity {
                                     handleIntent.setData(Uri.parse(loadingUrl));
                                     startActivity(handleIntent);
                                 } catch (android.content.ActivityNotFoundException notFoundException){
-                                    AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
+                                    AppUtils.toastError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
                                 }
                             }
                         }
@@ -611,7 +611,7 @@ public class HiddenWebActivity extends AppCompatActivity {
                     handleIntent.setData(Uri.parse(replacedUrl));
                     startActivity(handleIntent);
                 } catch (android.content.ActivityNotFoundException notFoundException){
-                    AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
+                    AppUtils.toastError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
                 }
             }
         }
@@ -629,7 +629,7 @@ public class HiddenWebActivity extends AppCompatActivity {
                         handleIntent.setData(Uri.parse(replacedUrl));
                         startActivity(handleIntent);
                     } catch (android.content.ActivityNotFoundException notFoundException){
-                        AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
+                        AppUtils.toastError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
                     }
                 }
             } else {
@@ -678,7 +678,7 @@ public class HiddenWebActivity extends AppCompatActivity {
                     try {
                         startActivity(marketIntent);
                     } catch (ActivityNotFoundException notFoundException1){
-                        AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
+                        AppUtils.toastError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
                     }
                 });
                 bottomSheetDialog.show(getSupportFragmentManager(), "BottomSheetDialog");
@@ -698,12 +698,12 @@ public class HiddenWebActivity extends AppCompatActivity {
                         try {
                             startActivity(marketIntent);
                         } catch (ActivityNotFoundException notFoundException) {
-                            AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
+                            AppUtils.toastError(context, HiddenWebActivity.this, getString(R.string.error_activity_not_found));
                         }
                     }
                 }
             } catch (URISyntaxException uriSyntaxException){
-                AppUtils.toastShortError(context, HiddenWebActivity.this, getString(R.string.error_uri_syntax_exception));
+                AppUtils.toastError(context, HiddenWebActivity.this, getString(R.string.error_uri_syntax_exception));
             }
         }
     }
@@ -718,7 +718,7 @@ public class HiddenWebActivity extends AppCompatActivity {
 
         @JavascriptInterface
         public void showToast(String toast) {
-            AppUtils.toastShortDefault(context , activity, toast);
+            AppUtils.toast(context , activity, toast);
         }
 
         @JavascriptInterface

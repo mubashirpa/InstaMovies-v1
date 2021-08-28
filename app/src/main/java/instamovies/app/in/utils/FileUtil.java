@@ -2,7 +2,6 @@ package instamovies.app.in.utils;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import java.io.File;

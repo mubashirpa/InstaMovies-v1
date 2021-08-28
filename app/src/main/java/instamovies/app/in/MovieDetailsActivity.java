@@ -453,7 +453,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     handleIntent.setData(Uri.parse(replacedUrl));
                     startActivity(handleIntent);
                 } catch (android.content.ActivityNotFoundException notFoundException){
-                    AppUtils.toastShortError(context, MovieDetailsActivity.this, getString(R.string.error_activity_not_found));
+                    AppUtils.toastError(context, MovieDetailsActivity.this, getString(R.string.error_activity_not_found));
                 }
             }
         }
@@ -471,7 +471,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                         handleIntent.setData(Uri.parse(replacedUrl));
                         startActivity(handleIntent);
                     } catch (android.content.ActivityNotFoundException notFoundException){
-                        AppUtils.toastShortError(context, MovieDetailsActivity.this, getString(R.string.error_activity_not_found));
+                        AppUtils.toastError(context, MovieDetailsActivity.this, getString(R.string.error_activity_not_found));
                     }
                 }
             } else {

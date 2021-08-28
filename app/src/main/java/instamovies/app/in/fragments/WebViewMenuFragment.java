@@ -117,7 +117,7 @@ public class WebViewMenuFragment extends BottomSheetDialogFragment {
                 if (menuList.get(position).getName().equals("Copy link")) {
                     dialog.dismiss();
                     ((ClipboardManager) Objects.requireNonNull(context.getSystemService(CLIPBOARD_SERVICE))).setPrimaryClip(ClipData.newPlainText("clipboard", url));
-                    AppUtils.toastShortDefault(context, requireActivity(), "Link copied");
+                    AppUtils.toast(context, requireActivity(), "Link copied");
                 }
                 if (menuList.get(position).getName().equals("Download image")) {
                     dialog.dismiss();
@@ -206,10 +206,10 @@ public class WebViewMenuFragment extends BottomSheetDialogFragment {
             String cookies = CookieManager.getInstance().getCookie(downloadUrl);
             request.addRequestHeader("cookie", cookies);
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-            AppUtils.toastShortDefault(context, requireActivity(), "Downloading file");
+            AppUtils.toast(context, requireActivity(), "Downloading file");
             downloadManager.enqueue(request);
         } else {
-            AppUtils.toastShortError(context, requireActivity(),"Download failed");
+            AppUtils.toastError(context, requireActivity(), context.getString(R.string.error_download_failed));
         }
     }
 }

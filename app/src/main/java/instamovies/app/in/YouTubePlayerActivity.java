@@ -1,13 +1,11 @@
 package instamovies.app.in;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
-
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragmentX;
@@ -95,7 +93,7 @@ public class YouTubePlayerActivity extends AppCompatActivity {
 
             @Override
             public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-                AppUtils.toastShortError(getApplicationContext(), YouTubePlayerActivity.this, "Failed to initialize player");
+                AppUtils.toastError(getApplicationContext(), YouTubePlayerActivity.this, getString(R.string.error_initialize_youtube_player));
             }
         });
     }

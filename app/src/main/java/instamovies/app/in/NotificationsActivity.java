@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.preference.PreferenceManager;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,7 +17,6 @@ import android.widget.*;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Objects;
-
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -31,7 +29,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import android.content.Intent;
-
 import instamovies.app.in.utils.AppUtils;
 
 public class NotificationsActivity extends AppCompatActivity {
@@ -105,7 +102,7 @@ public class NotificationsActivity extends AppCompatActivity {
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
             if (notificationList.get(position).containsKey("Premium") && !premiumUser) {
-                AppUtils.toastShortDefault(context,NotificationsActivity.this, "You are not a premium user.");
+                AppUtils.toast(context,NotificationsActivity.this, "You are not a premium user.");
                 return;
             }
             if (notificationList.get(position).containsKey("base_url") && notificationList.get(position).containsKey("reference_path")) {
@@ -142,7 +139,7 @@ public class NotificationsActivity extends AppCompatActivity {
                     webIntent.putExtra("HIDDEN_URL", itemLink);
                     startActivity(webIntent);
                 } else {
-                    AppUtils.toastShortError(context, NotificationsActivity.this, itemLink);
+                    AppUtils.toastError(context, NotificationsActivity.this, itemLink);
                 }
                 return;
             }
@@ -167,12 +164,11 @@ public class NotificationsActivity extends AppCompatActivity {
                         webIntent.setData(Uri.parse(itemLink));
                         startActivity(webIntent);
                     } catch (android.content.ActivityNotFoundException notFoundException){
-                        AppUtils.toastShortError(context,NotificationsActivity.this, "Failed to load url");
+                        AppUtils.toastError(context,NotificationsActivity.this, "Failed to load url");
                     }
                 }
                 return;
             }
-
             //if none of the above available closes the activity
             finish();
         });

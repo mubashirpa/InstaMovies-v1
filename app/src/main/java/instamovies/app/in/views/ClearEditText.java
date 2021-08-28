@@ -1,5 +1,6 @@
 package instamovies.app.in.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
@@ -7,6 +8,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
@@ -45,6 +47,7 @@ public class ClearEditText extends AppCompatEditText implements View.OnTouchList
         mOnTouchListener = onTouchListener;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void init(final Context context) {
         final Drawable drawable = ContextCompat.getDrawable(context, R.drawable.ic_round_cancel_24);
         final Drawable wrappedDrawable;
@@ -60,7 +63,6 @@ public class ClearEditText extends AppCompatEditText implements View.OnTouchList
         }
     }
 
-
     @Override
     public void onFocusChange(final View view, final boolean hasFocus) {
         if (hasFocus) {
@@ -75,7 +77,7 @@ public class ClearEditText extends AppCompatEditText implements View.OnTouchList
     }
 
     @Override
-    public boolean onTouch(final View view, final MotionEvent motionEvent) {
+    public boolean onTouch(final View view, @NonNull final MotionEvent motionEvent) {
         final int x = (int) motionEvent.getX();
         if (x > getWidth() - getPaddingRight() - clearTextIcon.getIntrinsicWidth()) {
             if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
@@ -109,7 +111,6 @@ public class ClearEditText extends AppCompatEditText implements View.OnTouchList
     @Override
     public void afterTextChanged(Editable s) {
     }
-
 
     private void setClearIconVisible(final boolean visible) {
         clearTextIcon.setVisible(visible, false);

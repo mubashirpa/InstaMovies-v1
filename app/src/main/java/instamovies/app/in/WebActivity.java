@@ -58,7 +58,6 @@ import instamovies.app.in.utils.AdBlocker;
 import instamovies.app.in.utils.AppUtils;
 import instamovies.app.in.utils.FileUtil;
 import instamovies.app.in.utils.NetworkUtil;
-import instamovies.app.in.utils.SnackBarHelper;
 import okhttp3.HttpUrl;
 
 public class WebActivity extends AppCompatActivity {
@@ -208,7 +207,6 @@ public class WebActivity extends AppCompatActivity {
                             bottomSheetDialog2.setPositiveButton("Done", v -> bottomSheetDialog2.dismiss());
                             bottomSheetDialog2.show(getSupportFragmentManager(), "BottomSheetDialog");
                         });
-                        SnackBarHelper.configSnackBar(context, snackbar);
                         snackbar.show();
                         return true;
                     }
@@ -234,12 +232,12 @@ public class WebActivity extends AppCompatActivity {
                                         try {
                                             startActivity(marketIntent);
                                         } catch (ActivityNotFoundException notFoundException) {
-                                            AppUtils.toastShortError(context, WebActivity.this, getString(R.string.error_activity_not_found));
+                                            AppUtils.toastError(context, WebActivity.this, getString(R.string.error_activity_not_found));
                                         }
                                     }
                                 }
                             } catch (URISyntaxException uriSyntaxException){
-                                AppUtils.toastShortError(context, WebActivity.this, getString(R.string.error_uri_syntax_exception));
+                                AppUtils.toastError(context, WebActivity.this, getString(R.string.error_uri_syntax_exception));
                             }
                         } else if (loadingUrl.startsWith("magnet:")){
                             bottomSheetDialog.setTitle("Error");
@@ -251,12 +249,12 @@ public class WebActivity extends AppCompatActivity {
                                 try {
                                     startActivity(marketIntent);
                                 } catch (ActivityNotFoundException notFoundException1){
-                                    AppUtils.toastShortError(context, WebActivity.this, getString(R.string.error_activity_not_found));
+                                    AppUtils.toastError(context, WebActivity.this, getString(R.string.error_activity_not_found));
                                 }
                             });
                             bottomSheetDialog.show(getSupportFragmentManager(), "BottomSheetDialog");
                         } else {
-                            AppUtils.toastShortError(context,WebActivity.this, "Unsupported URL");
+                            AppUtils.toastError(context,WebActivity.this, getString(R.string.error_unsupported_url, loadingUrl));
                         }
                     }
                 }
@@ -284,7 +282,6 @@ public class WebActivity extends AppCompatActivity {
                             bottomSheetDialog2.setPositiveButton("Done", v -> bottomSheetDialog2.dismiss());
                             bottomSheetDialog2.show(getSupportFragmentManager(), "BottomSheetDialog");
                         });
-                        SnackBarHelper.configSnackBar(context, snackbar);
                         snackbar.show();
                         return true;
                     }
@@ -310,12 +307,12 @@ public class WebActivity extends AppCompatActivity {
                                         try {
                                             startActivity(marketIntent);
                                         } catch (ActivityNotFoundException notFoundException) {
-                                            AppUtils.toastShortError(context, WebActivity.this, getString(R.string.error_activity_not_found));
+                                            AppUtils.toastError(context, WebActivity.this, getString(R.string.error_activity_not_found));
                                         }
                                     }
                                 }
                             } catch (URISyntaxException uriSyntaxException){
-                                AppUtils.toastShortError(context, WebActivity.this, getString(R.string.error_uri_syntax_exception));
+                                AppUtils.toastError(context, WebActivity.this, getString(R.string.error_uri_syntax_exception));
                             }
                         } else if (loadingUrl.startsWith("magnet:")){
                             bottomSheetDialog.setTitle("Error");
@@ -327,12 +324,12 @@ public class WebActivity extends AppCompatActivity {
                                 try {
                                     startActivity(marketIntent);
                                 } catch (ActivityNotFoundException notFoundException1){
-                                    AppUtils.toastShortError(context, WebActivity.this, getString(R.string.error_activity_not_found));
+                                    AppUtils.toastError(context, WebActivity.this, getString(R.string.error_activity_not_found));
                                 }
                             });
                             bottomSheetDialog.show(getSupportFragmentManager(), "BottomSheetDialog");
                         } else {
-                            AppUtils.toastShortError(context,WebActivity.this, "Unsupported URL");
+                            AppUtils.toastError(context,WebActivity.this, getString(R.string.error_unsupported_url, loadingUrl));
                         }
                     }
                 }
@@ -569,13 +566,13 @@ public class WebActivity extends AppCompatActivity {
                     return true;
                 case "Clear cache":
                     webView.clearCache(true);
-                    AppUtils.toastShortDefault(context,WebActivity.this,"Cache Cleared");
+                    AppUtils.toast(context,WebActivity.this,"Cache Cleared");
                     return true;
                 case "Report page":
                     if (webView.getUrl() != null){
                         ReportPage(webView.getUrl());
                     } else {
-                        AppUtils.toastShortError(context,WebActivity.this, getString(R.string.error_default));
+                        AppUtils.toastError(context,WebActivity.this, getString(R.string.error_default));
                     }
                     return true;
                 case "Settings":
@@ -693,7 +690,7 @@ public class WebActivity extends AppCompatActivity {
         request.addRequestHeader("User-Agent", userAgent);
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-        AppUtils.toastShortDefault(context, WebActivity.this, "Downloading file");
+        AppUtils.toast(context, WebActivity.this, "Downloading file");
         return downloadManager.enqueue(request);
     }
 
@@ -702,7 +699,7 @@ public class WebActivity extends AppCompatActivity {
         public void onReceive(Context context, @NotNull Intent intent) {
             long referenceId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
             if (downloadReference == referenceId) {
-                AppUtils.toastShortDefault(context, WebActivity.this, "Download complete");
+                AppUtils.toast(context, WebActivity.this, "Download complete");
             }
         }
     };
@@ -893,8 +890,8 @@ public class WebActivity extends AppCompatActivity {
             reportMap.put("Time", timeStamp);
             reportDB.collection("WebReport")
                     .add(reportMap)
-                    .addOnSuccessListener(documentReference -> AppUtils.toastShortDefault(context,WebActivity.this,"Reported successfully"))
-                    .addOnFailureListener(e -> AppUtils.toastShortError(context,WebActivity.this,"Failed to send report"));
+                    .addOnSuccessListener(documentReference -> AppUtils.toast(context,WebActivity.this,"Reported successfully"))
+                    .addOnFailureListener(e -> AppUtils.toastError(context,WebActivity.this,"Failed to send report"));
         });
         reportDialog.setView(view);
         reportDialog.create().show();
@@ -994,7 +991,7 @@ public class WebActivity extends AppCompatActivity {
 
         @JavascriptInterface
         public void showToast(String toast) {
-            AppUtils.toastShortDefault(context , activity, toast);
+            AppUtils.toast(context , activity, toast);
         }
     }
 }

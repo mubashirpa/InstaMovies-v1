@@ -131,7 +131,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode,permissions,grantResults);
         if (requestCode == REQUEST_CODE_STORAGE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                AppUtils.toastShortError(context, SplashScreenActivity.this, getString(R.string.error_permission_denied, "storage"));
+                AppUtils.toastError(context, SplashScreenActivity.this, getString(R.string.error_permission_denied, "storage"));
                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);

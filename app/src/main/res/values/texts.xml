@@ -7,6 +7,8 @@
     <string name="error_no_secure_decoder">This device does not provide a secure decoder for <xliff:g id="mime_type">%1$s</xliff:g></string>
     <string name="error_querying_decoders">Unable to query device decoders</string>
     <string name="error_instantiating_decoder">Unable to instantiate decoder <xliff:g id="decoder_name">%1$s</xliff:g></string>
+    <string name="error_unsupported_video">Media includes video tracks, but none are playable by this device</string>
+    <string name="error_unsupported_audio">Media includes audio tracks, but none are playable by this device</string>
 
     <!-- Error strings -->
     <string name="error_default">An error occurred</string>
@@ -17,6 +19,9 @@
     <string name="error_activity_not_found">No activity found to handle intent</string>
     <string name="error_uri_syntax_exception">Failed to parse uri</string>
     <string name="error_permission_denied">Permission for <xliff:g id="permission_type">%1$s</xliff:g> was denied</string>
+    <string name="error_unsupported_url">Unsupported URL: <xliff:g id="url">%1$s</xliff:g></string>
+    <string name="error_download_failed">Download failed</string>
+    <string name="error_initialize_youtube_player">Failed to initialize player</string>
 
     <!-- Other strings -->
     <string name="feedback_info">Some account and system info will be send to our developers. We\'ll use the info that you give us to address technical issues and improve our services, subject to our <a href="https://imoviesapp.wordpress.com/privacy-policy" >Privacy policy</a> and <a href="https://imoviesapp.wordpress.com/terms-conditions" >Terms of service.</a></string>
@@ -97,7 +102,6 @@
     <string name="list_of_actors">List of actors</string>
     <string name="synopsis">Synopsis</string>
     <string name="send">Send</string>
-    <string name="coming_soon">Coming soon</string>
     <string name="update">Update</string>
     <string name="later">Later</string>
     <string name="update_manually">UPDATE MANUALLY</string>

@@ -52,7 +52,6 @@ import android.widget.TextView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -169,7 +168,7 @@ public class FeedbackActivity extends AppCompatActivity {
         PRIVACY_URL = getString(R.string.privacy_url);
 
         TextView infoText = findViewById(R.id.info_text);
-        String feedbackInfo = "Some account and system info will be send to our developers. We'll use the info that you give us to address technical issues and improve our services, subject to our Privacy policy and Terms of service.";
+        String feedbackInfo = getString(R.string.feedback_info);
         SpannableString spannableString = new SpannableString(feedbackInfo);
         ClickableSpan privacySpan = new ClickableSpan() {
             @Override
@@ -250,7 +249,7 @@ public class FeedbackActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     initializeActivity();
                 } else {
-                    AppUtils.toastShortError(context, FeedbackActivity.this, getString(R.string.error_permission_denied, "accounts"));
+                    AppUtils.toastError(context, FeedbackActivity.this, getString(R.string.error_permission_denied, "accounts"));
                     finish();
                 }
                 return;
@@ -258,7 +257,7 @@ public class FeedbackActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     pickImage();
                 } else {
-                    AppUtils.toastShortError(context, FeedbackActivity.this, getString(R.string.error_permission_denied, "storage"));
+                    AppUtils.toastError(context, FeedbackActivity.this, getString(R.string.error_permission_denied, "storage"));
                 }
         }
     }
@@ -274,13 +273,13 @@ public class FeedbackActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getTitle().equals(getString(R.string.send))) {
             if (feedbackText.getText().toString().equals("")) {
-                AppUtils.toastShortDefault(context,FeedbackActivity.this, "Write your feedback before sending");
+                AppUtils.toast(context,FeedbackActivity.this, "Write your feedback before sending");
             } else {
                 if (emailList.size() == 0) {
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    AppUtils.toastShortError(context,FeedbackActivity.this, "An error occurred");
+                    AppUtils.toastError(context,FeedbackActivity.this, getString(R.string.error_default));
                     sendUsingMail();
                 } else {
                     showProgressDialog();
@@ -319,7 +318,7 @@ public class FeedbackActivity extends AppCompatActivity {
                             screenshotImage.setImageURI(contentUri);
                             screenshotLayout.setVisibility(View.VISIBLE);
                         } else {
-                            AppUtils.toastShortError(context, FeedbackActivity.this, "Failed select image");
+                            AppUtils.toastError(context, FeedbackActivity.this, "Failed select image");
                         }
                     } else {
                         imagePath = "";
@@ -345,9 +344,9 @@ public class FeedbackActivity extends AppCompatActivity {
             imagePath = "";
             imageName = "";
             screenshotLayout.setVisibility(View.GONE);
-            AppUtils.toastShortDefault(context,FeedbackActivity.this, "Thank you for the Feedback");
+            AppUtils.toast(context,FeedbackActivity.this, "Thank you for the Feedback");
         }).addOnFailureListener(e -> {
-            AppUtils.toastShortError(context,FeedbackActivity.this, "Failed to Send Feedback");
+            AppUtils.toastError(context,FeedbackActivity.this, "Failed to Send Feedback");
             if (progressDialog.isShowing()){
                 progressDialog.dismiss();
             }
@@ -385,7 +384,7 @@ public class FeedbackActivity extends AppCompatActivity {
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
-            AppUtils.toastShortError(context,FeedbackActivity.this, "An error occurred");
+            AppUtils.toastError(context,FeedbackActivity.this, getString(R.string.error_default));
             sendUsingMail();
         });
     }
@@ -418,7 +417,7 @@ public class FeedbackActivity extends AppCompatActivity {
     private void sendUsingMail() {
         Intent mailIntent = new Intent(Intent.ACTION_SEND);
         mailIntent.setType("text/plain");
-        mailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"mubashirmubajr11@gmail.com"});
+        mailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {getString(R.string.developer_email)});
         mailIntent.putExtra(Intent.EXTRA_SUBJECT, "Insta Movies - User Feedback");
         mailIntent.putExtra(Intent.EXTRA_TEXT, feedbackText.getText()+"\n\n"+aboutPhone);
         if (!imagePath.equals("") || FileUtil.isExistFile(new File(imagePath))){
@@ -429,7 +428,7 @@ public class FeedbackActivity extends AppCompatActivity {
         try {
             startActivity(chooserInt);
         } catch (ActivityNotFoundException e){
-            AppUtils.toastShortError(context,FeedbackActivity.this, "Failed to send email");
+            AppUtils.toastError(context,FeedbackActivity.this, "Failed to send email");
         }
     }
 }

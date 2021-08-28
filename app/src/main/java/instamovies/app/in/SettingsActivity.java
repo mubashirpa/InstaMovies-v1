@@ -144,7 +144,7 @@ public class SettingsActivity extends AppCompatActivity {
             if (cachePref != null) {
                 cachePref.setOnPreferenceClickListener(preference -> {
                     FileUtil.deleteCache(getContext());
-                    AppUtils.toastShortDefault(getContext(), requireActivity(),"Cache cleared");
+                    AppUtils.toast(getContext(), requireActivity(),"Cache cleared");
                     initializeCache();
                     return true;
                 });
@@ -153,7 +153,7 @@ public class SettingsActivity extends AppCompatActivity {
                 clearUpdate.setOnPreferenceClickListener(preference -> {
                     File filePath = new File(FileUtil.getPackageDataDir(context) + "/downloads/update");
                     if (FileUtil.deleteDirectory(filePath)) {
-                        AppUtils.toastShortDefault(getContext(), requireActivity(),"Successfully cleared files");
+                        AppUtils.toast(getContext(), requireActivity(),"Successfully cleared files");
                     }
                     return true;
                 });
@@ -176,7 +176,7 @@ public class SettingsActivity extends AppCompatActivity {
             if (dataSaverSwitch != null) {
                 dataSaverSwitch.setOnPreferenceChangeListener((preference, newValue) -> {
                     if (newValue.equals(true)) {
-                        AppUtils.toastShortDefault(getContext(), requireActivity(),"Data saver enabled");
+                        AppUtils.toast(getContext(), requireActivity(),"Data saver enabled");
                     }
                     return true;
                 });

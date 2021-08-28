@@ -12,11 +12,9 @@ import android.content.*;
 import androidx.appcompat.widget.Toolbar;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.preference.PreferenceManager;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
-
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -28,7 +26,6 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import android.net.Uri;
 import instamovies.app.in.utils.AppUtils;
 
@@ -114,7 +111,7 @@ public class MoreActivity extends AppCompatActivity {
                     webIntent.putExtra("HIDDEN_URL", itemLink);
                     startActivity(webIntent);
                 } else {
-                    AppUtils.toastShortError(context, MoreActivity.this, itemLink);
+                    AppUtils.toast(context, MoreActivity.this, itemLink);
                 }
             }
             if (moreList.get(position).containsKey("Link1")) {
@@ -137,7 +134,7 @@ public class MoreActivity extends AppCompatActivity {
                         webIntent.setData(Uri.parse(itemLink));
                         startActivity(webIntent);
                     } catch (android.content.ActivityNotFoundException notFoundException){
-                        AppUtils.toastShortError(context,MoreActivity.this, "Failed to load url");
+                        AppUtils.toastError(context,MoreActivity.this, getString(R.string.error_activity_not_found));
                     }
                 }
             }

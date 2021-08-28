@@ -72,7 +72,7 @@ public class BannerAdapter extends RecyclerView.Adapter<BannerAdapter.BannerView
 
         holder.sliderImage.setOnClickListener(v -> {
             if (sliderList.get(position).containsKey("Premium") && !premiumUser) {
-                AppUtils.toastShortDefault(context, activity, "You are not a premium user.");
+                AppUtils.toast(context, activity, "You are not a premium user.");
                 return;
             }
             if (sliderList.get(position).containsKey("Movie")) {
@@ -95,7 +95,7 @@ public class BannerAdapter extends RecyclerView.Adapter<BannerAdapter.BannerView
                     webIntent.putExtra("HIDDEN_URL", itemLink);
                     context.startActivity(webIntent);
                 } else {
-                    AppUtils.toastShortDefault(context, activity, itemLink);
+                    AppUtils.toast(context, activity, itemLink);
                 }
             }
             if (sliderList.get(position).containsKey("Link1")) {
@@ -119,7 +119,7 @@ public class BannerAdapter extends RecyclerView.Adapter<BannerAdapter.BannerView
                         webIntent.setData(Uri.parse(itemLink));
                         context.startActivity(webIntent);
                     } catch (android.content.ActivityNotFoundException notFoundException){
-                        AppUtils.toastShortError(context, activity, "Failed to load url");
+                        AppUtils.toastError(context, activity, context.getString(R.string.error_activity_not_found));
                     }
                 }
             }
@@ -137,7 +137,7 @@ public class BannerAdapter extends RecyclerView.Adapter<BannerAdapter.BannerView
                             webIntent.setData(Uri.parse(itemLink));
                             context.startActivity(webIntent);
                         } catch (android.content.ActivityNotFoundException notFoundException){
-                            AppUtils.toastShortError(context, activity, "Failed to load url");
+                            AppUtils.toastError(context, activity, context.getString(R.string.error_activity_not_found));
                         }
                     }
                 } else {

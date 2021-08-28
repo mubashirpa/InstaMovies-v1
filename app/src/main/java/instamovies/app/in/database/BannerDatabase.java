@@ -29,7 +29,6 @@ public class BannerDatabase {
     private final String LOG_TAG = "BannerDatabase";
 
     public BannerDatabase(@NotNull Context context, Activity activity, ViewPager2 viewPager2){
-
         BannerDatabase.viewPager2 = viewPager2;
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = database.getReference("Thumbnail");
@@ -46,7 +45,7 @@ public class BannerDatabase {
                         ViewSliderList.add(map);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(LOG_TAG, e.getMessage());
                 }
                 BannerAdapter bannerAdapter = new BannerAdapter(ViewSliderList, viewPager2, context, activity);
                 viewPager2.setAdapter(bannerAdapter);

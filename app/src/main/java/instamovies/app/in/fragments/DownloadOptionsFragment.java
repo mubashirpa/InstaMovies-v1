@@ -139,7 +139,7 @@ public class DownloadOptionsFragment extends BottomSheetDialogFragment {
                     handleIntent.setData(Uri.parse(replacedUrl));
                     startActivity(handleIntent);
                 } catch (android.content.ActivityNotFoundException notFoundException){
-                    AppUtils.toastShortError(context, activity, getString(R.string.error_activity_not_found));
+                    AppUtils.toastError(context, activity, getString(R.string.error_activity_not_found));
                 }
             }
         }
@@ -157,7 +157,7 @@ public class DownloadOptionsFragment extends BottomSheetDialogFragment {
                         handleIntent.setData(Uri.parse(replacedUrl));
                         startActivity(handleIntent);
                     } catch (android.content.ActivityNotFoundException notFoundException){
-                        AppUtils.toastShortError(context, activity, getString(R.string.error_activity_not_found));
+                        AppUtils.toastError(context, activity, getString(R.string.error_activity_not_found));
                     }
                 }
             } else {
@@ -198,7 +198,7 @@ public class DownloadOptionsFragment extends BottomSheetDialogFragment {
                     try {
                         context.startActivity(marketIntent);
                     } catch (ActivityNotFoundException notFoundException1){
-                        AppUtils.toastShortError(context, activity, getString(R.string.error_activity_not_found));
+                        AppUtils.toastError(context, activity, getString(R.string.error_activity_not_found));
                     }
                 });
                 bottomSheetDialog.show(requireActivity().getSupportFragmentManager(), "BottomSheetDialog");

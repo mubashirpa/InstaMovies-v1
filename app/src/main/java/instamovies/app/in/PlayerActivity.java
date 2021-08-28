@@ -37,9 +37,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.ErrorMessageProvider;
 import com.google.android.exoplayer2.util.EventLogger;
 import com.google.android.exoplayer2.util.Util;
-
 import org.jetbrains.annotations.NotNull;
-
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -320,10 +318,10 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
                 MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
                 if (mappedTrackInfo != null) {
                     if (mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_VIDEO) == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-                        AppUtils.toastShortError(context, PlayerActivity.this, "Media includes video tracks, but none are playable by this device");
+                        AppUtils.toastError(context, PlayerActivity.this, getString(R.string.error_unsupported_video));
                     }
                     if (mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_AUDIO) == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
-                        AppUtils.toastShortError(context, PlayerActivity.this, "Media includes audio tracks, but none are playable by this device");
+                        AppUtils.toastError(context, PlayerActivity.this, getString(R.string.error_unsupported_audio));
                     }
                 }
                 lastSeenTrackGroupArray = trackGroups;
