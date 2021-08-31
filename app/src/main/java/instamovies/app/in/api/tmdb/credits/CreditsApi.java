@@ -9,8 +9,9 @@ public interface CreditsApi {
 
     String JSON_URL = "https://api.themoviedb.org/";
 
-    @GET("3/movie/{movie_id}/credits")
-    Call<CreditsResponses> getCredits(@Path("movie_id") String movieId,
-                                           @Query("api_key") String apiKey,
-                                           @Query("language") String language);
+    @GET("3/{type}/{movie_id}/credits")
+    Call<CreditsResponses> getCredits(@Path("type") String type,
+                                      @Path("movie_id") String movieId,
+                                      @Query("api_key") String apiKey,
+                                      @Query("language") String language);
 }

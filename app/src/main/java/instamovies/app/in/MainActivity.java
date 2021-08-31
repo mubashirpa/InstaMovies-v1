@@ -203,12 +203,13 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putString("status","opened");
         firebaseAnalytics.logEvent("main_open", bundle);
-
         new BannerDatabase(context, MainActivity.this, viewSlider);
-
         NotificationUtils notificationService = new NotificationUtils(context);
         notificationService.CreateUpdateChannel();
         notificationService.CreateMoviesChannel();
+        notificationService.DefaultNotificationService("Test", "Hello");
+        scrollTop.setText(appData.getString("scroll_main", getString(R.string.about_app_sample)));
+
         if (NetworkUtil.isOnline(context)) {
             AppUtils.toastError(context,MainActivity.this, getString(R.string.error_no_connection));
             progressbarLayout.setVisibility(View.GONE);
@@ -290,10 +291,6 @@ public class MainActivity extends AppCompatActivity {
         layoutHindi.setOnClickListener(languageClickListener);
         layoutMore.setOnClickListener(languageClickListener);
 
-        if (!appData.getString("scroll_main", "").equals("")) {
-            scrollTop.setText(appData.getString("scroll_main", ""));
-        }
-
         systemChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -309,11 +306,14 @@ public class MainActivity extends AppCompatActivity {
                 if (errorLinear.isShown()) {
                     errorLinear.setVisibility(View.GONE);
                 }
+                if (childKey == null) {
+                    return;
+                }
 
-                if (childKey != null && childKey.equals("Scroll")) {
-                    if (childValue != null && childValue.containsKey("Text")) {
-                        String scrollTopMessage = Objects.requireNonNull(childValue.get("Text")).toString();
-                        if (!scrollTopMessage.equals(appData.getString("scroll_main", ""))) {
+                if (childKey.equals("scroll_main")) {
+                    if (childValue != null && childValue.containsKey("text")) {
+                        String scrollTopMessage = Objects.requireNonNull(childValue.get("text")).toString();
+                        if (!scrollTopMessage.equals(appData.getString("scroll_main", getString(R.string.about_app_sample)))) {
                             appData.edit().putString("scroll_main", scrollTopMessage).apply();
                             scrollTop.setText(scrollTopMessage);
                         }
@@ -322,47 +322,38 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                if (childKey != null && childKey.equals("Form")) {
+                if (childKey.equals("in_app_msg")) {
                     if (childValue != null) {
                         String Message = "";
                         View dialogView = getLayoutInflater().inflate(R.layout.layout_checkbox, null);
                         CheckBox checkBox = dialogView.findViewById(R.id.checkBox);
-                        if (childValue.containsKey("Title")) {
-                            String Title = Objects.requireNonNull(childValue.get("Title")).toString();
+                        if (childValue.containsKey("title")) {
+                            String Title = Objects.requireNonNull(childValue.get("title")).toString();
                             notifyDialog.setTitle(Title);
                         }
-                        if (childValue.containsKey("Message")){
-                            Message = Objects.requireNonNull(childValue.get("Message")).toString();
+                        if (childValue.containsKey("message")){
+                            Message = Objects.requireNonNull(childValue.get("message")).toString();
                             notifyDialog.setMessage("\n" + Message);
                             notifyDialog.setView(dialogView);
                             notifyDialog.setPositiveButton("CLOSE", (_dialog, _which) -> _dialog.dismiss());
-                            if (childValue.containsKey("Link")) {
-                                notifyDialog.setNegativeButton("OK", ((dialog, which) -> {
-                                    webIntent = new Intent();
-                                    webIntent.setClass(context, WebActivity.class);
-                                    webIntent.putExtra("WEB_URL", Objects.requireNonNull(childValue.get("Link")).toString());
-                                    startActivity(webIntent);
-                                }));
-                            }
-                            if (!Message.equals(appData.getString("form_message_main", ""))) {
+                            if (!Message.equals(appData.getString("in_app_message", ""))) {
                                 notifyDialog.create().show();
                             }
                         }
-
                         String finalMessage = Message;
                         checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
                             if(compoundButton.isChecked()){
-                                appData.edit().putString("form_message_main", finalMessage).apply();
+                                appData.edit().putString("in_app_message", finalMessage).apply();
                             }else{
-                                appData.edit().putString("form_message_main", "").apply();
+                                appData.edit().putString("in_app_message", "").apply();
                             }
                         });
                     }
                 }
 
-                if (childKey != null && childKey.equals("Maintenance")) {
-                    if (childValue != null && childValue.containsKey("Notice")) {
-                        String Notice = Objects.requireNonNull(childValue.get("Notice")).toString();
+                if (childKey.equals("app_maintenance")) {
+                    if (childValue != null && childValue.containsKey("notice")) {
+                        String Notice = Objects.requireNonNull(childValue.get("notice")).toString();
                         maintenanceDialog.setMessage(Notice);
                         maintenanceDialog.setNeutralButton("Close", (dialog, which) -> finish());
                         maintenanceDialog.setCancelable(false);
@@ -372,10 +363,18 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                if (childKey != null && childKey.equals("WebView")) {
+                if (childKey.equals("movie")) {
+                    if (childValue != null && childValue.containsKey("details_activity")) {
+                        if (Objects.equals(childValue.get("details_activity"), "false")) {
+                            appSettings.edit().putBoolean("details_activity", false).apply();
+                        }
+                    }
+                }
+
+                if (childKey.equals("web_view")) {
                     if (childValue != null) {
-                        if (childValue.containsKey("Maintenance")){
-                            if (Objects.equals(childValue.get("Maintenance"), "true")){
+                        if (childValue.containsKey("maintenance")){
+                            if (Objects.equals(childValue.get("maintenance"), "true")){
                                 settingsPreferences.edit().putBoolean("system_browser_preference", true).apply();
                                 appSettings.edit().putBoolean("web_maintenance", true).apply();
                             } else {
@@ -383,8 +382,8 @@ public class MainActivity extends AppCompatActivity {
                                 appSettings.edit().putBoolean("web_maintenance", false).apply();
                             }
                         }
-                        if (childValue.containsKey("AdServer")) {
-                            String fileUrl = Objects.requireNonNull(childValue.get("AdServer")).toString();
+                        if (childValue.containsKey("ad_hosts_list")) {
+                            String fileUrl = Objects.requireNonNull(childValue.get("ad_hosts_list")).toString();
                             File directory = new File(FileUtil.getPackageDataDir(context) + "/downloads");
                             boolean success;
                             if (!directory.exists()) {
@@ -399,7 +398,6 @@ public class MainActivity extends AppCompatActivity {
                                 if (FileUtil.isExistFile(filePath)) {
                                     FileUtil.deleteFile(filePath);
                                 }
-
                                 firebaseStorage.getReferenceFromUrl(fileUrl).getFile(filePath)
                                         .addOnSuccessListener(taskSnapshot -> appData.edit().putString("ad_pages_list", fileUrl).apply());
                             }

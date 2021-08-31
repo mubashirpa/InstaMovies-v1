@@ -69,6 +69,7 @@ public class HiddenWebActivity extends AppCompatActivity {
     private String errorUrl = null;
     private Intent videoIntent = new Intent();
     private SharedPreferences settingsPreferences;
+    private SharedPreferences appSettings;
     private BottomSheetFragment bottomSheetDialog;
     private ValueCallback<Uri[]> uploadMessage;
     private ProgressBar progressBar;
@@ -102,6 +103,7 @@ public class HiddenWebActivity extends AppCompatActivity {
         webView = findViewById(R.id.webView);
         pageUrl = getIntent().getStringExtra("HIDDEN_URL");
         settingsPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        appSettings = context.getSharedPreferences("appSettings", Activity.MODE_PRIVATE);
         bottomSheetDialog = BottomSheetFragment.newInstance();
         progressBar = findViewById(R.id.progressbar);
         errorLinear = findViewById(R.id.error_view);
@@ -642,11 +644,16 @@ public class HiddenWebActivity extends AppCompatActivity {
         if (url.startsWith("movie://")) {
             String replacedUrl = url.replace("movie://","");
             Uri uri = Uri.parse(replacedUrl);
-            String imdbID = uri.getQueryParameter("imdb_id");
+            String movieID = uri.getQueryParameter("movie_id");
             webIntent = new Intent();
-            webIntent.setClass(context, MovieDetailsActivity.class);
-            webIntent.putExtra("movie_details_url", replacedUrl);
-            webIntent.putExtra("imdb_id", imdbID);
+            if (appSettings.getBoolean("details_activity", true)) {
+                webIntent.setClass(context, MovieDetailsActivity.class);
+                webIntent.putExtra("movie_details_url", replacedUrl);
+                webIntent.putExtra("movie_id", movieID);
+            } else {
+                webIntent.setClass(context, HiddenWebActivity.class);
+                webIntent.putExtra("HIDDEN_URL", replacedUrl);
+            }
             startActivity(webIntent);
         }
         if (url.startsWith("video://")) {
@@ -722,9 +729,9 @@ public class HiddenWebActivity extends AppCompatActivity {
         }
 
         @JavascriptInterface
-        public void showMovieDetails(String imdbID) {
+        public void showMovieDetails(String movieID) {
             MovieDetailsFragment movieDetailsFragment = MovieDetailsFragment.newInstance();
-            movieDetailsFragment.setFileID(imdbID);
+            movieDetailsFragment.setFileID(movieID);
             movieDetailsFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
         }
 

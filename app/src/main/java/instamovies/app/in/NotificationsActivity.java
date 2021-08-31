@@ -35,6 +35,7 @@ public class NotificationsActivity extends AppCompatActivity {
 
     private ArrayList<HashMap<String, Object>> notificationList = new ArrayList<>();
     private SharedPreferences appData;
+    private SharedPreferences appSettings;
     private Intent webIntent = new Intent();
     private Context context;
     private final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -65,6 +66,7 @@ public class NotificationsActivity extends AppCompatActivity {
         MobileAds.initialize(context);
         ListView listView = findViewById(R.id.listView);
         appData = getSharedPreferences("appData", Activity.MODE_PRIVATE);
+        appSettings = context.getSharedPreferences("appSettings", Activity.MODE_PRIVATE);
         settingsPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         progressBar = findViewById(R.id.progressbar);
         checkSettings();
@@ -121,12 +123,17 @@ public class NotificationsActivity extends AppCompatActivity {
             }
             if (notificationList.get(position).containsKey("Movie")) {
                 String movieLink = Objects.requireNonNull(notificationList.get(position).get("Movie")).toString();
-                if (notificationList.get(position).containsKey("imdb_id")) {
-                    String imdbID = Objects.requireNonNull(notificationList.get(position).get("imdb_id")).toString();
+                if (notificationList.get(position).containsKey("movie_id")) {
+                    String movieID = Objects.requireNonNull(notificationList.get(position).get("movie_id")).toString();
                     webIntent = new Intent();
-                    webIntent.setClass(context, MovieDetailsActivity.class);
-                    webIntent.putExtra("movie_details_url", movieLink);
-                    webIntent.putExtra("imdb_id", imdbID);
+                    if (appSettings.getBoolean("details_activity", true)) {
+                        webIntent.setClass(context, MovieDetailsActivity.class);
+                        webIntent.putExtra("movie_details_url", movieLink);
+                        webIntent.putExtra("movie_id", movieID);
+                    } else {
+                        webIntent.setClass(context, HiddenWebActivity.class);
+                        webIntent.putExtra("HIDDEN_URL", movieLink);
+                    }
                     startActivity(webIntent);
                 }
                 return;

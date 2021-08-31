@@ -40,8 +40,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +53,6 @@ import instamovies.app.in.utils.AppUtils;
 public class CategoriesActivity extends AppCompatActivity {
 
     private Intent webIntent = new Intent();
-    private AlertDialog.Builder notifyDialog;
     private SharedPreferences appData;
     private ArrayList<HashMap<String,Object>> categoryList = new ArrayList<>();
     private GridView gridView;
@@ -63,6 +60,7 @@ public class CategoriesActivity extends AppCompatActivity {
     private final int REQUEST_CODE_STORAGE = 1001;
     private Intent videoIntent = new Intent();
     private SharedPreferences settingsPreferences;
+    private SharedPreferences appSettings;
     private AdView adView;
     private boolean premiumUser = false;
     private boolean systemBrowser = false;
@@ -142,6 +140,7 @@ public class CategoriesActivity extends AppCompatActivity {
         gridView = findViewById(R.id.gridView);
         FloatingActionButton fab = findViewById(R.id.fab);
         TextView scrollBottom = findViewById(R.id.scroll_bottom);
+        appSettings = context.getSharedPreferences("appSettings", Activity.MODE_PRIVATE);
         scrollBottom.setSelected(true);
         checkSettings();
 
@@ -175,34 +174,6 @@ public class CategoriesActivity extends AppCompatActivity {
             RequestDialogFragment requestDialogFragment = RequestDialogFragment.newInstance();
             requestDialogFragment.setActivity(CategoriesActivity.this);
             requestDialogFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
-        });
-
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        DocumentReference langReference = firebaseFirestore.collection("Languages").document("Notify");
-        langReference.addSnapshotListener((documentSnapshot, e) -> {
-            if (documentSnapshot != null && documentSnapshot.exists()) {
-                String Header = Objects.requireNonNull(documentSnapshot.get("Header")).toString();
-                String Message = Objects.requireNonNull(documentSnapshot.get("Message")).toString();
-
-                notifyDialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-                View dialogView = getLayoutInflater().inflate(R.layout.layout_checkbox, null);
-                CheckBox checkBox = dialogView.findViewById(R.id.checkBox);
-                notifyDialog.setTitle(Header);
-                notifyDialog.setMessage("\n" + Message);
-                notifyDialog.setView(dialogView);
-                notifyDialog.setPositiveButton("OK", (_dialog, _which) -> _dialog.dismiss());
-                notifyDialog.setCancelable(false);
-                if (!Message.equals(appData.getString("message_categories_activity", "")) && !isDestroyed()) {
-                    notifyDialog.create().show();
-                }
-                checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
-                    if(compoundButton.isChecked()){
-                        appData.edit().putString("message_categories_activity", Message).apply();
-                    }else{
-                        appData.edit().putString("message_categories_activity", "").apply();
-                    }
-                });
-            }
         });
 
         View dialogView = getLayoutInflater().inflate(R.layout.layout_checkbox, null);
@@ -249,12 +220,17 @@ public class CategoriesActivity extends AppCompatActivity {
             }
             if (categoryList.get(position).containsKey("Movie")) {
                 String movieLink = Objects.requireNonNull(categoryList.get(position).get("Movie")).toString();
-                if (categoryList.get(position).containsKey("imdb_id")) {
-                    String imdbID = Objects.requireNonNull(categoryList.get(position).get("imdb_id")).toString();
+                if (categoryList.get(position).containsKey("movie_id")) {
+                    String movieID = Objects.requireNonNull(categoryList.get(position).get("movie_id")).toString();
                     webIntent = new Intent();
-                    webIntent.setClass(context, MovieDetailsActivity.class);
-                    webIntent.putExtra("movie_details_url", movieLink);
-                    webIntent.putExtra("imdb_id", imdbID);
+                    if (appSettings.getBoolean("details_activity", true)) {
+                        webIntent.setClass(context, MovieDetailsActivity.class);
+                        webIntent.putExtra("movie_details_url", movieLink);
+                        webIntent.putExtra("movie_id", movieID);
+                    } else {
+                        webIntent.setClass(context, HiddenWebActivity.class);
+                        webIntent.putExtra("HIDDEN_URL", movieLink);
+                    }
                     startActivity(webIntent);
                 }
             }

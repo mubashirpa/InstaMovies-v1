@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+        body {
+            font-family: 'Nunito', sans-serif;
+            padding: 0;
+        }
+
+        .root-view {
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .icon {
+            width: 80px;
+            height: 80px;
+        }
+
+        h2 {
+            color: #202124;
+            font-weight: 400;
+            margin: 0;
+            margin-top: 10px;
+            font-size: 26px;
+        }
+
+        #moto {
+            color: #202124;
+            font-weight: 600;
+            font-size: 18px;
+            margin: 0;
+            margin-top: 20px;
+        }
+
+        .about {
+            color: #5F6368;
+            line-height: 25px;
+            text-align: center;
+        }
+
+        .root-view a {
+            color: #1A73E8;
+            cursor: default;
+        }
+
+        .root-view a:link {
+            text-decoration: none;
+        }
+
+        .root-view a:visited {
+            text-decoration: none;
+        }
+
+        .root-view a:hover {
+            text-decoration: none;
+        }
+
+        .root-view a:active {
+            text-decoration: none;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #202124;
+            }
+
+            h2 {
+                color: #E8EAED;
+            }
+
+            #moto {
+                color: #E8EAED;
+            }
+
+            .about {
+                color: #9AA0A6;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="root-view">
+    <img class="icon"
+         src="data:image/png;base64,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" />
+    <h2>Insta Movies</h2>
+    <p id="moto">Download anywhere. Watch anytime</p>
+    <p class="about">Insta Movies app is one of the incredible collection of entertainments App for Android mobiles
+    </p>
+    <p class="about">Insta Movies App best resource to watch your beloved movies, videos with high-quality visuals.
+        we give you access to best-in-class TV shows, movies and documentaries. All the latest films are updated to
+        the app as soon as possible with the most high-grade quality. It will be more accessible for you to search
+        for the Latest Movies for free. No matter who is your favorite star, you’ll be able to see all their movies.
+    </p>
+    <p class="about">Stories move us. They make us feel more emotion, see new perspectives, and bring us closer to
+        each other.</p>
+    <a href="link1://https://instamoviesapp.wordpress.com/about">More at www.instamoviesapp.page.link/about</a>
+</div>
+</body>
+
+</html>

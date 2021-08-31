@@ -152,7 +152,7 @@ public class WebViewMenuFragment extends BottomSheetDialogFragment {
         this.webView = webView;
     }
 
-    private void initializeRecycler(RecyclerView recyclerView) {
+    private void initializeRecycler(@NonNull RecyclerView recyclerView) {
         RecyclerDecorationHorizontal recyclerDecoration = new RecyclerDecorationHorizontal(15, 15, 10);
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);

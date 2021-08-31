@@ -2,6 +2,9 @@ package instamovies.app.in.utils;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+
+import androidx.annotation.NonNull;
+
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import java.io.File;
@@ -29,7 +32,7 @@ public class FileUtil {
         return sb.toString();
     }
 
-    public static boolean isExistFile(File file) {
+    public static boolean isExistFile(@NonNull File file) {
         return file.exists();
     }
 
@@ -38,14 +41,14 @@ public class FileUtil {
         return new ContextWrapper(context).getExternalFilesDir(null).getAbsolutePath();
     }
 
-    public static void deleteFile(File path) {
+    public static void deleteFile(@NonNull File path) {
         if (path.exists()) {
             //noinspection ResultOfMethodCallIgnored
             path.delete();
         }
     }
 
-    public static boolean deleteDirectory(File path) {
+    public static boolean deleteDirectory(@NonNull File path) {
         boolean result = false;
         if (path.exists()) {
             result = path.delete();

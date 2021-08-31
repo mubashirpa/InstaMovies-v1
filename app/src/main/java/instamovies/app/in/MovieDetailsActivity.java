@@ -153,7 +153,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         errorView = progressStatus.findViewById(R.id.error_view);
         errorCauseText = progressStatus.findViewById(R.id.cause_text);
         Button retryButton = progressStatus.findViewById(R.id.retry_button);
-        String imdbID = getIntent().getStringExtra("imdb_id");
+        String movieID = getIntent().getStringExtra("movie_id");
         String detailsURL = getIntent().getStringExtra("movie_details_url");
         checkSettings();
         // Initializing recycler view
@@ -165,8 +165,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
         screenshotRecycler.addItemDecoration(recyclerDecoration);
 
         fetchInstaData(detailsURL);
-        fetchMovieDetails(imdbID);
-        fetchCredits(imdbID);
+        fetchMovieDetails(movieID);
+        fetchCredits(movieID);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             scrollView.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
@@ -212,8 +212,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
             handler.postDelayed(() -> {
                 if (!isDestroyed()) {
                     fetchInstaData(detailsURL);
-                    fetchMovieDetails(imdbID);
-                    fetchCredits(imdbID);
+                    fetchMovieDetails(movieID);
+                    fetchCredits(movieID);
                 }
             }, getResources().getInteger(R.integer.retry_button_wait_time_default));
         });
@@ -279,6 +279,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
             if (jsonObject.has("certificate")) {
                 movieCertificate.setText(jsonObject.getString("certificate"));
             }
+            if (jsonObject.has("adult") && jsonObject.getBoolean("adult")) {
+                adultWarning.setVisibility(View.VISIBLE);
+            }
             if (jsonObject.has("trailer")) {
                 trailerURL = jsonObject.getString("trailer");
             }
@@ -309,9 +312,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
         screenshotRecycler.setAdapter(adapter);
     }
 
-    private void fetchMovieDetails(String fileId) {
+    private void fetchMovieDetails(@NonNull String fileId) {
         String apiKey = getString(R.string.tmdb_api_key);
-
+        String type = "movie";
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder().addInterceptor(new HttpLoggingInterceptor()
                 .setLevel(HttpLoggingInterceptor.Level.BODY)).build();
@@ -322,8 +325,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
+        if (fileId.endsWith("-tv")) {
+            type = "tv";
+            String tempID = fileId;
+            fileId = tempID.replace("-tv", "");
+        }
         MovieDetailsApi theMovieDbApi = retrofit.create(MovieDetailsApi.class);
-        Call<MovieDetailsResponses> call = theMovieDbApi.getMovie(fileId, apiKey, "en-US");
+        Call<MovieDetailsResponses> call = theMovieDbApi.getMovie(type, fileId, apiKey, "en-US");
         call.enqueue(new Callback<MovieDetailsResponses>() {
             @Override
             public void onResponse(@NotNull Call<MovieDetailsResponses> call, @NotNull Response<MovieDetailsResponses> response) {
@@ -381,13 +389,18 @@ public class MovieDetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void fetchCredits(String fileId) {
+    private void fetchCredits(@NonNull String fileId) {
         String apiKey = getString(R.string.tmdb_api_key);
-
+        String type = "movie";
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder().addInterceptor(new HttpLoggingInterceptor()
                 .setLevel(HttpLoggingInterceptor.Level.BODY)).build();
 
+        if (fileId.endsWith("-tv")) {
+            type = "tv";
+            String tempID = fileId;
+            fileId = tempID.replace("-tv", "");
+        }
         Retrofit retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl(CreditsApi.JSON_URL)
@@ -395,7 +408,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 .build();
 
         CreditsApi creditsApi = retrofit.create(CreditsApi.class);
-        Call<CreditsResponses> call = creditsApi.getCredits(fileId, apiKey, "en-US");
+        Call<CreditsResponses> call = creditsApi.getCredits(type, fileId, apiKey, "en-US");
         call.enqueue(new Callback<CreditsResponses>() {
             @Override
             public void onResponse(@NonNull Call<CreditsResponses> call, @NonNull Response<CreditsResponses> response) {

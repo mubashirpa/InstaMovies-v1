@@ -43,6 +43,7 @@ public class BannerAdapter extends RecyclerView.Adapter<BannerAdapter.BannerView
     private Intent videoIntent = new Intent();
     private final SharedPreferences settingsPreferences;
     private final SharedPreferences appData;
+    private final SharedPreferences appSettings;
 
     public BannerAdapter(ArrayList<HashMap<String, Object>> arrayList, ViewPager2 viewPager2, @NotNull Context context, Activity activity) {
         sliderList = arrayList;
@@ -50,6 +51,7 @@ public class BannerAdapter extends RecyclerView.Adapter<BannerAdapter.BannerView
         this.context = context;
         this.activity = activity;
         appData = context.getSharedPreferences("appData", Activity.MODE_PRIVATE);
+        appSettings = context.getSharedPreferences("appSettings", Activity.MODE_PRIVATE);
         settingsPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         checkSettings();
     }
@@ -77,12 +79,18 @@ public class BannerAdapter extends RecyclerView.Adapter<BannerAdapter.BannerView
             }
             if (sliderList.get(position).containsKey("Movie")) {
                 String movieLink = Objects.requireNonNull(sliderList.get(position).get("Movie")).toString();
-                if (sliderList.get(position).containsKey("imdb_id")) {
-                    String imdbID = Objects.requireNonNull(sliderList.get(position).get("imdb_id")).toString();
+                if (sliderList.get(position).containsKey("movie_id")) {
+                    String movieID = Objects.requireNonNull(sliderList.get(position).get("movie_id")).toString();
                     webIntent = new Intent();
-                    webIntent.setClass(context, MovieDetailsActivity.class);
-                    webIntent.putExtra("movie_details_url", movieLink);
-                    webIntent.putExtra("imdb_id", imdbID);
+                    if (appSettings.getBoolean("details_activity", true)) {
+                        webIntent.setClass(context, MovieDetailsActivity.class);
+                        webIntent.putExtra("movie_details_url", movieLink);
+                        webIntent.putExtra("movie_id", movieID);
+                    } else {
+                        webIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        webIntent.setClass(context, HiddenWebActivity.class);
+                        webIntent.putExtra("HIDDEN_URL", movieLink);
+                    }
                     context.startActivity(webIntent);
                 }
             }

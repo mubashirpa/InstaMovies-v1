@@ -1,5 +1,6 @@
 package instamovies.app.in.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -21,6 +22,7 @@ public class NotificationUtils {
         this.context = context;
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     public void MoviesNotificationService(String messageTitle, String messageBody) {
         int notificationId = 100;
         String channelId = context.getString(R.string.movies_notification_channel_id);
@@ -30,10 +32,15 @@ public class NotificationUtils {
 
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        }
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(R.drawable.ic_baseline_notifications_black_24)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(messageTitle)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
@@ -63,6 +70,7 @@ public class NotificationUtils {
         }
     }
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     public void DefaultNotificationService(String messageTitle, String messageBody) {
         int notificationId = 200;
         String channelId = context.getString(R.string.default_notification_channel_id);
@@ -71,10 +79,15 @@ public class NotificationUtils {
 
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        } else {
+            pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        }
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(R.drawable.ic_baseline_notifications_black_24)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(messageTitle)
                 .setContentText(messageBody)
                 .setAutoCancel(true)

@@ -61,6 +61,7 @@ public class MoviesActivity extends AppCompatActivity {
     private Intent webIntent = new Intent();
     private Intent videoIntent = new Intent();
     private SharedPreferences settingsPreferences;
+    private SharedPreferences appSettings;
     private SharedPreferences appData;
     private GridLayoutAnimationController animationController;
     private Context context;
@@ -97,6 +98,7 @@ public class MoviesActivity extends AppCompatActivity {
         gridView = findViewById(R.id.gridView);
         gridView.setSelector(android.R.color.transparent);
         appData = getSharedPreferences("appData", Activity.MODE_PRIVATE);
+        appSettings = context.getSharedPreferences("appSettings", Activity.MODE_PRIVATE);
         settingsPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.move_top);
         animationController = new GridLayoutAnimationController(animation,.2f,.2f);
@@ -154,12 +156,17 @@ public class MoviesActivity extends AppCompatActivity {
             }
             if (movieList.get(position).containsKey("Movie")) {
                 String movieLink = Objects.requireNonNull(movieList.get(position).get("Movie")).toString();
-                if (movieList.get(position).containsKey("imdb_id")) {
-                    String imdbID = Objects.requireNonNull(movieList.get(position).get("imdb_id")).toString();
+                if (movieList.get(position).containsKey("movie_id")) {
+                    String movieID = Objects.requireNonNull(movieList.get(position).get("movie_id")).toString();
                     webIntent = new Intent();
-                    webIntent.setClass(context, MovieDetailsActivity.class);
-                    webIntent.putExtra("movie_details_url", movieLink);
-                    webIntent.putExtra("imdb_id", imdbID);
+                    if (appSettings.getBoolean("details_activity", true)) {
+                        webIntent.setClass(context, MovieDetailsActivity.class);
+                        webIntent.putExtra("movie_details_url", movieLink);
+                        webIntent.putExtra("movie_id", movieID);
+                    } else {
+                        webIntent.setClass(context, HiddenWebActivity.class);
+                        webIntent.putExtra("HIDDEN_URL", movieLink);
+                    }
                     startActivity(webIntent);
                 }
             }
@@ -239,8 +246,8 @@ public class MoviesActivity extends AppCompatActivity {
         });
 
         gridView.setOnItemLongClickListener((parent, view, position, id) -> {
-            if (movieList.get(position).containsKey("imdb_id")) {
-                String fileID = Objects.requireNonNull(movieList.get(position).get("imdb_id")).toString();
+            if (movieList.get(position).containsKey("movie_id")) {
+                String fileID = Objects.requireNonNull(movieList.get(position).get("movie_id")).toString();
                 MovieDetailsFragment movieDetailsFragment = MovieDetailsFragment.newInstance();
                 movieDetailsFragment.setFileID(fileID);
                 movieDetailsFragment.show(getSupportFragmentManager(), "BottomSheetDialog");
@@ -423,8 +430,8 @@ public class MoviesActivity extends AppCompatActivity {
                         if (moviesJsonResponse.get(i).getPoster() != null) {
                             hashMap.put("poster", moviesJsonResponse.get(i).getPoster());
                         }
-                        if (moviesJsonResponse.get(i).getImdb() != null) {
-                            hashMap.put("imdb_id", moviesJsonResponse.get(i).getImdb());
+                        if (moviesJsonResponse.get(i).getId() != null) {
+                            hashMap.put("movie_id", moviesJsonResponse.get(i).getId());
                         }
                         if (moviesJsonResponse.get(i).getMovie() != null) {
                             hashMap.put("Movie", moviesJsonResponse.get(i).getMovie());
