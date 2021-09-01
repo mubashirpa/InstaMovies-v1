@@ -87,6 +87,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private LinearLayout errorView;
     private TextView errorCauseText;
     private Handler handler;
+    private boolean tvShow = false;
+    private String mediaType = "movie";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,6 +166,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
         screenshotRecycler.setItemAnimator(new DefaultItemAnimator());
         screenshotRecycler.addItemDecoration(recyclerDecoration);
 
+        if (movieID.endsWith("-tv")) {
+            String tempID = movieID;
+            movieID = tempID.replace("-tv", "");
+            tvShow = true;
+            mediaType = "tv";
+        }
         fetchInstaData(detailsURL);
         fetchMovieDetails(movieID);
         fetchCredits(movieID);
@@ -204,6 +212,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             }
         });
 
+        String finalMovieID = movieID;  // Variable used in lambda expression should be final or effectively final
         retryButton.setOnClickListener(v -> {
             errorView.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
@@ -212,8 +221,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
             handler.postDelayed(() -> {
                 if (!isDestroyed()) {
                     fetchInstaData(detailsURL);
-                    fetchMovieDetails(movieID);
-                    fetchCredits(movieID);
+                    fetchMovieDetails(finalMovieID);
+                    fetchCredits(finalMovieID);
                 }
             }, getResources().getInteger(R.integer.retry_button_wait_time_default));
         });
@@ -314,7 +323,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private void fetchMovieDetails(@NonNull String fileId) {
         String apiKey = getString(R.string.tmdb_api_key);
-        String type = "movie";
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder().addInterceptor(new HttpLoggingInterceptor()
                 .setLevel(HttpLoggingInterceptor.Level.BODY)).build();
@@ -325,13 +333,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        if (fileId.endsWith("-tv")) {
-            type = "tv";
-            String tempID = fileId;
-            fileId = tempID.replace("-tv", "");
-        }
         MovieDetailsApi theMovieDbApi = retrofit.create(MovieDetailsApi.class);
-        Call<MovieDetailsResponses> call = theMovieDbApi.getMovie(type, fileId, apiKey, "en-US");
+        Call<MovieDetailsResponses> call = theMovieDbApi.getMovie(mediaType, fileId, apiKey, "en-US");
         call.enqueue(new Callback<MovieDetailsResponses>() {
             @Override
             public void onResponse(@NotNull Call<MovieDetailsResponses> call, @NotNull Response<MovieDetailsResponses> response) {
@@ -341,44 +344,59 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 }
                 MovieDetailsResponses dbResponses = response.body();
                 if (dbResponses != null) {
-                    Glide.with(context)
-                            .load(Uri.parse("https://www.themoviedb.org/t/p/w220_and_h330_face/" + dbResponses.getPoster()))
-                            .into(moviePoster);
-                    setTitle(dbResponses.getTitle());
-                    movieTitle.setText(dbResponses.getTitle());
-                    float starRating = dbResponses.getRating() / 2;
-                    ratingBar.setRating(starRating);
-                    movieRating.setText(String.valueOf(dbResponses.getRating()));
-                    StringBuilder genre = new StringBuilder();
-                    List<Genres> genresList = dbResponses.getGenres();
-                    for (int i = 0; i < genresList.size(); i++) {
-                        if (i != genresList.size() - 1) {
-                            genre.append(genresList.get(i).getGenre()).append(", ");
-                        } else {
-                            genre.append(genresList.get(i).getGenre());
+                    if (tvShow) {
+                        setTvDetails(dbResponses);
+                    } else {
+                        Glide.with(context)
+                                .load(Uri.parse("https://www.themoviedb.org/t/p/w220_and_h330_face/" + dbResponses.getPoster()))
+                                .into(moviePoster);
+                        String title = "N/A";
+                        if (dbResponses.getTitle() != null) {
+                            title = dbResponses.getTitle();
+                            setTitle(title);
                         }
-                    }
-                    movieGenre.setText(genre);
-                    int totalMinutes = dbResponses.getRuntime();
-                    String durationHour = String.valueOf(totalMinutes / 60);
-                    String durationMinutes = String.valueOf(totalMinutes % 60);
-                    movieDuration.setText(String.format(Locale.getDefault(),"%shr %smin", durationHour, durationMinutes));
-                    StringBuilder country = new StringBuilder();
-                    List<ProductionCountries> productionCountries = dbResponses.getCountries();
-                    for (int i = 0; i < productionCountries.size(); i++) {
-                        if (i != productionCountries.size() - 1) {
-                            country.append(productionCountries.get(i).getCountry()).append(", ");
-                        } else {
-                            country.append(productionCountries.get(i).getCountry());
+                        movieTitle.setText(title);
+                        float starRating = dbResponses.getRating() / 2;
+                        ratingBar.setRating(starRating);
+                        movieRating.setText(String.valueOf(dbResponses.getRating()));
+                        StringBuilder genre = new StringBuilder();
+                        List<Genres> genresList = dbResponses.getGenres();
+                        for (int i = 0; i < genresList.size(); i++) {
+                            if (i != genresList.size() - 1) {
+                                genre.append(genresList.get(i).getGenre()).append(", ");
+                            } else {
+                                genre.append(genresList.get(i).getGenre());
+                            }
                         }
+                        movieGenre.setText(genre);
+                        if (dbResponses.getRuntime() != 0) {
+                            int totalMinutes = dbResponses.getRuntime();
+                            String durationHour = String.valueOf(totalMinutes / 60);
+                            String durationMinutes = String.valueOf(totalMinutes % 60);
+                            movieDuration.setText(String.format(Locale.getDefault(),"%shr %smin", durationHour, durationMinutes));
+                            movieDurationMinutes.setText(String.format(Locale.getDefault(), "%d min", totalMinutes));
+                        } else {
+                            movieDuration.setText("N/A");
+                            movieDurationMinutes.setText("N/A");
+                        }
+                        StringBuilder country = new StringBuilder();
+                        List<ProductionCountries> productionCountries = dbResponses.getCountries();
+                        for (int i = 0; i < productionCountries.size(); i++) {
+                            if (i != productionCountries.size() - 1) {
+                                country.append(productionCountries.get(i).getCountry()).append(", ");
+                            } else {
+                                country.append(productionCountries.get(i).getCountry());
+                            }
+                        }
+                        String releaseYear = "N/A";
+                        if (dbResponses.getYear() != null) {
+                            releaseYear = String.format("%s  |  %s", dbResponses.getYear().substring(0, 4), country);
+                        }
+                        movieYear.setText(releaseYear);
+
+                        movieSummary.setText(dbResponses.getOverview());
                     }
-                    movieYear.setText(String.format("%s  |  %s", dbResponses.getYear().substring(0, 4), country));
-                    movieDurationMinutes.setText(String.format(Locale.getDefault(), "%d min", totalMinutes));
-                    movieSummary.setText(dbResponses.getOverview());
-                    if (dbResponses.isAdult()) {
-                        adultWarning.setVisibility(View.VISIBLE);
-                    }
-                    progressStatus.setVisibility(View.GONE);
+                    progressStatus.setVisibility(View.GONE);    // On connected with database hide the progressbar
                 }
             }
 
@@ -391,16 +409,10 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private void fetchCredits(@NonNull String fileId) {
         String apiKey = getString(R.string.tmdb_api_key);
-        String type = "movie";
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder().addInterceptor(new HttpLoggingInterceptor()
                 .setLevel(HttpLoggingInterceptor.Level.BODY)).build();
 
-        if (fileId.endsWith("-tv")) {
-            type = "tv";
-            String tempID = fileId;
-            fileId = tempID.replace("-tv", "");
-        }
         Retrofit retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl(CreditsApi.JSON_URL)
@@ -408,7 +420,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 .build();
 
         CreditsApi creditsApi = retrofit.create(CreditsApi.class);
-        Call<CreditsResponses> call = creditsApi.getCredits(type, fileId, apiKey, "en-US");
+        Call<CreditsResponses> call = creditsApi.getCredits(mediaType, fileId, apiKey, "en-US");
         call.enqueue(new Callback<CreditsResponses>() {
             @Override
             public void onResponse(@NonNull Call<CreditsResponses> call, @NonNull Response<CreditsResponses> response) {
@@ -436,6 +448,56 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 movieCasts.setText(getString(R.string.failed_to_load_data));
             }
         });
+    }
+
+    private void setTvDetails(@NonNull MovieDetailsResponses dbResponses) {
+        Glide.with(context)
+                .load(Uri.parse("https://www.themoviedb.org/t/p/w220_and_h330_face/" + dbResponses.getPoster()))
+                .into(moviePoster);
+        String title = "N/A";
+        if (dbResponses.getName() != null) {
+            title = dbResponses.getName();
+            setTitle(title);
+        }
+        movieTitle.setText(title);
+        float starRating = dbResponses.getRating() / 2;
+        ratingBar.setRating(starRating);
+        movieRating.setText(String.valueOf(dbResponses.getRating()));
+        StringBuilder genre = new StringBuilder();
+        List<Genres> genresList = dbResponses.getGenres();
+        for (int i = 0; i < genresList.size(); i++) {
+            if (i != genresList.size() - 1) {
+                genre.append(genresList.get(i).getGenre()).append(", ");
+            } else {
+                genre.append(genresList.get(i).getGenre());
+            }
+        }
+        movieGenre.setText(genre);
+        if (dbResponses.getRuntime() != 0) {
+            int totalMinutes = dbResponses.getRuntime();
+            String durationHour = String.valueOf(totalMinutes / 60);
+            String durationMinutes = String.valueOf(totalMinutes % 60);
+            movieDuration.setText(String.format(Locale.getDefault(),"%shr %smin", durationHour, durationMinutes));
+            movieDurationMinutes.setText(String.format(Locale.getDefault(), "%d min", totalMinutes));
+        } else {
+            movieDuration.setText("N/A");
+            movieDurationMinutes.setText("N/A");
+        }
+        StringBuilder country = new StringBuilder();
+        List<ProductionCountries> productionCountries = dbResponses.getCountries();
+        for (int i = 0; i < productionCountries.size(); i++) {
+            if (i != productionCountries.size() - 1) {
+                country.append(productionCountries.get(i).getCountry()).append(", ");
+            } else {
+                country.append(productionCountries.get(i).getCountry());
+            }
+        }
+        String releaseYear = "N/A";
+        if (dbResponses.getTvYear() != null) {
+            releaseYear = String.format("%s  |  %s", dbResponses.getTvYear().substring(0, 4), country);
+        }
+        movieYear.setText(releaseYear);
+        movieSummary.setText(dbResponses.getOverview());
     }
 
     private void loadUrl(@NonNull String url) {

@@ -34,6 +34,8 @@ public class MovieDetailsFragment extends BottomSheetDialogFragment {
     private ProgressBar progressBar;
     private LinearLayout contentLayout, progressLayout;
     private String fileID;
+    private boolean tvShow = false;
+    private String mediaType = "movie";
 
     @Contract(" -> new")
     public static @NotNull MovieDetailsFragment newInstance() {
@@ -112,7 +114,6 @@ public class MovieDetailsFragment extends BottomSheetDialogFragment {
 
     private void fetchData(@NonNull String id) {
         String apiKey = getString(R.string.tmdb_api_key);
-        String type = "movie";
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder().addInterceptor(new HttpLoggingInterceptor()
                 .setLevel(HttpLoggingInterceptor.Level.BODY)).build();
@@ -123,13 +124,8 @@ public class MovieDetailsFragment extends BottomSheetDialogFragment {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        if (id.endsWith("-tv")) {
-            type = "tv";
-            String tempID = id;
-            id = tempID.replace("-tv", "");
-        }
         MovieDetailsApi theMovieDbApi = retrofit.create(MovieDetailsApi.class);
-        Call<MovieDetailsResponses> call = theMovieDbApi.getMovie(type, id, apiKey, "en-US");
+        Call<MovieDetailsResponses> call = theMovieDbApi.getMovie(mediaType, id, apiKey, "en-US");
         call.enqueue(new Callback<MovieDetailsResponses>() {
             @Override
             public void onResponse(@NotNull Call<MovieDetailsResponses> call, @NotNull Response<MovieDetailsResponses> response) {
@@ -153,9 +149,21 @@ public class MovieDetailsFragment extends BottomSheetDialogFragment {
                     }
                     progressLayout.setVisibility(View.GONE);
                     contentLayout.setVisibility(View.VISIBLE);
-                    movieTitle.setText(dbResponses.getTitle());
+                    String title = "N/A";
+                    if (dbResponses.getTitle() != null) {
+                        title = dbResponses.getTitle();
+                    } else if (tvShow && dbResponses.getName() != null) {
+                        title = dbResponses.getName();
+                    }
+                    movieTitle.setText(title);
                     movieGenre.setText(String.valueOf(genre));
-                    movieYear.setText(dbResponses.getYear());
+                    String releaseYear = "N/A";
+                    if (dbResponses.getYear() != null) {
+                        releaseYear = dbResponses.getYear().substring(0, 4);
+                    } else if (tvShow && dbResponses.getTvYear() != null) {
+                        releaseYear = dbResponses.getTvYear().substring(0, 4);
+                    }
+                    movieYear.setText(releaseYear);
                     movieRating.setText(String.valueOf(dbResponses.getRating()));
                     movieSummary.setText(dbResponses.getOverview());
                 }
@@ -170,7 +178,13 @@ public class MovieDetailsFragment extends BottomSheetDialogFragment {
         });
     }
 
-    public void setFileID(String fileID) {
-        this.fileID = fileID;
+    public void setFileID(@NonNull String id) {
+        if (id.endsWith("-tv")) {
+            fileID = id.replace("-tv", "");
+            tvShow = true;
+            mediaType = "tv";
+        } else {
+            fileID = id;
+        }
     }
 }

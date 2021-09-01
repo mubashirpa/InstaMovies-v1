@@ -207,7 +207,6 @@ public class MainActivity extends AppCompatActivity {
         NotificationUtils notificationService = new NotificationUtils(context);
         notificationService.CreateUpdateChannel();
         notificationService.CreateMoviesChannel();
-        notificationService.DefaultNotificationService("Test", "Hello");
         scrollTop.setText(appData.getString("scroll_main", getString(R.string.about_app_sample)));
 
         if (NetworkUtil.isOnline(context)) {
@@ -367,6 +366,8 @@ public class MainActivity extends AppCompatActivity {
                     if (childValue != null && childValue.containsKey("details_activity")) {
                         if (Objects.equals(childValue.get("details_activity"), "false")) {
                             appSettings.edit().putBoolean("details_activity", false).apply();
+                        } else {
+                            appSettings.edit().putBoolean("details_activity", true).apply();
                         }
                     }
                 }

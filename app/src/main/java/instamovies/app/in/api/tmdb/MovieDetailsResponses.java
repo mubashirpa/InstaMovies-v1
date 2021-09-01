@@ -1,25 +1,27 @@
 package instamovies.app.in.api.tmdb;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
-
-import instamovies.app.in.api.tmdb.Genres;
 
 public class MovieDetailsResponses {
 
     @SerializedName("title") private String title;
+    @SerializedName("name") private String name;
     @SerializedName("genres") private List<Genres> genres;
     @SerializedName("release_date") private String year;
+    @SerializedName("first_air_date") private String tv_year;
     @SerializedName("vote_average") private float rating;
     @SerializedName("overview") private String overview;
     @SerializedName("poster_path") private String poster;
     @SerializedName("runtime") private int runtime;
-    @SerializedName("adult") private boolean adult;
     @SerializedName("production_countries") private List<ProductionCountries> countries;
 
     public String getTitle() {
         return title;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public List<Genres> getGenres() {
@@ -28,6 +30,10 @@ public class MovieDetailsResponses {
 
     public String getYear() {
         return year;
+    }
+
+    public String getTvYear() {
+        return tv_year;
     }
 
     public float getRating() {
@@ -48,9 +54,5 @@ public class MovieDetailsResponses {
 
     public List<ProductionCountries> getCountries() {
         return countries;
-    }
-
-    public boolean isAdult() {
-        return adult;
     }
 }
