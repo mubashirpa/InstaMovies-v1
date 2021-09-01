@@ -297,7 +297,7 @@ public class HiddenWebActivity extends AppCompatActivity {
         webView.addJavascriptInterface(new MyJavaScriptInterface(this), "Android");
         webView.setOnLongClickListener(view -> {
             WebView.HitTestResult hitTestResult = webView.getHitTestResult();
-            if (hitTestResult.getType() == WebView.HitTestResult.SRC_ANCHOR_TYPE) {
+            if (hitTestResult.getType() == WebView.HitTestResult.SRC_ANCHOR_TYPE && hitTestResult.getExtra().startsWith("magnet:")) {
                 ((ClipboardManager) Objects.requireNonNull(context.getSystemService(CLIPBOARD_SERVICE))).setPrimaryClip(ClipData.newPlainText("clipboard", hitTestResult.getExtra()));
                 AppUtils.toast(context, HiddenWebActivity.this, "Link copied");
             }
@@ -656,6 +656,9 @@ public class HiddenWebActivity extends AppCompatActivity {
             String replacedUrl = url.replace("movie://","");
             Uri uri = Uri.parse(replacedUrl);
             String movieID = uri.getQueryParameter("movie_id");
+            if (movieID == null) {
+                return;
+            }
             webIntent = new Intent();
             if (appSettings.getBoolean("details_activity", true)) {
                 webIntent.setClass(context, MovieDetailsActivity.class);

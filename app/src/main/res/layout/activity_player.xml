@@ -18,8 +18,8 @@
         android:alpha="0.4"
         android:text="@string/app_name"
         android:textSize="16sp"
-        android:layout_marginStart="30dp"
-        android:layout_gravity="center_vertical"/>
+        android:layout_marginEnd="50dp"
+        android:layout_gravity="center_vertical|end"/>
     <com.github.ybq.android.spinkit.SpinKitView
         android:id="@+id/progressbar"
         style="@style/SpinKitView.Pulse"
