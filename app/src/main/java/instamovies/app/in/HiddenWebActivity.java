@@ -14,6 +14,8 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -54,6 +56,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import org.jetbrains.annotations.NotNull;
 import java.net.URISyntaxException;
+import java.util.Objects;
+
 import javax.annotation.Nullable;
 import instamovies.app.in.fragments.BottomSheetFragment;
 import instamovies.app.in.fragments.MovieDetailsFragment;
@@ -286,12 +290,19 @@ public class HiddenWebActivity extends AppCompatActivity {
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         webView.setLongClickable(true);
         webView.setLayerType(View.LAYER_TYPE_HARDWARE,null);
-        webView.setOnLongClickListener(view -> true);
         webView.requestFocusFromTouch();
         webView.loadUrl(pageUrl);
         webView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.setWebChromeClient(new CustomWebClient());
         webView.addJavascriptInterface(new MyJavaScriptInterface(this), "Android");
+        webView.setOnLongClickListener(view -> {
+            WebView.HitTestResult hitTestResult = webView.getHitTestResult();
+            if (hitTestResult.getType() == WebView.HitTestResult.SRC_ANCHOR_TYPE) {
+                ((ClipboardManager) Objects.requireNonNull(context.getSystemService(CLIPBOARD_SERVICE))).setPrimaryClip(ClipData.newPlainText("clipboard", hitTestResult.getExtra()));
+                AppUtils.toast(context, HiddenWebActivity.this, "Link copied");
+            }
+            return true;
+        });
     }
 
     @Override

@@ -140,12 +140,16 @@ public class MovieDetailsFragment extends BottomSheetDialogFragment {
                 if (dbResponses != null) {
                     StringBuilder genre = new StringBuilder();
                     List<Genres> genresList = dbResponses.getGenres();
-                    for (int i = 0; i < genresList.size(); i++) {
-                        if (i != genresList.size() - 1) {
-                            genre.append(genresList.get(i).getGenre()).append(", ");
-                        } else {
-                            genre.append(genresList.get(i).getGenre());
+                    if (!genresList.isEmpty()) {
+                        for (int i = 0; i < genresList.size(); i++) {
+                            if (i != genresList.size() - 1) {
+                                genre.append(genresList.get(i).getGenre()).append(", ");
+                            } else {
+                                genre.append(genresList.get(i).getGenre());
+                            }
                         }
+                    } else {
+                        genre.append("N/A");
                     }
                     progressLayout.setVisibility(View.GONE);
                     contentLayout.setVisibility(View.VISIBLE);

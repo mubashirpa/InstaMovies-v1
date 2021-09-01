@@ -1,8 +1,11 @@
 package instamovies.app.in.fragments;
 
+import static android.content.Context.CLIPBOARD_SERVICE;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import java.util.ArrayList;
+import java.util.Objects;
 import instamovies.app.in.HiddenWebActivity;
 import instamovies.app.in.PlayerActivity;
 import instamovies.app.in.R;
@@ -80,6 +84,14 @@ public class DownloadOptionsFragment extends BottomSheetDialogFragment {
                 dialog.dismiss();
                 loadUrl(downloadsList.get(position).getLink());
             }
+        });
+
+        listView.setOnItemLongClickListener((parent, view, position, id) -> {
+            if (downloadsList.get(position).getLink() != null && downloadsList.get(position).getLink().startsWith("magnet:")) {
+                ((ClipboardManager) Objects.requireNonNull(context.getSystemService(CLIPBOARD_SERVICE))).setPrimaryClip(ClipData.newPlainText("clipboard", downloadsList.get(position).getLink()));
+                AppUtils.toast(context, activity, "Link copied");
+            }
+            return true;
         });
     }
 
