@@ -338,6 +338,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
         call.enqueue(new Callback<MovieDetailsResponses>() {
             @Override
             public void onResponse(@NotNull Call<MovieDetailsResponses> call, @NotNull Response<MovieDetailsResponses> response) {
+                if (isDestroyed()) {
+                    return;
+                }
                 if (!response.isSuccessful()) {
                     onFetchError(getString(R.string.error_retrofit_response));
                     return;
@@ -428,6 +431,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
         call.enqueue(new Callback<CreditsResponses>() {
             @Override
             public void onResponse(@NonNull Call<CreditsResponses> call, @NonNull Response<CreditsResponses> response) {
+                if (isDestroyed()) {
+                    return;
+                }
                 if (!response.isSuccessful()) {
                     movieCasts.setText(getString(R.string.failed_to_load_data));
                     return;

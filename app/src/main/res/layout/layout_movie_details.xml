@@ -59,6 +59,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
+                android:maxLines="4"
+                android:ellipsize="end"
                 android:textColor="@color/colorTextSecondary"
                 android:layout_marginBottom="16dp"/>
             <Button

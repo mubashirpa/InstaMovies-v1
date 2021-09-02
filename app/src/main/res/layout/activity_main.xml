@@ -279,23 +279,11 @@
                 </LinearLayout>
             </ScrollView>
             <include
-                android:id="@+id/error_linear"
+                android:id="@+id/progress_status_view"
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
-                layout="@layout/layout_error_connection"
-                android:visibility="gone"/>
-            <LinearLayout
-                android:id="@+id/progressbar_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:background="@color/colorLayoutPrimary"
-                android:clickable="true"
-                android:focusable="true">
-                <ProgressBar
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
+                layout="@layout/layout_progress_status"
+                android:visibility="visible"/>
         </RelativeLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
     <com.google.android.material.navigation.NavigationView

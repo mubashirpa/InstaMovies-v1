@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
@@ -24,7 +23,7 @@ import instamovies.app.in.utils.RecyclerTouchListener;
 
 public class ThumbnailDatabase {
 
-    public static void ThumbnailDatabaseMain(String childID, @NotNull RecyclerView recyclerView, Context context, LinearLayout linearLayout) {
+    public static void ThumbnailDatabaseMain(String childID, @NotNull RecyclerView recyclerView, Context context, View progressView) {
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = database.getReference("Thumbnail");
@@ -37,8 +36,8 @@ public class ThumbnailDatabase {
         FirebaseRecyclerAdapter<ThumbnailModel, ThumbnailViewHolder> recyclerAdapter = new FirebaseRecyclerAdapter<ThumbnailModel, ThumbnailViewHolder>(recyclerOptions) {
             @Override
             protected void onBindViewHolder(@NonNull ThumbnailViewHolder holder, int position, @NonNull ThumbnailModel model) {
-                if (linearLayout.isShown()) {
-                    linearLayout.setVisibility(View.GONE);
+                if (progressView.isShown()) {
+                    progressView.setVisibility(View.GONE);
                 }
                 Glide.with(context)
                         .load(model.getThumbLink())

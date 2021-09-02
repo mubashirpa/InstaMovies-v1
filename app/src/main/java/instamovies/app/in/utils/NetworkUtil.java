@@ -31,7 +31,7 @@ public class NetworkUtil {
                 isOnline = networkInfo.isConnected();
             }
         }
-        return !isOnline;
+        return isOnline;
     }
 
     public static boolean isWifiConnected(@NotNull Context context) {

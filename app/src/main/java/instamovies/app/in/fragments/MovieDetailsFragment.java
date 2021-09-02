@@ -129,6 +129,9 @@ public class MovieDetailsFragment extends BottomSheetDialogFragment {
         call.enqueue(new Callback<MovieDetailsResponses>() {
             @Override
             public void onResponse(@NotNull Call<MovieDetailsResponses> call, @NotNull Response<MovieDetailsResponses> response) {
+                if (!isVisible()) {
+                    return;
+                }
                 if (!response.isSuccessful()) {
                     progressBar.setVisibility(View.GONE);
                     errorMessage.setText(getString(R.string.error_retrofit_response));

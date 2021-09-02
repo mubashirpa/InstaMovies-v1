@@ -234,6 +234,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
                         android:maxLines="4"
+                        android:ellipsize="end"
                         android:lineSpacingExtra="4dp"/>
                 </LinearLayout>
                 <!-- Screenshots layout -->
@@ -279,7 +280,8 @@
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
                         android:lineSpacingExtra="4dp"
-                        android:maxLines="4"/>
+                        android:maxLines="4"
+                        android:ellipsize="end"/>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

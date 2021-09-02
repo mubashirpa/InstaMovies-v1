@@ -89,12 +89,14 @@ public class MainActivity extends AppCompatActivity {
     private AdView adView1, adView2;
     private final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
     private String HOT_LINKS_URL, CONTACT_URL, ABOUT_URL, MUSIC_URL, GAMES_URL, TUTORIAL_URL;
-    private LinearLayout progressbarLayout;
+    private View progressView;
+    private ProgressBar progressBar;
+    private LinearLayout errorView;
+    private TextView errorText;
     private Context context;
     private final String LOG_TAG = "MainActivity";
     private final int REQUEST_CODE_STORAGE = 1001;
     private boolean premiumUser = false;
-    private View errorLinear;
     private boolean isDatabaseConnected = false;
     private String OFFICIAL_WEBSITE_URL = "";
     private UpdateProgressFragment updateProgressFragment;
@@ -164,8 +166,6 @@ public class MainActivity extends AppCompatActivity {
         maintenanceDialog = new AlertDialog.Builder(context);
         AlertDialog.Builder uninstallDialog = new AlertDialog.Builder(context);
         FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(context);
-        errorLinear = findViewById(R.id.error_linear);
-        Button retryButton = findViewById(R.id.retry_button);
         RecyclerView recyclerMalayalam = findViewById(R.id.recycler_malayalam);
         RecyclerView recyclerTamil = findViewById(R.id.recycler_tamil);
         RecyclerView recyclerEnglish = findViewById(R.id.recycler_english);
@@ -181,7 +181,11 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout layoutEnglish = findViewById(R.id.layout_english);
         LinearLayout layoutHindi = findViewById(R.id.layout_hindi);
         LinearLayout layoutMore = findViewById(R.id.layout_more);
-        progressbarLayout = findViewById(R.id.progressbar_layout);
+        progressView = findViewById(R.id.progress_status_view);
+        progressBar = progressView.findViewById(R.id.progressbar);
+        errorView = progressView.findViewById(R.id.error_view);
+        errorText = progressView.findViewById(R.id.cause_text);
+        Button retryButton = progressView.findViewById(R.id.retry_button);
         HOT_LINKS_URL = getString(R.string.hot_links_url);
         CONTACT_URL = getString(R.string.contact_url);
         ABOUT_URL = getString(R.string.about_url);
@@ -209,10 +213,11 @@ public class MainActivity extends AppCompatActivity {
         notificationService.CreateMoviesChannel();
         scrollTop.setText(appData.getString("scroll_main", getString(R.string.about_app_sample)));
 
-        if (NetworkUtil.isOnline(context)) {
+        if (!NetworkUtil.isOnline(context)) {
             AppUtils.toastError(context,MainActivity.this, getString(R.string.error_no_connection));
-            progressbarLayout.setVisibility(View.GONE);
-            errorLinear.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
+            errorText.setText(getString(R.string.error_no_connection));
+            errorView.setVisibility(View.VISIBLE);
         }
         boolean autoUpdate = settingsPreferences.getBoolean("auto_update", false);
         if (!autoUpdate) {
@@ -236,18 +241,14 @@ public class MainActivity extends AppCompatActivity {
 
         retryButton.setOnClickListener(v -> {
             if (isDatabaseConnected) {
-                if (progressbarLayout.isShown()) {
-                    progressbarLayout.setVisibility(View.GONE);
-                }
-                if (errorLinear.isShown()) {
-                    errorLinear.setVisibility(View.GONE);
-                }
+                progressView.setVisibility(View.GONE);
             } else {
-                errorLinear.setVisibility(View.GONE);
-                progressbarLayout.setVisibility(View.VISIBLE);
-                if (NetworkUtil.isOnline(context)) {
-                    progressbarLayout.setVisibility(View.GONE);
-                    errorLinear.setVisibility(View.VISIBLE);
+                errorView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                if (!NetworkUtil.isOnline(context)) {
+                    progressBar.setVisibility(View.GONE);
+                    errorText.setText(getString(R.string.error_no_connection));
+                    errorView.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -297,18 +298,11 @@ public class MainActivity extends AppCompatActivity {
                 };
                 final String childKey = dataSnapshot.getKey();
                 final HashMap<String, Object> childValue = dataSnapshot.getValue(ind);
-
                 isDatabaseConnected = true;
-                if (progressbarLayout.isShown()) {
-                    progressbarLayout.setVisibility(View.GONE);
-                }
-                if (errorLinear.isShown()) {
-                    errorLinear.setVisibility(View.GONE);
-                }
+                progressView.setVisibility(View.GONE);
                 if (childKey == null) {
                     return;
                 }
-
                 if (childKey.equals("scroll_main")) {
                     if (childValue != null && childValue.containsKey("text")) {
                         String scrollTopMessage = Objects.requireNonNull(childValue.get("text")).toString();
@@ -660,7 +654,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(recyclerDecoration);
-        ThumbnailDatabase.ThumbnailDatabaseMain(ChildID, recyclerView, context, progressbarLayout);
+        ThumbnailDatabase.ThumbnailDatabaseMain(ChildID, recyclerView, context, progressView);
     }
 
     private void checkUpdate() {

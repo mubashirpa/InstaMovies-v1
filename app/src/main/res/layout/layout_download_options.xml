@@ -4,14 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/bg_bottomsheet_default">
+    android:background="@drawable/bg_bottomsheet_default"
+    android:paddingVertical="10dp">
+    <View
+        android:layout_width="60dp"
+        android:layout_height="5dp"
+        android:background="@drawable/bg_bottomsheet_indicator"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"/>
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="10dp"
         android:scrollbars="none"
         android:choiceMode="none"
         android:divider="@color/colorStrokePrimary"
-        android:dividerHeight="1dp"/>
+        android:dividerHeight="1dp"
+        android:nestedScrollingEnabled="true"/>
 </LinearLayout>
