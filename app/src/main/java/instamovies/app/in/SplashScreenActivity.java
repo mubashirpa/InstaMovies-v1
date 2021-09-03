@@ -21,9 +21,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsetsController;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import org.jetbrains.annotations.NotNull;
 import instamovies.app.in.fragments.BottomSheetFragment;
 import instamovies.app.in.utils.AppUtils;
@@ -37,7 +34,6 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash_screen);
 
         context = this;
         Window window = getWindow();
@@ -96,10 +92,6 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     private void initializeActivity() {
         appDetails = getSharedPreferences("appDetails", MODE_PRIVATE);
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.anim_fade_in_splash_text);
-        ImageView appIcon = findViewById(R.id.app_icon);
-        appIcon.startAnimation(animation);
-
         if (appDetails != null) {
             if (!appDetails.getBoolean("First Open", false)) {
                 BottomSheetFragment bottomSheetDialog = BottomSheetFragment.newInstance();

@@ -129,7 +129,7 @@ public class MovieDetailsFragment extends BottomSheetDialogFragment {
         call.enqueue(new Callback<MovieDetailsResponses>() {
             @Override
             public void onResponse(@NotNull Call<MovieDetailsResponses> call, @NotNull Response<MovieDetailsResponses> response) {
-                if (!isVisible()) {
+                if (getDialog() == null || !getDialog().isShowing()) {
                     return;
                 }
                 if (!response.isSuccessful()) {
