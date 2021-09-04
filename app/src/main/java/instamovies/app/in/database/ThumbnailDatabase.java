@@ -55,7 +55,6 @@ public class ThumbnailDatabase {
             }
         };
         recyclerAdapter.startListening();
-        recyclerAdapter.notifyDataSetChanged();
         recyclerView.setAdapter(recyclerAdapter);
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override
@@ -101,7 +100,6 @@ public class ThumbnailDatabase {
             }
         };
         recyclerAdapter.startListening();
-        recyclerAdapter.notifyDataSetChanged();
         recyclerView.setAdapter(recyclerAdapter);
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(context, recyclerView, new RecyclerTouchListener.ClickListener() {
             @Override

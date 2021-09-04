@@ -7,7 +7,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.content.SharedPreferences;
-import com.github.florent37.fiftyshadesof.FiftyShadesOf;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -511,7 +510,6 @@ public class MoviesActivity extends AppCompatActivity {
             // Needed for marquee scrolling
             movieName.setSelected(true);
 
-            FiftyShadesOf.with(context).on(posterFrame).fadein(true).start();
             String movieTitle =  "";
             if (data.get(position).containsKey("title")) {
                 movieTitle = Objects.requireNonNull(data.get(position).get("title")).toString().toUpperCase();

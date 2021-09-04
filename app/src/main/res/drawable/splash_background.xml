@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/colorLayoutPrimary"/>
     <item
-        android:drawable="@drawable/app_logo"
+        android:drawable="@drawable/splash_logo"
         android:left="@dimen/splash_screen_logo_size"
         android:right="@dimen/splash_screen_logo_size"
         android:gravity="center"/>
