@@ -251,6 +251,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getTitle().equals(getString(R.string.more))) {
+            Intent menuIntent = new Intent();
+            menuIntent.setClass(context, SettingsActivity.class);
+            startActivity(menuIntent);
             return true;
         }
         return super.onOptionsItemSelected(item);
