@@ -9,6 +9,7 @@
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/drawable/bg_button_trailer.xml" value="0.2128205128205128" />
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/drawable/ic_baseline_send_white_24.xml" value="0.21614583333333334" />
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/drawable/ic_music_file.xml" value="0.21614583333333334" />
+        <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/drawable/ic_outline_notifications_24.xml" value="0.10260416666666666" />
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/drawable/splash_background.xml" value="0.21614583333333334" />
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/activity_categories.xml" value="0.1716485507246377" />
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/activity_feedback.xml" value="0.1" />
@@ -28,6 +29,7 @@
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/item_notifications.xml" value="0.1" />
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/layout_checkbox.xml" value="0.1" />
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/layout_download_options.xml" value="0.2" />
+        <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/layout_edittext.xml" value="0.2" />
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/layout_error_connection.xml" value="0.2" />
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/layout_error_webview.xml" value="0.2" />
         <entry key="..\:/Android/AndroidStudioProjects/InstaMovies/app/src/main/res/layout/layout_menu_webview.xml" value="0.1" />

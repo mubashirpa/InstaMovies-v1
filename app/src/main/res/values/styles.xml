@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style	name="AppTheme"	parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -25,6 +26,7 @@
     <style	name="AppTheme.SplashTheme" parent="AppTheme">
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:statusBarColor">@color/colorLayoutPrimary</item>
         <item name="android:windowBackground">@drawable/splash_background</item>
     </style>
 
@@ -58,6 +60,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="TrackSelectionDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="windowNoTitle">false</item>
+        <item name="android:windowBackground">@drawable/bg_dialog</item>
+    </style>
+
     <style name="BottomSheetDialogTheme" parent="Theme.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/BottomSheetDialogStyle</item>
     </style>
@@ -72,10 +79,5 @@
     </style>
     <style name="BottomSheetDialogDefaultStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@android:color/transparent</item>
-    </style>
-
-    <style name="TrackSelectionDialogTheme" parent="ThemeOverlay.AppCompat.Dialog.Alert">
-        <item name="windowNoTitle">false</item>
-        <item name="android:windowBackground">@drawable/bg_dialog</item>
     </style>
 </resources>

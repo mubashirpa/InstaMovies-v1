@@ -11,16 +11,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowInsetsController;
 import org.jetbrains.annotations.NotNull;
 import instamovies.app.in.fragments.BottomSheetFragment;
 import instamovies.app.in.utils.AppUtils;
@@ -34,30 +28,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         context = this;
-        Window window = getWindow();
-        switch (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
-            case Configuration.UI_MODE_NIGHT_YES:
-
-                break;
-            case Configuration.UI_MODE_NIGHT_NO:
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-                    WindowInsetsController controller = getWindow().getInsetsController();
-                    if(controller != null) {
-                        controller.setSystemBarsAppearance(WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS);
-                    }
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-
-                    //Deprecated in Api level 30
-                    window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-
-                } else {
-                    window.setStatusBarColor(Color.BLACK);
-                }
-                break;
-        }
-
         SharedPreferences settingsPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String themePreference = settingsPreferences.getString("theme_preference","");
 

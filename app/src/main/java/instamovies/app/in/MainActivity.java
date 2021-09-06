@@ -674,7 +674,7 @@ public class MainActivity extends AppCompatActivity {
                 if (childKey != null && childKey.equals("Latest")) {
                     if (childValue != null && childValue.containsKey("Latest Version")) {
                         latestVersion = Objects.requireNonNull(childValue.get("Latest Version")).toString();
-                        if (latestVersion.equals(currentVersion)) {
+                        if (latestVersion.contains(currentVersion)) {
                             AppUtils.toast(context, MainActivity.this, "App is up to date");
                         } else {
                             AppUtils.toast(context, MainActivity.this, "Update Available");
