@@ -4,8 +4,11 @@ Insta Movies is an Android app which allows you to watch, stream and download FR
 
 ## Screenshots
 
-<img src="screenshots/screenshot1.jpg" alt="Screenshot">
-<img src="screenshots/screenshot2.jpg" alt="Screenshot">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="screenshots/screenshot-dark.jpg">
+  <source media="(prefers-color-scheme: light)" srcset="screenshots/screenshot.jpg">
+  <img alt="App Screenshot" src="screenshots/screenshot.jpg">
+</picture>
 
 ## License
 
