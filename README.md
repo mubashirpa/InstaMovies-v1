@@ -1,6 +1,9 @@
-# InstaMovies for Android (Deprecated)
+# Insta Movies (Deprecated)
 
-Insta Movies is an Android app which allows you to watch, stream and download FREE and 1080p HD TV shows and movies on your Android devices. It provides almost latest TV shows and movies. Absolutely free. You can download them on your Android device or watch online. Watching movies and TV shows are the best entertainment!
+Insta Movies is an Android app which allows you to watch, stream and download FREE and 1080p HD TV
+shows and movies on your Android devices. It provides almost latest TV shows and movies. Absolutely
+free. You can download them on your Android device or watch online. Watching movies and TV shows are
+the best entertainment!
 
 ## Screenshots
 
@@ -28,6 +31,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-Feel free to explore the code and use this project as a reference for your own Android development endeavors. If you have any questions or need assistance, please don't hesitate to reach out.
+Feel free to explore the code and use this project as a reference for your own Android development
+endeavors. If you have any questions or need assistance, please don't hesitate to reach out.
 
 Happy learning!
